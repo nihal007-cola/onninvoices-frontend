@@ -26,7 +26,6 @@
     }
   </script>
   <style>
-    /* ==================== THEME VARIABLES ==================== */
     :root {
       --bg: #F8FAFC;
       --surface: #F1F5F9;
@@ -63,7 +62,6 @@
       --overlay: rgba(0, 0, 0, 0.6);
     }
 
-    /* ==================== RESET & NATIVE FEEL ==================== */
     * {
       box-sizing: border-box;
       margin: 0;
@@ -110,7 +108,6 @@
       * { -ms-overflow-style: none; scrollbar-width: none; }
     }
 
-    /* ==================== LAYOUT & SIDEBAR ==================== */
     .sidebar {
       background: var(--surface);
       border-right: 1px solid var(--border);
@@ -142,7 +139,6 @@
       border-radius: 0 8px 8px 0;
     }
 
-    /* ==================== COMPONENTS ==================== */
     .erp-card {
       background: var(--card);
       border: 1px solid var(--border);
@@ -434,7 +430,6 @@
 </head>
 <body class="pb-[env(safe-area-inset-bottom)]">
 
-  <!-- ==================== DESKTOP SIDEBAR ==================== -->
   <aside class="sidebar hidden md:flex fixed left-0 top-0 h-full w-64 flex-col z-40 no-print">
     <div class="p-6 border-b border-[var(--border)]">
       <div class="flex items-center gap-3">
@@ -483,7 +478,6 @@
     </div>
   </aside>
 
-  <!-- ==================== MOBILE APP BAR & DRAWER ==================== -->
   <div class="md:hidden fixed top-0 left-0 right-0 z-40 no-print border-b border-[var(--border)] bg-[var(--surface)] backdrop-blur-md bg-opacity-90 pt-[env(safe-area-inset-top)]">
     <div class="flex items-center justify-between px-4 h-16">
       <div class="flex items-center gap-3">
@@ -522,11 +516,9 @@
     </div>
   </div>
 
-  <!-- ==================== MAIN CONTENT ==================== -->
   <main class="md:ml-64 min-h-screen pt-16 md:pt-0">
     <div class="p-4 md:p-8 max-w-7xl mx-auto">
 
-      <!-- DASHBOARD -->
       <div id="view-dashboard" class="view">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6 md:mb-8 gap-4">
           <div>
@@ -547,7 +539,6 @@
         <div id="dashboard-content"></div>
       </div>
 
-      <!-- CREATE INVOICE -->
       <div id="view-create-invoice" class="view hidden">
         <div class="mb-6 md:mb-8">
           <div class="text-header text-xl md:text-2xl">Create Invoice</div>
@@ -556,7 +547,6 @@
         <div id="create-invoice-content"></div>
       </div>
 
-      <!-- CLIENTS -->
       <div id="view-clients" class="view hidden">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6 md:mb-8 gap-4">
           <div>
@@ -571,7 +561,6 @@
         <div id="clients-content"></div>
       </div>
 
-      <!-- BUSINESSES -->
       <div id="view-businesses" class="view hidden">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6 md:mb-8 gap-4">
           <div>
@@ -586,7 +575,6 @@
         <div id="businesses-content"></div>
       </div>
 
-      <!-- EXPORT INVOICES -->
       <div id="view-export-invoices" class="view hidden">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6 md:mb-8 gap-4">
           <div>
@@ -601,7 +589,6 @@
         <div id="export-invoices-content"></div>
       </div>
 
-      <!-- CANCELLED -->
       <div id="view-cancelled" class="view hidden">
         <div class="mb-6 md:mb-8">
           <div class="text-header text-xl md:text-2xl">Cancelled Invoices</div>
@@ -613,9 +600,6 @@
     </div>
   </main>
 
-  <!-- ==================== MODALS ==================== -->
-
-  <!-- Add Client Modal -->
   <div id="add-client-modal" class="hidden fixed inset-0 modal-overlay z-50 flex items-center justify-center p-0 md:p-4 no-print">
     <div class="erp-card modal-card max-w-lg w-full">
       <div class="text-header mb-6">New Client</div>
@@ -660,7 +644,6 @@
     </div>
   </div>
 
-  <!-- Add Business Modal -->
   <div id="add-business-modal" class="hidden fixed inset-0 modal-overlay z-50 flex items-center justify-center p-0 md:p-4 no-print">
     <div class="erp-card modal-card max-w-lg w-full overflow-y-auto">
       <div class="text-header mb-6">New Business</div>
@@ -727,7 +710,6 @@
     </div>
   </div>
 
-  <!-- Create Export Modal -->
   <div id="create-export-modal" class="hidden fixed inset-0 modal-overlay z-50 flex items-center justify-center p-0 md:p-4 no-print">
     <div class="erp-card modal-card max-w-lg w-full overflow-y-auto">
       <div class="text-header mb-6">Create Export Invoice</div>
@@ -774,7 +756,6 @@
     </div>
   </div>
 
-  <!-- Review Modal -->
   <div id="review-invoice-modal" class="hidden fixed inset-0 modal-overlay z-50 flex items-center justify-center p-0 md:p-4 no-print">
     <div class="erp-card modal-card max-w-3xl w-full overflow-y-auto flex flex-col">
       <div class="flex items-center justify-between mb-6 shrink-0">
@@ -793,7 +774,6 @@
     </div>
   </div>
 
-  <!-- Revise Modal -->
   <div id="revise-invoice-modal" class="hidden fixed inset-0 modal-overlay z-50 flex items-center justify-center p-0 md:p-4 no-print">
     <div class="erp-card modal-card max-w-4xl w-full overflow-y-auto flex flex-col">
       <div class="flex items-center justify-between mb-6 shrink-0">
@@ -806,7 +786,6 @@
     </div>
   </div>
 
-  <!-- Custom Dialog Modal (Replaces native alerts/confirms/prompts) -->
   <div id="custom-dialog" class="hidden fixed inset-0 z-[99999] modal-overlay flex items-center justify-center p-4 no-print">
     <div id="custom-dialog-card" class="erp-card w-full max-w-sm transition-all duration-200 scale-95 opacity-0 flex flex-col">
       <h3 id="custom-dialog-title" class="text-lg font-bold mb-2">ONNinvoices</h3>
@@ -819,13 +798,30 @@
     </div>
   </div>
 
-  <!-- Toast Container -->
   <div id="toast-container" class="toast no-print"></div>
 
-  <!-- ==================== JAVASCRIPT ==================== -->
   <script>
     // ==================== CONFIGURATION ====================
     const API_URL = 'http://3.107.14.239:8000';
+
+    // ==================== HELPER FUNCTIONS ====================
+    function roundCurrency(value) {
+      return Math.round((value + Number.EPSILON) * 100) / 100;
+    }
+
+    function escapeHtml(text) {
+      if (!text) return '';
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function createSafeElement(tag, className, text) {
+      const el = document.createElement(tag);
+      if (className) el.className = className;
+      if (text) el.textContent = text;
+      return el;
+    }
 
     // ==================== STATE ====================
     let currentView = 'dashboard';
@@ -965,9 +961,10 @@
       const container = document.getElementById('toast-container');
       const toast = document.createElement('div');
       toast.className = `toast-content toast-${type} fade-in`;
-      toast.innerHTML = `
-        <span class="text-helper font-medium">${message}</span>
-      `;
+      const span = document.createElement('span');
+      span.className = 'text-helper font-medium';
+      span.textContent = message;
+      toast.appendChild(span);
       container.appendChild(toast);
       setTimeout(() => { if (toast.parentElement) toast.remove(); }, 3500);
     }
@@ -982,7 +979,6 @@
     // ==================== DASHBOARD ====================
     async function loadDashboard() {
       setLoading('dashboard-content');
-      
       try {
         const response = await fetch(`${API_URL}/api/invoices`);
         const data = await response.json();
@@ -996,7 +992,7 @@
     function renderDashboard(response) {
       const container = document.getElementById('dashboard-content');
       if (!response || !response.success) {
-        container.innerHTML = `<div class="erp-card text-center" style="color:var(--danger)">Failed to load: ${response?.error || 'Unknown'}</div>`;
+        container.innerHTML = `<div class="erp-card text-center" style="color:var(--danger)">Failed to load: ${escapeHtml(response?.error || 'Unknown')}</div>`;
         return;
       }
 
@@ -1008,9 +1004,7 @@
           <div class="erp-card flex flex-col items-center justify-center p-10 md:p-16 text-center">
             <svg class="mb-4 text-[var(--muted)] opacity-50" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
             <div class="text-header mb-6">No Invoices Yet</div>
-            <button onclick="navigateTo('create-invoice')" class="btn btn-primary w-full md:w-auto">
-              Create First Invoice
-            </button>
+            <button onclick="navigateTo('create-invoice')" class="btn btn-primary w-full md:w-auto">Create First Invoice</button>
           </div>
         `;
         return;
@@ -1116,9 +1110,8 @@
             if (row.inv.status === 'ACTIVE') {
               actions = `
                 <div class="flex gap-2 justify-center w-full">
-                  <button onclick="handleReviseInvoice('${row.inv.invoice_no}')" class="btn btn-warning btn-sm flex-1 md:flex-none">Revise</button>
-                  <button onclick="handleCancelInvoice('${row.inv.invoice_no}')" class="btn btn-danger btn-sm flex-1 md:flex-none">Cancel</button>
-                  <button onclick="handleGeneratePDF('${row.inv.invoice_no}')" class="btn btn-primary btn-sm flex-1 md:flex-none">PDF</button>
+                  <button onclick="handleReviseInvoice('${escapeHtml(row.inv.invoice_no)}')" class="btn btn-warning btn-sm flex-1 md:flex-none">Revise</button>
+                  <button onclick="handleCancelInvoice('${escapeHtml(row.inv.invoice_no)}')" class="btn btn-danger btn-sm flex-1 md:flex-none">Cancel</button>
                 </div>
               `;
             } else {
@@ -1126,9 +1119,9 @@
             }
             return `
               <tr>
-                <td data-label="Invoice No"><span style="font-weight:600">${row.invoiceNo}</span> <span class="text-helper text-[var(--muted)] ml-1">v${row.inv.version || 1}</span></td>
-                <td data-label="Date">${row.date}</td>
-                <td data-label="Client"><div class="truncate w-full ml-4 max-w-[180px] md:max-w-[200px] text-right md:text-left md:ml-0" title="${row.clientName}">${row.clientName}</div></td>
+                <td data-label="Invoice No"><span style="font-weight:600">${escapeHtml(row.invoiceNo)}</span> <span class="text-helper text-[var(--muted)] ml-1">v${row.inv.version || 1}</span></td>
+                <td data-label="Date">${escapeHtml(row.date)}</td>
+                <td data-label="Client"><div class="truncate w-full ml-4 max-w-[180px] md:max-w-[200px] text-right md:text-left md:ml-0" title="${escapeHtml(row.clientName)}">${escapeHtml(row.clientName)}</div></td>
                 <td data-label="Total" style="text-align:right;font-weight:600">${row.total}</td>
                 <td data-label="Status"><span class="badge ${row.statusClass}">${row.status}</span></td>
                 <td data-label="Actions">${actions}</td>
@@ -1178,11 +1171,6 @@
       } catch (error) {
         showToast(error.message || 'Failed to cancel', 'error');
       }
-    }
-
-    async function handleGeneratePDF(invoiceNo) {
-      showToast('PDF generation coming soon...', 'info');
-      // PDF generation will be implemented later
     }
 
     // ==================== CREATE INVOICE ====================
@@ -1375,7 +1363,7 @@
       items.forEach(item => {
         const qty = parseFloat(item.querySelector('.item-qty')?.value) || 0;
         const rate = parseFloat(item.querySelector('.item-rate')?.value) || 0;
-        const amount = qty * rate;
+        const amount = roundCurrency(qty * rate);
         const amountEl = item.querySelector('.item-amount');
         if (amountEl) amountEl.textContent = `₹${amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
         totalTaxable += amount;
@@ -1388,14 +1376,14 @@
       let cgst = 0, sgst = 0, igst = 0;
       if (taxType === 'inter') {
         const rate = parseFloat(document.getElementById('igst-rate').value) || 0;
-        igst = totalTaxable * (rate / 100);
+        igst = roundCurrency(totalTaxable * (rate / 100));
       } else {
         const cgstRate = parseFloat(document.getElementById('cgst-rate').value) || 0;
         const sgstRate = parseFloat(document.getElementById('sgst-rate').value) || 0;
-        cgst = totalTaxable * (cgstRate / 100);
-        sgst = totalTaxable * (sgstRate / 100);
+        cgst = roundCurrency(totalTaxable * (cgstRate / 100));
+        sgst = roundCurrency(totalTaxable * (sgstRate / 100));
       }
-      const grandTotal = totalTaxable + cgst + sgst + igst;
+      const grandTotal = roundCurrency(totalTaxable + cgst + sgst + igst);
 
       document.getElementById('summary-taxable').textContent = `₹${totalTaxable.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
       if (taxType === 'inter') {
@@ -1438,7 +1426,7 @@
         const qty = parseFloat(item.querySelector('.item-qty')?.value) || 0;
         const rate = parseFloat(item.querySelector('.item-rate')?.value) || 0;
         if (!desc) { showToast('Fill all descriptions', 'error'); hasError = true; return; }
-        lineItems.push({ description: desc, sacCode: sac || '', quantity: qty, rate: rate, amount: qty * rate });
+        lineItems.push({ description: desc, sacCode: sac || '', quantity: qty, rate: rate, amount: roundCurrency(qty * rate) });
       });
       if (hasError) return;
       if (lineItems.length === 0) { showToast('Add at least one item', 'error'); return; }
@@ -1454,20 +1442,19 @@
       const modal = document.getElementById('review-invoice-modal');
       const content = document.getElementById('review-content');
       const items = data.items || [];
-      const taxType = data.isInterstate ? 'Inter-State (IGST)' : 'Intra-State (CGST + SGST)';
       const totalTaxable = items.reduce((sum, item) => sum + (item.quantity * item.rate), 0);
       let cgst = 0, sgst = 0, igst = 0;
-      if (data.isInterstate) { igst = totalTaxable * (data.igstRate / 100); } 
-      else { cgst = totalTaxable * (data.cgstRate / 100); sgst = totalTaxable * (data.sgstRate / 100); }
-      const grandTotal = totalTaxable + cgst + sgst + igst;
+      if (data.isInterstate) { igst = roundCurrency(totalTaxable * (data.igstRate / 100)); } 
+      else { cgst = roundCurrency(totalTaxable * (data.cgstRate / 100)); sgst = roundCurrency(totalTaxable * (data.sgstRate / 100)); }
+      const grandTotal = roundCurrency(totalTaxable + cgst + sgst + igst);
 
       let html = `
         <div class="space-y-6">
           <div class="grid grid-cols-2 gap-4 text-[13px] md:text-[14px]">
-            <div class="bg-[var(--bg)] p-3 rounded-lg"><span class="text-helper text-[var(--muted)] block mb-1">Client</span><span class="font-semibold">${data.clientName}</span></div>
-            <div class="bg-[var(--bg)] p-3 rounded-lg"><span class="text-helper text-[var(--muted)] block mb-1">Place of Supply</span><span class="font-semibold">${data.placeOfSupply}</span></div>
-            <div class="bg-[var(--bg)] p-3 rounded-lg"><span class="text-helper text-[var(--muted)] block mb-1">Date</span><span class="font-semibold">${data.date}</span></div>
-            <div class="bg-[var(--bg)] p-3 rounded-lg"><span class="text-helper text-[var(--muted)] block mb-1">Due</span><span class="font-semibold">${data.dueDate || '-'}</span></div>
+            <div class="bg-[var(--bg)] p-3 rounded-lg"><span class="text-helper text-[var(--muted)] block mb-1">Client</span><span class="font-semibold">${escapeHtml(data.clientName)}</span></div>
+            <div class="bg-[var(--bg)] p-3 rounded-lg"><span class="text-helper text-[var(--muted)] block mb-1">Place of Supply</span><span class="font-semibold">${escapeHtml(data.placeOfSupply)}</span></div>
+            <div class="bg-[var(--bg)] p-3 rounded-lg"><span class="text-helper text-[var(--muted)] block mb-1">Date</span><span class="font-semibold">${escapeHtml(data.date)}</span></div>
+            <div class="bg-[var(--bg)] p-3 rounded-lg"><span class="text-helper text-[var(--muted)] block mb-1">Due</span><span class="font-semibold">${escapeHtml(data.dueDate || '-')}</span></div>
           </div>
           
           <div class="table-container shadow-sm">
@@ -1480,8 +1467,8 @@
       items.forEach((item, idx) => {
         html += `<tr>
           <td data-label="#">${idx + 1}</td>
-          <td data-label="Description"><div class="max-w-[150px] md:max-w-none truncate">${item.description}</div></td>
-          <td data-label="SAC" class="hidden md:table-cell">${item.sacCode || '-'}</td>
+          <td data-label="Description"><div class="max-w-[150px] md:max-w-none truncate">${escapeHtml(item.description)}</div></td>
+          <td data-label="SAC" class="hidden md:table-cell">${escapeHtml(item.sacCode || '-')}</td>
           <td data-label="Qty" style="text-align:right">${item.quantity}</td>
           <td data-label="Rate" style="text-align:right">₹${Number(item.rate).toFixed(2)}</td>
           <td data-label="Amount" style="text-align:right; font-weight:600;">₹${Number(item.amount).toFixed(2)}</td>
@@ -1578,7 +1565,7 @@
       let html = `
         <form id="revise-invoice-form" onsubmit="handleSubmitReviseInvoice(event)" class="space-y-5 pb-24 md:pb-0">
           <div class="p-4 rounded-xl" style="background:rgba(245, 158, 11, 0.1); border: 1px solid var(--warning);">
-            <div style="font-weight:600; color:var(--warning)">Revising: ${invoice.invoice_no}</div>
+            <div style="font-weight:600; color:var(--warning)">Revising: ${escapeHtml(invoice.invoice_no)}</div>
             <div class="text-helper" style="color:var(--warning); opacity:0.8; margin-top:4px">v${invoice.version || 1} → v${(invoice.version || 1) + 1}</div>
           </div>
 
@@ -1593,7 +1580,7 @@
             </div>
             <div>
               <label>Place of Supply *</label>
-              <input type="text" id="revise-place-of-supply" required value="${invoice.place_of_supply || 'West Bengal'}" class="input-field">
+              <input type="text" id="revise-place-of-supply" required value="${escapeHtml(invoice.place_of_supply || 'West Bengal')}" class="input-field">
             </div>
             <div class="grid grid-cols-2 gap-4 md:col-span-2">
               <div>
@@ -1662,7 +1649,6 @@
 
       container.innerHTML = html;
 
-      // Load clients for revise select
       (async () => {
         try {
           const response = await fetch(`${API_URL}/api/clients`);
@@ -1722,11 +1708,11 @@
           </button>
           <div class="col-span-12 md:col-span-5 pr-6 md:pr-0">
             <label>Description *</label>
-            <input type="text" value="${item?.description || ''}" class="revise-item-desc input-field" oninput="recalculateReviseTotals()">
+            <input type="text" value="${escapeHtml(item?.description || '')}" class="revise-item-desc input-field" oninput="recalculateReviseTotals()">
           </div>
           <div class="col-span-6 md:col-span-2">
             <label>SAC/HSN</label>
-            <input type="text" value="${item?.sacCode || ''}" class="revise-item-sac input-field">
+            <input type="text" value="${escapeHtml(item?.sacCode || '')}" class="revise-item-sac input-field">
           </div>
           <div class="col-span-6 md:col-span-1">
             <label>Qty</label>
@@ -1738,7 +1724,7 @@
           </div>
           <div class="col-span-6 md:col-span-2 text-right">
             <label class="md:hidden">Amount</label>
-            <span class="revise-item-amount block py-3 font-semibold text-[var(--primary)] md:text-[var(--text)]">₹${((item?.quantity || 0) * (item?.rate || 0)).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
+            <span class="revise-item-amount block py-3 font-semibold text-[var(--primary)] md:text-[var(--text)]">₹${roundCurrency((item?.quantity || 0) * (item?.rate || 0)).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
           </div>
         </div>
       `;
@@ -1771,7 +1757,7 @@
       items.forEach(item => {
         const qty = parseFloat(item.querySelector('.revise-item-qty')?.value) || 0;
         const rate = parseFloat(item.querySelector('.revise-item-rate')?.value) || 0;
-        const amount = qty * rate;
+        const amount = roundCurrency(qty * rate);
         const amountEl = item.querySelector('.revise-item-amount');
         if (amountEl) amountEl.textContent = `₹${amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
         totalTaxable += amount;
@@ -1781,14 +1767,14 @@
       let cgst = 0, sgst = 0, igst = 0;
       if (taxType === 'inter') {
         const rate = parseFloat(document.getElementById('revise-igst-rate').value) || 0;
-        igst = totalTaxable * (rate / 100);
+        igst = roundCurrency(totalTaxable * (rate / 100));
       } else {
         const cgstRate = parseFloat(document.getElementById('revise-cgst-rate').value) || 0;
         const sgstRate = parseFloat(document.getElementById('revise-sgst-rate').value) || 0;
-        cgst = totalTaxable * (cgstRate / 100);
-        sgst = totalTaxable * (sgstRate / 100);
+        cgst = roundCurrency(totalTaxable * (cgstRate / 100));
+        sgst = roundCurrency(totalTaxable * (sgstRate / 100));
       }
-      const grandTotal = totalTaxable + cgst + sgst + igst;
+      const grandTotal = roundCurrency(totalTaxable + cgst + sgst + igst);
 
       document.getElementById('revise-summary-taxable').textContent = `₹${totalTaxable.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
       if (taxType === 'inter') {
@@ -1833,7 +1819,7 @@
         const qty = parseFloat(item.querySelector('.revise-item-qty')?.value) || 0;
         const rate = parseFloat(item.querySelector('.revise-item-rate')?.value) || 0;
         if (!desc) { showToast('Fill all descriptions', 'error'); hasError = true; return; }
-        lineItems.push({ description: desc, sacCode: sac || '', quantity: qty, rate: rate, amount: qty * rate });
+        lineItems.push({ description: desc, sacCode: sac || '', quantity: qty, rate: rate, amount: roundCurrency(qty * rate) });
       });
       if (hasError) return;
       if (lineItems.length === 0) { showToast('Add at least one item', 'error'); return; }
@@ -1872,9 +1858,7 @@
           <div class="erp-card flex flex-col items-center justify-center p-10 md:p-16 text-center">
             <svg class="mb-4 text-[var(--muted)] opacity-50" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
             <div class="text-header mb-6">No Clients Yet</div>
-            <button onclick="showAddClientForm()" class="btn btn-primary w-full md:w-auto">
-              Add First Client
-            </button>
+            <button onclick="showAddClientForm()" class="btn btn-primary w-full md:w-auto">Add First Client</button>
           </div>
         `;
         return;
@@ -1929,11 +1913,11 @@
         } else {
           tbody.innerHTML = filtered.map(row => `
             <tr>
-              <td data-label="Client Name" style="font-weight:600"><div class="truncate w-full ml-4 max-w-[180px] md:max-w-none text-right md:text-left md:ml-0">${row[1] || 'N/A'}</div></td>
-              <td data-label="GSTIN">${row[3] || 'NONE'}</td>
-              <td data-label="State">${row[4] || 'N/A'}</td>
-              <td data-label="Code" class="hidden md:table-cell">${row[5] || 'N/A'}</td>
-              <td data-label="Phone">${row[6] || '-'}</td>
+              <td data-label="Client Name" style="font-weight:600"><div class="truncate w-full ml-4 max-w-[180px] md:max-w-none text-right md:text-left md:ml-0">${escapeHtml(row[1] || 'N/A')}</div></td>
+              <td data-label="GSTIN">${escapeHtml(row[3] || 'NONE')}</td>
+              <td data-label="State">${escapeHtml(row[4] || 'N/A')}</td>
+              <td data-label="Code" class="hidden md:table-cell">${escapeHtml(row[5] || 'N/A')}</td>
+              <td data-label="Phone">${escapeHtml(row[6] || '-')}</td>
             </tr>
           `).join('');
         }
@@ -2024,9 +2008,7 @@
           <div class="erp-card flex flex-col items-center justify-center p-10 md:p-16 text-center">
             <svg class="mb-4 text-[var(--muted)] opacity-50" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01"/><path d="M16 6h.01"/><path d="M12 6h.01"/><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/></svg>
             <div class="text-header mb-6">No Businesses Yet</div>
-            <button onclick="showAddBusinessForm()" class="btn btn-primary w-full md:w-auto">
-              Add Business
-            </button>
+            <button onclick="showAddBusinessForm()" class="btn btn-primary w-full md:w-auto">Add Business</button>
           </div>
         `;
         return;
@@ -2081,8 +2063,8 @@
             const isDefault = row[13] === true;
             return `
               <tr>
-                <td data-label="Business Name" style="font-weight:600"><div class="truncate w-full ml-4 max-w-[180px] md:max-w-none text-right md:text-left md:ml-0">${row[1] || 'N/A'}</div></td>
-                <td data-label="GSTIN" class="hidden sm:table-cell">${row[4] || 'N/A'}</td>
+                <td data-label="Business Name" style="font-weight:600"><div class="truncate w-full ml-4 max-w-[180px] md:max-w-none text-right md:text-left md:ml-0">${escapeHtml(row[1] || 'N/A')}</div></td>
+                <td data-label="GSTIN" class="hidden sm:table-cell">${escapeHtml(row[4] || 'N/A')}</td>
                 <td data-label="Status">${isDefault ? '<span class="badge badge-default text-[10px]">Default</span>' : '<span style="color:var(--muted)">—</span>'}</td>
                 <td data-label="Action" style="text-align:center">${!isDefault ? `<button onclick="setDefaultBusiness('${row[0]}')" class="btn btn-secondary btn-sm w-full md:w-auto h-8">Set Default</button>` : '<span class="text-helper text-[var(--muted)] w-full block text-right md:text-center">Active</span>'}</td>
               </tr>
@@ -2204,9 +2186,7 @@
           <div class="erp-card flex flex-col items-center justify-center p-10 md:p-16 text-center">
             <svg class="mb-4 text-[var(--muted)] opacity-50" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
             <div class="text-header mb-6">No Export Invoices</div>
-            <button onclick="showCreateExportForm()" class="btn btn-primary w-full md:w-auto">
-              Create Export
-            </button>
+            <button onclick="showCreateExportForm()" class="btn btn-primary w-full md:w-auto">Create Export</button>
           </div>
         `;
         return;
@@ -2272,9 +2252,9 @@
             }
             return `
               <tr>
-                <td data-label="No"><span style="font-weight:600">${inv.invoice_no || 'N/A'}</span></td>
-                <td data-label="Date">${inv.date || 'N/A'}</td>
-                <td data-label="Client"><div class="truncate w-full ml-4 max-w-[180px] md:max-w-none text-right md:text-left md:ml-0">${inv.client_name || 'N/A'}</div></td>
+                <td data-label="No"><span style="font-weight:600">${escapeHtml(inv.invoice_no || 'N/A')}</span></td>
+                <td data-label="Date">${escapeHtml(inv.date || 'N/A')}</td>
+                <td data-label="Client"><div class="truncate w-full ml-4 max-w-[180px] md:max-w-none text-right md:text-left md:ml-0">${escapeHtml(inv.client_name || 'N/A')}</div></td>
                 <td data-label="USD" style="text-align:right;font-weight:600">$${Number(inv.amount_usd || 0).toFixed(2)}</td>
                 <td data-label="Action">${actions}</td>
               </tr>
@@ -2427,10 +2407,10 @@
         } else {
           tbody.innerHTML = filtered.map(inv => `
             <tr>
-              <td data-label="No"><span style="font-weight:600">${inv.invoice_no || 'N/A'}</span></td>
-              <td data-label="Client"><div class="truncate w-full ml-4 max-w-[180px] md:max-w-none text-right md:text-left md:ml-0">${inv.client_name || 'N/A'}</div></td>
+              <td data-label="No"><span style="font-weight:600">${escapeHtml(inv.invoice_no || 'N/A')}</span></td>
+              <td data-label="Client"><div class="truncate w-full ml-4 max-w-[180px] md:max-w-none text-right md:text-left md:ml-0">${escapeHtml(inv.client_name || 'N/A')}</div></td>
               <td data-label="Total" style="text-align:right;font-weight:600;color:var(--danger)">₹${Number(inv.total_amount || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
-              <td data-label="Reason" class="hidden sm:table-cell text-[var(--muted)]"><div class="max-w-[150px] truncate">${inv.cancelled_reason || 'N/A'}</div></td>
+              <td data-label="Reason" class="hidden sm:table-cell text-[var(--muted)]"><div class="max-w-[150px] truncate">${escapeHtml(inv.cancelled_reason || 'N/A')}</div></td>
             </tr>
           `).join('');
         }
