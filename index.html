@@ -1,0 +1,2492 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#111827">
+  <title>ONNinvoices • Invoice Manager</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,500;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          }
+        }
+      },
+      corePlugins: {
+        fontSize: false,
+      }
+    }
+  </script>
+  <style>
+    /* ==================== THEME VARIABLES ==================== */
+    :root {
+      --bg: #F8FAFC;
+      --surface: #F1F5F9;
+      --card: #FFFFFF;
+      --border: #CBD5E1;
+      --text: #111827;
+      --muted: #64748B;
+      --primary: #2563EB;
+      --primary-hover: #1D4ED8;
+      --danger: #DC2626;
+      --danger-hover: #B91C1C;
+      --success: #16A34A;
+      --success-hover: #15803D;
+      --warning: #D97706;
+      --warning-hover: #B45309;
+      --overlay: rgba(17, 24, 39, 0.4);
+    }
+    
+    [data-theme="dark"] {
+      --bg: #111827;
+      --surface: #0F172A;
+      --card: #1F2937;
+      --border: #374151;
+      --text: #F9FAFB;
+      --muted: #9CA3AF;
+      --primary: #2563EB;
+      --primary-hover: #3B82F6;
+      --danger: #EF4444;
+      --danger-hover: #F87171;
+      --success: #10B981;
+      --success-hover: #34D399;
+      --warning: #F59E0B;
+      --warning-hover: #FBBF24;
+      --overlay: rgba(0, 0, 0, 0.6);
+    }
+
+    /* ==================== RESET & NATIVE FEEL ==================== */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+    
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      min-height: -webkit-fill-available;
+      font-size: 14px;
+      font-weight: 500;
+      transition: background 0.3s ease, color 0.3s ease;
+      overscroll-behavior-y: none;
+    }
+
+    h1, h2, h3, h4, h5, h6, .text-header {
+      font-size: 18px !important;
+      font-weight: 700 !important;
+      line-height: 1.2 !important;
+      margin: 0;
+      color: var(--text);
+    }
+    
+    .text-helper, th, .badge, small, .sidebar-link-sub {
+      font-size: 12px !important;
+      font-weight: 500 !important;
+      line-height: 1.4 !important;
+    }
+    
+    body, input, button, select, textarea, div, p, span, td {
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    ::-webkit-scrollbar { width: 4px; height: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+    @media (max-width: 768px) {
+      ::-webkit-scrollbar { display: none; }
+      * { -ms-overflow-style: none; scrollbar-width: none; }
+    }
+
+    /* ==================== LAYOUT & SIDEBAR ==================== */
+    .sidebar {
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      user-select: none;
+    }
+    
+    .sidebar-link {
+      padding: 14px 16px;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      color: var(--muted);
+      text-decoration: none;
+      cursor: pointer;
+      margin-bottom: 4px;
+    }
+    
+    .sidebar-link svg { width: 20px; height: 20px; opacity: 0.8; }
+    .sidebar-link:active { transform: scale(0.98); }
+    .sidebar-link:hover { background: var(--bg); color: var(--text); }
+    
+    .sidebar-link.active {
+      background: rgba(37, 99, 235, 0.1);
+      color: var(--primary);
+      border-left: 3px solid var(--primary);
+      border-radius: 0 8px 8px 0;
+    }
+
+    /* ==================== COMPONENTS ==================== */
+    .erp-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      transition: all 0.3s ease;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+    }
+    
+    @media (max-width: 768px) {
+      .erp-card { padding: 16px; border-radius: 12px; }
+    }
+
+    .stat-card {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      height: 48px;
+      padding: 0 20px;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      white-space: nowrap;
+      user-select: none;
+      font-weight: 600;
+    }
+    
+    .btn:active { transform: scale(0.97); }
+    .btn-sm { height: 36px; padding: 0 14px; border-radius: 6px; }
+    
+    .btn-primary { background: var(--primary); color: #FFFFFF; }
+    .btn-primary:hover { background: var(--primary-hover); color: #FFFFFF; }
+    .btn-secondary { background: var(--surface); border-color: var(--border); color: var(--text); }
+    .btn-secondary:hover { background: var(--border); color: var(--text); }
+    .btn-danger { background: var(--danger); color: #FFFFFF; }
+    .btn-danger:hover { background: var(--danger-hover); color: #FFFFFF; }
+    .btn-success { background: var(--success); color: #FFFFFF; }
+    .btn-success:hover { background: var(--success-hover); color: #FFFFFF; }
+    .btn-warning { background: var(--warning); color: #FFFFFF; }
+    .btn-warning:hover { background: var(--warning-hover); color: #FFFFFF; }
+
+    .input-field {
+      height: 48px;
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0 16px;
+      color: var(--text);
+      outline: none;
+      transition: all 0.2s ease;
+      appearance: none;
+    }
+    
+    .input-field:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    }
+    
+    .input-field::placeholder { color: var(--muted); }
+    textarea.input-field { min-height: 100px; padding: 16px; resize: vertical; }
+    select.input-field {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+      padding-right: 40px;
+    }
+    
+    label { display: block; color: var(--muted); margin-bottom: 8px; font-weight: 500; font-size: 13px; }
+
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      -webkit-overflow-scrolling: touch;
+    }
+    
+    .erp-table { width: 100%; border-collapse: collapse; white-space: nowrap; }
+    .erp-table th {
+      padding: 16px;
+      text-align: left;
+      color: var(--muted);
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      user-select: none;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .erp-table td { padding: 16px; border-bottom: 1px solid var(--border); color: var(--text); }
+    .erp-table tr:hover td { background: rgba(128, 128, 128, 0.04); }
+
+    @media (max-width: 768px) {
+      .table-container {
+        border: none;
+        border-radius: 0;
+        background: transparent;
+        overflow-x: visible;
+      }
+      .erp-table, .erp-table tbody, .erp-table tr, .erp-table td {
+        display: block;
+        width: 100%;
+        white-space: normal;
+      }
+      .erp-table thead { display: none; }
+      .erp-table tr {
+        margin-bottom: 16px;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background: var(--card);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      }
+      .erp-table td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 14px 16px;
+        border-bottom: 1px solid var(--border);
+        text-align: right;
+      }
+      .erp-table td:last-child {
+        border-bottom: none;
+      }
+      .erp-table td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        font-size: 12px;
+        text-transform: uppercase;
+        color: var(--muted);
+        text-align: left;
+        margin-right: 16px;
+      }
+      .erp-table td[data-label="Actions"], .erp-table td[data-label="Action"] {
+        justify-content: center;
+        background: var(--surface);
+        border-bottom-left-radius: 12px;
+        border-bottom-right-radius: 12px;
+      }
+      .erp-table td[data-label="Actions"]::before, .erp-table td[data-label="Action"]::before {
+        display: none;
+      }
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 10px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+    }
+    .badge-active { background: rgba(22, 163, 74, 0.15); color: var(--success); }
+    .badge-cancelled { background: rgba(220, 38, 38, 0.15); color: var(--danger); }
+    .badge-revised { background: rgba(217, 119, 6, 0.15); color: var(--warning); }
+    .badge-default { background: rgba(37, 99, 235, 0.15); color: var(--primary); }
+
+    .modal-overlay {
+      background: var(--overlay);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+    
+    .modal-card {
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @media (max-width: 768px) {
+      .modal-overlay { align-items: flex-end !important; padding: 0 !important; }
+      .modal-card {
+        margin-top: auto;
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+        max-height: 90vh;
+        width: 100% !important;
+        animation: slideUp 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+        padding: 20px !important;
+      }
+      .mobile-sticky-btn {
+        position: sticky;
+        bottom: 0;
+        background: var(--card);
+        padding: 16px 0;
+        border-top: 1px solid var(--border);
+        margin-top: 16px;
+        z-index: 20;
+      }
+    }
+    
+    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+    .spinner {
+      border: 2px solid var(--border);
+      border-top: 2px solid var(--primary);
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      animation: spin 0.6s linear infinite;
+      display: inline-block;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .fade-in { animation: fadeIn 0.25s ease-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+
+    .toast {
+      position: fixed;
+      top: env(safe-area-inset-top, 24px);
+      right: 24px;
+      left: 24px;
+      z-index: 99999;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      pointer-events: none;
+    }
+    @media (min-width: 768px) {
+      .toast { left: auto; max-width: 400px; }
+    }
+    .toast-content {
+      padding: 16px 20px;
+      border-radius: 12px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      pointer-events: auto;
+    }
+    .toast-success { border-left: 4px solid var(--success); }
+    .toast-error { border-left: 4px solid var(--danger); }
+    .toast-info { border-left: 4px solid var(--primary); }
+
+    .toggle-switch {
+      position: relative;
+      width: 48px;
+      height: 28px;
+      background: var(--bg);
+      border-radius: 14px;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      transition: background 0.3s ease;
+    }
+    .toggle-switch.active { background: var(--primary); border-color: var(--primary); }
+    .toggle-switch .toggle-knob {
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #FFF;
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    }
+    .toggle-switch.active .toggle-knob { transform: translateX(20px); }
+
+    #mobile-menu-backdrop {
+      background: var(--overlay);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+    }
+    .mobile-drawer {
+      transform: translateX(-100%);
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .mobile-drawer.open { transform: translateX(0); }
+
+    @media print {
+      .no-print { display: none !important; }
+      body { background: white !important; color: black !important; }
+      .erp-card { background: white !important; border: none !important; padding: 0 !important; box-shadow: none !important; }
+      .erp-table td, .erp-table th { color: #000 !important; border-color: #DDD !important; }
+    }
+  </style>
+</head>
+<body class="pb-[env(safe-area-inset-bottom)]">
+
+  <!-- ==================== DESKTOP SIDEBAR ==================== -->
+  <aside class="sidebar hidden md:flex fixed left-0 top-0 h-full w-64 flex-col z-40 no-print">
+    <div class="p-6 border-b border-[var(--border)]">
+      <div class="flex items-center gap-3">
+        <img src="https://nihal007-cola.github.io/logo.png" alt="ONN" style="height: 32px; width: auto; object-fit: contain;">
+        <div>
+          <div class="text-header">ONNinvoices</div>
+          <div class="text-helper text-[var(--muted)] mt-1">Invoice Manager</div>
+        </div>
+      </div>
+    </div>
+    
+    <nav class="flex-1 py-4 px-4 space-y-2 overflow-y-auto">
+      <a href="#" onclick="navigateTo('dashboard')" id="nav-dashboard" class="sidebar-link active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+        Dashboard
+      </a>
+      <a href="#" onclick="navigateTo('create-invoice')" id="nav-create-invoice" class="sidebar-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Create Invoice
+      </a>
+      <a href="#" onclick="navigateTo('clients')" id="nav-clients" class="sidebar-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Clients
+      </a>
+      <a href="#" onclick="navigateTo('businesses')" id="nav-businesses" class="sidebar-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01"/><path d="M16 6h.01"/><path d="M12 6h.01"/><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/></svg>
+        Businesses
+      </a>
+      <a href="#" onclick="navigateTo('export-invoices')" id="nav-export-invoices" class="sidebar-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        Export Invoices
+      </a>
+      <a href="#" onclick="navigateTo('cancelled')" id="nav-cancelled" class="sidebar-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+        Cancelled
+      </a>
+    </nav>
+    
+    <div class="p-6 border-t border-[var(--border)] space-y-4">
+      <div class="flex items-center justify-between">
+        <span class="text-helper text-[var(--muted)] font-semibold">Dark Mode</span>
+        <div class="toggle-switch active" onclick="toggleTheme()" id="theme-toggle">
+          <div class="toggle-knob"></div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ==================== MOBILE APP BAR & DRAWER ==================== -->
+  <div class="md:hidden fixed top-0 left-0 right-0 z-40 no-print border-b border-[var(--border)] bg-[var(--surface)] backdrop-blur-md bg-opacity-90 pt-[env(safe-area-inset-top)]">
+    <div class="flex items-center justify-between px-4 h-16">
+      <div class="flex items-center gap-3">
+        <img src="https://nihal007-cola.github.io/logo.png" alt="ONN" style="height: 24px; width: auto; object-fit: contain;">
+        <div class="text-header tracking-tight">ONNinvoices</div>
+      </div>
+      <button onclick="toggleMobileMenu()" class="p-2 -mr-2 text-[var(--text)] active:scale-95 transition-transform">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+    </div>
+  </div>
+  
+  <div id="mobile-menu-backdrop" class="hidden fixed inset-0 z-50 md:hidden no-print" onclick="toggleMobileMenu()"></div>
+  <div id="mobile-drawer" class="mobile-drawer fixed top-0 left-0 bottom-0 w-[280px] bg-[var(--surface)] z-50 flex flex-col md:hidden no-print border-r border-[var(--border)] pt-[env(safe-area-inset-top)]">
+    <div class="p-5 flex items-center justify-between border-b border-[var(--border)]">
+      <div class="text-header">Menu</div>
+      <button onclick="toggleMobileMenu()" class="text-[var(--muted)] p-2 -mr-2">
+         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <nav class="flex-1 overflow-y-auto p-4 space-y-2">
+      <a href="#" onclick="navigateTo('dashboard'); toggleMobileMenu();" id="nav-dashboard-mob" class="sidebar-link active">Dashboard</a>
+      <a href="#" onclick="navigateTo('create-invoice'); toggleMobileMenu();" id="nav-create-invoice-mob" class="sidebar-link">Create Invoice</a>
+      <a href="#" onclick="navigateTo('clients'); toggleMobileMenu();" id="nav-clients-mob" class="sidebar-link">Clients</a>
+      <a href="#" onclick="navigateTo('businesses'); toggleMobileMenu();" id="nav-businesses-mob" class="sidebar-link">Businesses</a>
+      <a href="#" onclick="navigateTo('export-invoices'); toggleMobileMenu();" id="nav-export-invoices-mob" class="sidebar-link">Export Invoices</a>
+      <a href="#" onclick="navigateTo('cancelled'); toggleMobileMenu();" id="nav-cancelled-mob" class="sidebar-link">Cancelled</a>
+    </nav>
+    <div class="p-5 border-t border-[var(--border)]">
+       <div class="flex items-center justify-between">
+        <span class="text-helper text-[var(--muted)] font-semibold">Dark Mode</span>
+        <div class="toggle-switch active" onclick="toggleTheme()" id="theme-toggle-mob">
+          <div class="toggle-knob"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MAIN CONTENT ==================== -->
+  <main class="md:ml-64 min-h-screen pt-16 md:pt-0">
+    <div class="p-4 md:p-8 max-w-7xl mx-auto">
+
+      <!-- DASHBOARD -->
+      <div id="view-dashboard" class="view">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6 md:mb-8 gap-4">
+          <div>
+            <div class="text-header text-xl md:text-2xl">Invoice Ledger</div>
+            <div class="text-helper text-[var(--muted)] mt-1">Manage and track billing</div>
+          </div>
+          <div class="flex gap-3">
+            <button onclick="window.print()" class="btn btn-secondary flex-1 md:flex-none">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+              Print
+            </button>
+            <button onclick="navigateTo('create-invoice')" class="btn btn-primary flex-1 md:flex-none">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              New
+            </button>
+          </div>
+        </div>
+        <div id="dashboard-content"></div>
+      </div>
+
+      <!-- CREATE INVOICE -->
+      <div id="view-create-invoice" class="view hidden">
+        <div class="mb-6 md:mb-8">
+          <div class="text-header text-xl md:text-2xl">Create Invoice</div>
+          <div class="text-helper text-[var(--muted)] mt-1">Generate a GST-compliant document</div>
+        </div>
+        <div id="create-invoice-content"></div>
+      </div>
+
+      <!-- CLIENTS -->
+      <div id="view-clients" class="view hidden">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6 md:mb-8 gap-4">
+          <div>
+            <div class="text-header text-xl md:text-2xl">Clients</div>
+            <div class="text-helper text-[var(--muted)] mt-1">Manage network database</div>
+          </div>
+          <button onclick="showAddClientForm()" class="btn btn-primary w-full md:w-auto">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add Client
+          </button>
+        </div>
+        <div id="clients-content"></div>
+      </div>
+
+      <!-- BUSINESSES -->
+      <div id="view-businesses" class="view hidden">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6 md:mb-8 gap-4">
+          <div>
+            <div class="text-header text-xl md:text-2xl">Businesses</div>
+            <div class="text-helper text-[var(--muted)] mt-1">Manage company profiles</div>
+          </div>
+          <button onclick="showAddBusinessForm()" class="btn btn-primary w-full md:w-auto">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add Business
+          </button>
+        </div>
+        <div id="businesses-content"></div>
+      </div>
+
+      <!-- EXPORT INVOICES -->
+      <div id="view-export-invoices" class="view hidden">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6 md:mb-8 gap-4">
+          <div>
+            <div class="text-header text-xl md:text-2xl">Export Invoices</div>
+            <div class="text-helper text-[var(--muted)] mt-1">Zero GST exports under LUT</div>
+          </div>
+          <button onclick="showCreateExportForm()" class="btn btn-primary w-full md:w-auto">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Create Export
+          </button>
+        </div>
+        <div id="export-invoices-content"></div>
+      </div>
+
+      <!-- CANCELLED -->
+      <div id="view-cancelled" class="view hidden">
+        <div class="mb-6 md:mb-8">
+          <div class="text-header text-xl md:text-2xl">Cancelled Invoices</div>
+          <div class="text-helper text-[var(--muted)] mt-1">History and reasoning</div>
+        </div>
+        <div id="cancelled-content"></div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ==================== MODALS ==================== -->
+
+  <!-- Add Client Modal -->
+  <div id="add-client-modal" class="hidden fixed inset-0 modal-overlay z-50 flex items-center justify-center p-0 md:p-4 no-print">
+    <div class="erp-card modal-card max-w-lg w-full">
+      <div class="text-header mb-6">New Client</div>
+      <form id="add-client-form" onsubmit="handleAddClient(event)" class="space-y-4">
+        <div>
+          <label>Client Name *</label>
+          <input type="text" name="name" required class="input-field">
+        </div>
+        <div>
+          <label>Address *</label>
+          <textarea name="address" required class="input-field" style="min-height:80px;"></textarea>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label>GSTIN</label>
+            <input type="text" name="gstin" placeholder="NONE" class="input-field">
+          </div>
+          <div>
+            <label>State *</label>
+            <input type="text" name="state" required class="input-field">
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label>State Code *</label>
+            <input type="text" name="stateCode" required placeholder="e.g. 19" class="input-field">
+          </div>
+          <div>
+            <label>Phone</label>
+            <input type="tel" name="phone" placeholder="-" class="input-field">
+          </div>
+        </div>
+        <div>
+          <label>Email</label>
+          <input type="email" name="email" placeholder="-" class="input-field">
+        </div>
+        <div class="mobile-sticky-btn flex gap-3 justify-end md:pt-4 md:mt-2 md:border-t-0 md:bg-transparent">
+          <button type="button" onclick="closeAddClientModal()" class="btn btn-secondary flex-1 md:flex-none">Cancel</button>
+          <button type="submit" class="btn btn-primary flex-1 md:flex-none">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Add Business Modal -->
+  <div id="add-business-modal" class="hidden fixed inset-0 modal-overlay z-50 flex items-center justify-center p-0 md:p-4 no-print">
+    <div class="erp-card modal-card max-w-lg w-full overflow-y-auto">
+      <div class="text-header mb-6">New Business</div>
+      <form id="add-business-form" onsubmit="handleAddBusiness(event)" class="space-y-4">
+        <div>
+          <label>Business Name *</label>
+          <input type="text" name="name" required class="input-field">
+        </div>
+        <div>
+          <label>Address *</label>
+          <textarea name="address" required class="input-field" style="min-height:80px;"></textarea>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label>GSTIN *</label>
+            <input type="text" name="gstin" required class="input-field">
+          </div>
+          <div>
+            <label>PAN *</label>
+            <input type="text" name="pan" required class="input-field">
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label>Email *</label>
+            <input type="email" name="email" required class="input-field">
+          </div>
+          <div>
+            <label>Phone *</label>
+            <input type="tel" name="phone" required class="input-field">
+          </div>
+        </div>
+        <div>
+          <label>Bank Name *</label>
+          <input type="text" name="bankName" required class="input-field">
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label>Branch *</label>
+            <input type="text" name="branch" required class="input-field">
+          </div>
+          <div>
+            <label>IFSC Code *</label>
+            <input type="text" name="ifsc" required class="input-field">
+          </div>
+        </div>
+        <div>
+          <label>Account Number *</label>
+          <input type="text" name="accountNo" required class="input-field">
+        </div>
+        <div>
+          <label>Signature Text</label>
+          <input type="text" name="signatureText" placeholder="Authorised Signatory" class="input-field">
+        </div>
+        <div class="flex items-center gap-3 pt-2 pb-4">
+          <input type="checkbox" name="isDefault" id="business-default" style="width:20px;height:20px;accent-color:var(--primary);">
+          <label for="business-default" style="margin:0; font-size:14px;">Set as default business</label>
+        </div>
+        <div class="mobile-sticky-btn flex gap-3 justify-end md:pt-4 md:mt-2 md:border-t-0 md:bg-transparent">
+          <button type="button" onclick="closeAddBusinessModal()" class="btn btn-secondary flex-1 md:flex-none">Cancel</button>
+          <button type="submit" class="btn btn-primary flex-1 md:flex-none">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Create Export Modal -->
+  <div id="create-export-modal" class="hidden fixed inset-0 modal-overlay z-50 flex items-center justify-center p-0 md:p-4 no-print">
+    <div class="erp-card modal-card max-w-lg w-full overflow-y-auto">
+      <div class="text-header mb-6">Create Export Invoice</div>
+      <form id="create-export-form" onsubmit="handleCreateExportInvoice(event)" class="space-y-4">
+        <div>
+          <label>Client Name *</label>
+          <input type="text" name="clientName" required class="input-field">
+        </div>
+        <div>
+          <label>Country *</label>
+          <input type="text" name="country" required placeholder="e.g. Turkey" class="input-field">
+        </div>
+        <div>
+          <label>Address *</label>
+          <textarea name="address" required class="input-field" style="min-height:80px;"></textarea>
+        </div>
+        <div>
+          <label>Service Description *</label>
+          <input type="text" name="description" required class="input-field">
+        </div>
+        <div>
+          <label>SAC/HSN Code *</label>
+          <input type="text" name="sacCode" required class="input-field">
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label>Quantity *</label>
+            <input type="number" name="quantity" required min="1" step="1" class="input-field">
+          </div>
+          <div>
+            <label>Rate (USD) *</label>
+            <input type="number" name="rate" required min="0" step="0.01" class="input-field">
+          </div>
+        </div>
+        <div class="pb-4">
+          <label>Invoice Date</label>
+          <input type="date" name="date" id="export-date" class="input-field">
+        </div>
+        <div class="mobile-sticky-btn flex gap-3 justify-end md:pt-4 md:mt-2 md:border-t-0 md:bg-transparent">
+          <button type="button" onclick="closeCreateExportModal()" class="btn btn-secondary flex-1 md:flex-none">Cancel</button>
+          <button type="submit" class="btn btn-primary flex-1 md:flex-none">Create</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Review Modal -->
+  <div id="review-invoice-modal" class="hidden fixed inset-0 modal-overlay z-50 flex items-center justify-center p-0 md:p-4 no-print">
+    <div class="erp-card modal-card max-w-3xl w-full overflow-y-auto flex flex-col">
+      <div class="flex items-center justify-between mb-6 shrink-0">
+        <div class="text-header">Review Invoice</div>
+        <button onclick="closeReviewModal()" class="text-[var(--muted)] p-2 -mr-2">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div id="review-content" class="overflow-y-auto pb-4"></div>
+      <div class="mobile-sticky-btn flex gap-3 justify-end md:pt-4 md:mt-2 md:border-t-0 md:bg-transparent shrink-0">
+        <button onclick="closeReviewModal()" class="btn btn-secondary flex-1 md:flex-none">Cancel</button>
+        <button id="confirm-invoice-btn" onclick="confirmInvoice()" class="btn btn-success flex-1 md:flex-none">
+          Confirm & Create
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Revise Modal -->
+  <div id="revise-invoice-modal" class="hidden fixed inset-0 modal-overlay z-50 flex items-center justify-center p-0 md:p-4 no-print">
+    <div class="erp-card modal-card max-w-4xl w-full overflow-y-auto flex flex-col">
+      <div class="flex items-center justify-between mb-6 shrink-0">
+        <div class="text-header">Revise Invoice</div>
+        <button onclick="closeReviseModal()" class="text-[var(--muted)] p-2 -mr-2">
+           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div id="revise-invoice-content" class="overflow-y-auto"></div>
+    </div>
+  </div>
+
+  <!-- Custom Dialog Modal (Replaces native alerts/confirms/prompts) -->
+  <div id="custom-dialog" class="hidden fixed inset-0 z-[99999] modal-overlay flex items-center justify-center p-4 no-print">
+    <div id="custom-dialog-card" class="erp-card w-full max-w-sm transition-all duration-200 scale-95 opacity-0 flex flex-col">
+      <h3 id="custom-dialog-title" class="text-lg font-bold mb-2">ONNinvoices</h3>
+      <p id="custom-dialog-message" class="text-[var(--text)] mb-5 leading-relaxed"></p>
+      <input type="text" id="custom-dialog-input" class="input-field mb-5 hidden" />
+      <div class="flex gap-3 justify-end mt-auto">
+        <button id="custom-dialog-cancel" class="btn btn-secondary flex-1">Cancel</button>
+        <button id="custom-dialog-ok" class="btn btn-primary flex-1">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toast-container" class="toast no-print"></div>
+
+  <!-- ==================== JAVASCRIPT ==================== -->
+  <script>
+    // ==================== CONFIGURATION ====================
+    const API_URL = 'http://3.107.14.239:8000';
+
+    // ==================== STATE ====================
+    let currentView = 'dashboard';
+    let invoicesData = [];
+    let clientsData = [];
+    let businessesData = [];
+    let exportInvoicesData = [];
+    let lineItemCounter = 0;
+    let reviseLineItemCounter = 0;
+    let currentReviseInvoiceNo = null;
+    let pendingInvoiceData = null;
+    let pendingIsRevise = false;
+    let pendingReviseNo = null;
+    let isDark = true;
+
+    // ==================== CUSTOM DIALOG SYSTEM ====================
+    function showCustomDialog(options) {
+      return new Promise((resolve) => {
+        const dialog = document.getElementById('custom-dialog');
+        const card = document.getElementById('custom-dialog-card');
+        const titleEl = document.getElementById('custom-dialog-title');
+        const messageEl = document.getElementById('custom-dialog-message');
+        const inputEl = document.getElementById('custom-dialog-input');
+        const cancelBtn = document.getElementById('custom-dialog-cancel');
+        const okBtn = document.getElementById('custom-dialog-ok');
+
+        titleEl.textContent = options.title || 'ONNinvoices';
+        messageEl.textContent = options.message || '';
+        
+        if (options.type === 'prompt') {
+          inputEl.classList.remove('hidden');
+          inputEl.value = options.defaultValue || '';
+          setTimeout(() => inputEl.focus(), 200);
+        } else {
+          inputEl.classList.add('hidden');
+        }
+
+        if (options.type === 'alert') {
+          cancelBtn.classList.add('hidden');
+        } else {
+          cancelBtn.classList.remove('hidden');
+        }
+
+        dialog.classList.remove('hidden');
+        void dialog.offsetWidth;
+        card.classList.remove('scale-95', 'opacity-0');
+
+        const cleanup = () => {
+          card.classList.add('scale-95', 'opacity-0');
+          setTimeout(() => dialog.classList.add('hidden'), 200);
+          cancelBtn.onclick = null;
+          okBtn.onclick = null;
+        };
+
+        cancelBtn.onclick = () => {
+          cleanup();
+          resolve(options.type === 'prompt' ? null : false);
+        };
+
+        okBtn.onclick = () => {
+          cleanup();
+          if (options.type === 'prompt') {
+            resolve(inputEl.value);
+          } else {
+            resolve(true);
+          }
+        };
+      });
+    }
+
+    async function appAlert(message) {
+      await showCustomDialog({ type: 'alert', message: message });
+    }
+
+    async function appConfirm(message) {
+      return await showCustomDialog({ type: 'confirm', message: message });
+    }
+
+    async function appPrompt(message, defaultValue = '') {
+      return await showCustomDialog({ type: 'prompt', message: message, defaultValue });
+    }
+
+    // ==================== THEME & UI ====================
+    function toggleTheme() {
+      isDark = !isDark;
+      document.getElementById('theme-toggle').classList.toggle('active');
+      const mobToggle = document.getElementById('theme-toggle-mob');
+      if(mobToggle) mobToggle.classList.toggle('active');
+      
+      const themeColor = isDark ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', themeColor);
+      
+      const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+      if (metaThemeColor) {
+        metaThemeColor.setAttribute('content', isDark ? '#111827' : '#F8FAFC');
+      }
+    }
+
+    function toggleMobileMenu() {
+      const drawer = document.getElementById('mobile-drawer');
+      const backdrop = document.getElementById('mobile-menu-backdrop');
+      
+      if (drawer.classList.contains('open')) {
+        drawer.classList.remove('open');
+        backdrop.classList.add('hidden');
+        document.body.style.overflow = '';
+      } else {
+        drawer.classList.add('open');
+        backdrop.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+      }
+    }
+
+    // ==================== NAVIGATION ====================
+    function navigateTo(view) {
+      currentView = view;
+      document.querySelectorAll('.view').forEach(v => v.classList.add('hidden'));
+      const target = document.getElementById('view-' + view);
+      if (target) target.classList.remove('hidden');
+
+      document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+      const navEl = document.getElementById('nav-' + view);
+      if (navEl) navEl.classList.add('active');
+      const navElMob = document.getElementById('nav-' + view + '-mob');
+      if (navElMob) navElMob.classList.add('active');
+
+      if (view === 'dashboard') loadDashboard();
+      else if (view === 'create-invoice') renderCreateInvoiceForm();
+      else if (view === 'clients') loadClients();
+      else if (view === 'businesses') loadBusinesses();
+      else if (view === 'export-invoices') loadExportInvoices();
+      else if (view === 'cancelled') loadCancelledInvoices();
+    }
+
+    // ==================== TOAST ====================
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = `toast-content toast-${type} fade-in`;
+      toast.innerHTML = `
+        <span class="text-helper font-medium">${message}</span>
+      `;
+      container.appendChild(toast);
+      setTimeout(() => { if (toast.parentElement) toast.remove(); }, 3500);
+    }
+
+    function setLoading(containerId) {
+      const el = document.getElementById(containerId);
+      if (el) {
+        el.innerHTML = '<div class="flex items-center justify-center py-20"><div class="spinner"></div></div>';
+      }
+    }
+
+    // ==================== DASHBOARD ====================
+    async function loadDashboard() {
+      setLoading('dashboard-content');
+      
+      try {
+        const response = await fetch(`${API_URL}/api/invoices`);
+        const data = await response.json();
+        renderDashboard(data);
+      } catch (error) {
+        document.getElementById('dashboard-content').innerHTML = 
+          `<div class="erp-card text-center" style="color:var(--danger)">Failed to load: ${error.message}</div>`;
+      }
+    }
+
+    function renderDashboard(response) {
+      const container = document.getElementById('dashboard-content');
+      if (!response || !response.success) {
+        container.innerHTML = `<div class="erp-card text-center" style="color:var(--danger)">Failed to load: ${response?.error || 'Unknown'}</div>`;
+        return;
+      }
+
+      const invoices = response.invoices || [];
+      invoicesData = invoices;
+
+      if (invoices.length === 0) {
+        container.innerHTML = `
+          <div class="erp-card flex flex-col items-center justify-center p-10 md:p-16 text-center">
+            <svg class="mb-4 text-[var(--muted)] opacity-50" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+            <div class="text-header mb-6">No Invoices Yet</div>
+            <button onclick="navigateTo('create-invoice')" class="btn btn-primary w-full md:w-auto">
+              Create First Invoice
+            </button>
+          </div>
+        `;
+        return;
+      }
+
+      const activeInvoices = invoices.filter(i => i.status === 'ACTIVE');
+      const totalAmount = activeInvoices.reduce((sum, i) => sum + (Number(i.total_amount) || 0), 0);
+
+      let html = `
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 mb-6 md:mb-8">
+          <div class="erp-card stat-card col-span-2 md:col-span-1">
+            <div class="text-helper text-[var(--muted)] uppercase tracking-wide">Total Value</div>
+            <div class="text-header text-xl md:text-2xl" style="color:var(--primary)">₹${totalAmount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</div>
+          </div>
+          <div class="erp-card stat-card">
+            <div class="text-helper text-[var(--muted)] uppercase tracking-wide">Invoices</div>
+            <div class="text-header text-xl md:text-2xl">${invoices.length}</div>
+          </div>
+          <div class="erp-card stat-card">
+            <div class="text-helper text-[var(--muted)] uppercase tracking-wide">Active</div>
+            <div class="text-header text-xl md:text-2xl" style="color:var(--success)">${activeInvoices.length}</div>
+          </div>
+        </div>
+      `;
+
+      html += `
+        <div class="erp-card">
+          <div class="mb-4 md:mb-6 flex flex-col md:flex-row gap-3 md:items-center">
+            <div class="flex-1 relative">
+              <input type="text" id="dashboard-search" placeholder="Search..." class="input-field" oninput="filterDashboardTable()" style="padding-left:44px">
+              <svg style="position:absolute;left:14px;top:16px;color:var(--muted)" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            </div>
+            <button onclick="resetDashboardFilters()" class="btn btn-secondary hidden md:inline-flex">Reset</button>
+          </div>
+          <div class="table-container">
+            <table class="erp-table" id="dashboard-table">
+              <thead>
+                <tr>
+                  <th onclick="sortDashboardTable(0)">Invoice No ↕</th>
+                  <th onclick="sortDashboardTable(1)">Date ↕</th>
+                  <th onclick="sortDashboardTable(2)">Client ↕</th>
+                  <th onclick="sortDashboardTable(3)" style="text-align:right">Total ↕</th>
+                  <th onclick="sortDashboardTable(4)">Status ↕</th>
+                  <th style="text-align:center">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="dashboard-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      `;
+
+      container.innerHTML = html;
+
+      window.dashboardData = invoices.map(inv => {
+        const items = typeof inv.items === 'string' ? JSON.parse(inv.items) : (inv.items || []);
+        return {
+          invoiceNo: inv.invoice_no || 'N/A',
+          date: inv.date || 'N/A',
+          clientName: inv.client_name || 'N/A',
+          total: '₹' + Number(inv.total_amount || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 }),
+          totalRaw: Number(inv.total_amount || 0),
+          status: inv.status || 'ACTIVE',
+          statusClass: inv.status === 'ACTIVE' ? 'badge-active' : inv.status === 'CANCELLED' ? 'badge-cancelled' : 'badge-revised',
+          inv: inv,
+          itemCount: items.length
+        };
+      });
+
+      window.dashboardSortCol = 0;
+      window.dashboardSortDir = 1;
+      filterDashboardTable();
+    }
+
+    function filterDashboardTable() {
+      const search = (document.getElementById('dashboard-search')?.value || '').toLowerCase();
+      let data = window.dashboardData || [];
+      
+      data = data.filter(row => {
+        return row.invoiceNo.toLowerCase().includes(search) || 
+               row.clientName.toLowerCase().includes(search) ||
+               row.date.toLowerCase().includes(search);
+      });
+
+      const col = window.dashboardSortCol || 0;
+      const dir = window.dashboardSortDir || 1;
+      const keys = ['invoiceNo', 'date', 'clientName', 'totalRaw', 'status'];
+      data.sort((a, b) => {
+        let va = a[keys[col]] || '';
+        let vb = b[keys[col]] || '';
+        if (typeof va === 'string') va = va.toLowerCase();
+        if (typeof vb === 'string') vb = vb.toLowerCase();
+        return va < vb ? -dir : va > vb ? dir : 0;
+      });
+
+      const tbody = document.getElementById('dashboard-tbody');
+      if (tbody) {
+        if (data.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--muted)">No results found</td></tr>`;
+        } else {
+          tbody.innerHTML = data.map(row => {
+            let actions = '';
+            if (row.inv.status === 'ACTIVE') {
+              actions = `
+                <div class="flex gap-2 justify-center w-full">
+                  <button onclick="handleReviseInvoice('${row.inv.invoice_no}')" class="btn btn-warning btn-sm flex-1 md:flex-none">Revise</button>
+                  <button onclick="handleCancelInvoice('${row.inv.invoice_no}')" class="btn btn-danger btn-sm flex-1 md:flex-none">Cancel</button>
+                  <button onclick="handleGeneratePDF('${row.inv.invoice_no}')" class="btn btn-primary btn-sm flex-1 md:flex-none">PDF</button>
+                </div>
+              `;
+            } else {
+              actions = `<div style="text-align:center;color:var(--muted);width:100%;">—</div>`;
+            }
+            return `
+              <tr>
+                <td data-label="Invoice No"><span style="font-weight:600">${row.invoiceNo}</span> <span class="text-helper text-[var(--muted)] ml-1">v${row.inv.version || 1}</span></td>
+                <td data-label="Date">${row.date}</td>
+                <td data-label="Client"><div class="truncate w-full ml-4 max-w-[180px] md:max-w-[200px] text-right md:text-left md:ml-0" title="${row.clientName}">${row.clientName}</div></td>
+                <td data-label="Total" style="text-align:right;font-weight:600">${row.total}</td>
+                <td data-label="Status"><span class="badge ${row.statusClass}">${row.status}</span></td>
+                <td data-label="Actions">${actions}</td>
+              </tr>
+            `;
+          }).join('');
+        }
+      }
+    }
+
+    function sortDashboardTable(col) {
+      if (window.dashboardSortCol === col) {
+        window.dashboardSortDir *= -1;
+      } else {
+        window.dashboardSortCol = col;
+        window.dashboardSortDir = 1;
+      }
+      filterDashboardTable();
+    }
+
+    function resetDashboardFilters() {
+      document.getElementById('dashboard-search').value = '';
+      filterDashboardTable();
+    }
+
+    // ==================== INVOICE ACTIONS ====================
+    async function handleCancelInvoice(invoiceNo) {
+      const confirmed = await appConfirm(`Cancel invoice ${invoiceNo}?`);
+      if (!confirmed) return;
+      
+      const reason = await appPrompt('Cancellation reason:');
+      if (!reason) return;
+      
+      try {
+        const response = await fetch(`${API_URL}/api/invoices/cancel`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ invoiceNo, reason })
+        });
+        const data = await response.json();
+        if (data.success) {
+          showToast(`Invoice ${invoiceNo} cancelled`);
+          loadDashboard();
+        } else {
+          showToast(data.error || 'Failed to cancel', 'error');
+        }
+      } catch (error) {
+        showToast(error.message || 'Failed to cancel', 'error');
+      }
+    }
+
+    async function handleGeneratePDF(invoiceNo) {
+      showToast('PDF generation coming soon...', 'info');
+      // PDF generation will be implemented later
+    }
+
+    // ==================== CREATE INVOICE ====================
+    function renderCreateInvoiceForm() {
+      const container = document.getElementById('create-invoice-content');
+      lineItemCounter = 0;
+      const today = new Date().toISOString().split('T')[0];
+      const nextWeek = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+
+      container.innerHTML = `
+        <form id="invoice-form" onsubmit="handleCreateInvoice(event)" class="space-y-4 md:space-y-6 pb-24 md:pb-0">
+          <div class="erp-card">
+            <div class="text-header mb-5">Details</div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+              <div>
+                <label>Client Name *</label>
+                <select id="client-select" class="input-field">
+                  <option value="">Select a client...</option>
+                </select>
+                <input type="text" id="client-name-manual" placeholder="Or type custom name..." class="input-field mt-2 hidden">
+                <button type="button" onclick="toggleClientInput()" class="text-helper mt-2 text-[var(--primary)] bg-transparent border-none p-0 cursor-pointer text-left">Enter custom name instead</button>
+              </div>
+              <div>
+                <label>Place of Supply *</label>
+                <input type="text" id="place-of-supply" required value="West Bengal" class="input-field">
+              </div>
+              <div class="grid grid-cols-2 gap-4 md:col-span-2 md:grid-cols-2">
+                <div>
+                  <label>Invoice Date *</label>
+                  <input type="date" id="invoice-date" required value="${today}" class="input-field">
+                </div>
+                <div>
+                  <label>Due Date</label>
+                  <input type="date" id="due-date" value="${nextWeek}" class="input-field">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="erp-card">
+            <div class="text-header mb-5">Tax Config</div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
+              <div>
+                <label>Interstate</label>
+                <select id="tax-type" onchange="updateTaxFields()" class="input-field">
+                  <option value="intra">Intra-State</option>
+                  <option value="inter">Inter-State</option>
+                </select>
+              </div>
+              <div id="cgst-field">
+                <label>CGST (%)</label>
+                <input type="number" id="cgst-rate" value="9" step="0.1" min="0" max="100" onchange="recalculateTotals()" class="input-field">
+              </div>
+              <div id="sgst-field">
+                <label>SGST (%)</label>
+                <input type="number" id="sgst-rate" value="9" step="0.1" min="0" max="100" onchange="recalculateTotals()" class="input-field">
+              </div>
+              <div id="igst-field" class="hidden">
+                <label>IGST (%)</label>
+                <input type="number" id="igst-rate" value="18" step="0.1" min="0" max="100" onchange="recalculateTotals()" class="input-field">
+              </div>
+            </div>
+          </div>
+
+          <div class="erp-card">
+            <div class="flex items-center justify-between mb-5">
+              <div class="text-header">Line Items</div>
+              <button type="button" onclick="addLineItem()" class="btn btn-secondary btn-sm h-8 px-3">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Add Item
+              </button>
+            </div>
+            <div id="line-items-container" class="space-y-4"></div>
+            <div id="no-items-msg" class="text-center py-8 text-[var(--muted)]">No items added yet.</div>
+          </div>
+
+          <div class="erp-card relative">
+            <div class="text-header mb-5">Summary</div>
+            <div class="space-y-3 max-w-sm ml-auto">
+              <div class="flex justify-between"><span class="text-[var(--muted)]">Taxable:</span><span id="summary-taxable" class="font-semibold">₹0.00</span></div>
+              <div class="flex justify-between"><span class="text-[var(--muted)]" id="summary-tax-label">CGST:</span><span id="summary-tax1" class="font-semibold">₹0.00</span></div>
+              <div class="flex justify-between" id="summary-tax2-row"><span class="text-[var(--muted)]">SGST:</span><span id="summary-tax2" class="font-semibold">₹0.00</span></div>
+              <div class="flex justify-between pt-4 mt-2 border-t border-[var(--border)]">
+                <span class="text-header">Total:</span>
+                <span id="summary-total" class="text-header text-[var(--primary)]">₹0.00</span>
+              </div>
+            </div>
+            
+            <div class="md:mt-8 md:pt-6 md:border-t md:border-[var(--border)] md:flex md:justify-end mobile-sticky-btn md:static md:bg-transparent md:p-0">
+              <button type="submit" class="btn btn-success w-full md:w-auto md:min-w-[240px]">Generate Invoice</button>
+            </div>
+          </div>
+        </form>
+      `;
+
+      loadClientsForSelect();
+      addLineItem();
+      recalculateTotals();
+    }
+
+    async function loadClientsForSelect() {
+      try {
+        const response = await fetch(`${API_URL}/api/clients`);
+        const data = await response.json();
+        if (data.success && data.clients) {
+          clientsData = data.clients;
+          const select = document.getElementById('client-select');
+          data.clients.forEach(client => {
+            const option = document.createElement('option');
+            option.value = client[1];
+            option.textContent = `${client[1]} (${client[4] || 'N/A'})`;
+            select.appendChild(option);
+          });
+        }
+      } catch (error) {
+        console.error('Failed to load clients:', error);
+      }
+    }
+
+    function toggleClientInput() {
+      const select = document.getElementById('client-select');
+      const manual = document.getElementById('client-name-manual');
+      if (manual.classList.contains('hidden')) {
+        manual.classList.remove('hidden');
+        select.classList.add('hidden');
+        select.value = '';
+      } else {
+        manual.classList.add('hidden');
+        select.classList.remove('hidden');
+        manual.value = '';
+      }
+    }
+
+    function updateTaxFields() {
+      const type = document.getElementById('tax-type').value;
+      document.getElementById('cgst-field').classList.toggle('hidden', type === 'inter');
+      document.getElementById('sgst-field').classList.toggle('hidden', type === 'inter');
+      document.getElementById('igst-field').classList.toggle('hidden', type !== 'inter');
+      recalculateTotals();
+    }
+
+    function addLineItem() {
+      lineItemCounter++;
+      const container = document.getElementById('line-items-container');
+      document.getElementById('no-items-msg')?.classList.add('hidden');
+
+      const itemHtml = `
+        <div class="line-item grid grid-cols-12 gap-3 md:gap-4 items-end p-4 rounded-xl bg-[var(--surface)] border border-[var(--border)] relative" data-item-id="${lineItemCounter}">
+          <button type="button" onclick="removeLineItem(${lineItemCounter})" class="absolute top-2 right-2 p-2 text-[var(--muted)] hover:text-[var(--danger)] bg-transparent border-none">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+          
+          <div class="col-span-12 md:col-span-5 pr-6 md:pr-0">
+            <label>Description *</label>
+            <input type="text" placeholder="Service details" class="item-desc input-field" oninput="recalculateTotals()">
+          </div>
+          <div class="col-span-6 md:col-span-2">
+            <label>SAC/HSN</label>
+            <input type="text" placeholder="e.g. 996111" class="item-sac input-field">
+          </div>
+          <div class="col-span-6 md:col-span-1">
+            <label>Qty</label>
+            <input type="number" value="1" min="1" step="1" class="item-qty input-field px-2 text-center" oninput="recalculateTotals()">
+          </div>
+          <div class="col-span-6 md:col-span-2">
+            <label>Rate</label>
+            <input type="number" value="0" min="0" step="0.01" class="item-rate input-field" oninput="recalculateTotals()">
+          </div>
+          <div class="col-span-6 md:col-span-2 text-right">
+            <label class="md:hidden">Amount</label>
+            <span class="item-amount block py-3 font-semibold text-[var(--primary)] md:text-[var(--text)]">₹0.00</span>
+          </div>
+        </div>
+      `;
+      container.insertAdjacentHTML('beforeend', itemHtml);
+      recalculateTotals();
+    }
+
+    function removeLineItem(itemId) {
+      const item = document.querySelector(`.line-item[data-item-id="${itemId}"]`);
+      if (item) item.remove();
+      const remaining = document.querySelectorAll('.line-item');
+      if (remaining.length === 0) document.getElementById('no-items-msg')?.classList.remove('hidden');
+      recalculateTotals();
+    }
+
+    function recalculateTotals() {
+      const items = document.querySelectorAll('.line-item');
+      let totalTaxable = 0;
+      items.forEach(item => {
+        const qty = parseFloat(item.querySelector('.item-qty')?.value) || 0;
+        const rate = parseFloat(item.querySelector('.item-rate')?.value) || 0;
+        const amount = qty * rate;
+        const amountEl = item.querySelector('.item-amount');
+        if (amountEl) amountEl.textContent = `₹${amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+        totalTaxable += amount;
+      });
+      updateSummaryTotals(totalTaxable);
+    }
+
+    function updateSummaryTotals(totalTaxable) {
+      const taxType = document.getElementById('tax-type').value;
+      let cgst = 0, sgst = 0, igst = 0;
+      if (taxType === 'inter') {
+        const rate = parseFloat(document.getElementById('igst-rate').value) || 0;
+        igst = totalTaxable * (rate / 100);
+      } else {
+        const cgstRate = parseFloat(document.getElementById('cgst-rate').value) || 0;
+        const sgstRate = parseFloat(document.getElementById('sgst-rate').value) || 0;
+        cgst = totalTaxable * (cgstRate / 100);
+        sgst = totalTaxable * (sgstRate / 100);
+      }
+      const grandTotal = totalTaxable + cgst + sgst + igst;
+
+      document.getElementById('summary-taxable').textContent = `₹${totalTaxable.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+      if (taxType === 'inter') {
+        document.getElementById('summary-tax-label').textContent = 'IGST:';
+        document.getElementById('summary-tax1').textContent = `₹${igst.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+        document.getElementById('summary-tax2-row').classList.add('hidden');
+      } else {
+        document.getElementById('summary-tax-label').textContent = 'CGST:';
+        document.getElementById('summary-tax1').textContent = `₹${cgst.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+        document.getElementById('summary-tax2-row').classList.remove('hidden');
+        document.getElementById('summary-tax2').textContent = `₹${sgst.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+      }
+      document.getElementById('summary-total').textContent = `₹${grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+    }
+
+    async function handleCreateInvoice(event) {
+      event.preventDefault();
+      let clientName = document.getElementById('client-select').value;
+      const manualName = document.getElementById('client-name-manual').value.trim();
+      if (manualName) clientName = manualName;
+      if (!clientName) { showToast('Select or enter a client', 'error'); return; }
+
+      const placeOfSupply = document.getElementById('place-of-supply').value.trim();
+      if (!placeOfSupply) { showToast('Enter place of supply', 'error'); return; }
+
+      const date = document.getElementById('invoice-date').value;
+      const dueDate = document.getElementById('due-date').value;
+      const taxType = document.getElementById('tax-type').value;
+      const isInterstate = taxType === 'inter';
+      const cgstRate = parseFloat(document.getElementById('cgst-rate').value) || 0;
+      const sgstRate = parseFloat(document.getElementById('sgst-rate').value) || 0;
+      const igstRate = parseFloat(document.getElementById('igst-rate').value) || 0;
+
+      const lineItems = [];
+      const itemElements = document.querySelectorAll('.line-item');
+      let hasError = false;
+      itemElements.forEach(item => {
+        const desc = item.querySelector('.item-desc')?.value.trim();
+        const sac = item.querySelector('.item-sac')?.value.trim();
+        const qty = parseFloat(item.querySelector('.item-qty')?.value) || 0;
+        const rate = parseFloat(item.querySelector('.item-rate')?.value) || 0;
+        if (!desc) { showToast('Fill all descriptions', 'error'); hasError = true; return; }
+        lineItems.push({ description: desc, sacCode: sac || '', quantity: qty, rate: rate, amount: qty * rate });
+      });
+      if (hasError) return;
+      if (lineItems.length === 0) { showToast('Add at least one item', 'error'); return; }
+
+      const invoiceData = { clientName, placeOfSupply, date, dueDate, isInterstate, cgstRate, sgstRate, igstRate, items: lineItems };
+      pendingInvoiceData = invoiceData;
+      pendingIsRevise = false;
+      showReviewModal(invoiceData);
+    }
+
+    // ==================== REVIEW MODAL ====================
+    function showReviewModal(data) {
+      const modal = document.getElementById('review-invoice-modal');
+      const content = document.getElementById('review-content');
+      const items = data.items || [];
+      const taxType = data.isInterstate ? 'Inter-State (IGST)' : 'Intra-State (CGST + SGST)';
+      const totalTaxable = items.reduce((sum, item) => sum + (item.quantity * item.rate), 0);
+      let cgst = 0, sgst = 0, igst = 0;
+      if (data.isInterstate) { igst = totalTaxable * (data.igstRate / 100); } 
+      else { cgst = totalTaxable * (data.cgstRate / 100); sgst = totalTaxable * (data.sgstRate / 100); }
+      const grandTotal = totalTaxable + cgst + sgst + igst;
+
+      let html = `
+        <div class="space-y-6">
+          <div class="grid grid-cols-2 gap-4 text-[13px] md:text-[14px]">
+            <div class="bg-[var(--bg)] p-3 rounded-lg"><span class="text-helper text-[var(--muted)] block mb-1">Client</span><span class="font-semibold">${data.clientName}</span></div>
+            <div class="bg-[var(--bg)] p-3 rounded-lg"><span class="text-helper text-[var(--muted)] block mb-1">Place of Supply</span><span class="font-semibold">${data.placeOfSupply}</span></div>
+            <div class="bg-[var(--bg)] p-3 rounded-lg"><span class="text-helper text-[var(--muted)] block mb-1">Date</span><span class="font-semibold">${data.date}</span></div>
+            <div class="bg-[var(--bg)] p-3 rounded-lg"><span class="text-helper text-[var(--muted)] block mb-1">Due</span><span class="font-semibold">${data.dueDate || '-'}</span></div>
+          </div>
+          
+          <div class="table-container shadow-sm">
+            <table class="erp-table text-[13px] md:text-[14px]">
+              <thead><tr>
+                <th>#</th><th>Description</th><th class="hidden md:table-cell">SAC</th><th style="text-align:right">Qty</th><th style="text-align:right">Rate</th><th style="text-align:right">Amount</th>
+              </tr></thead>
+              <tbody>
+      `;
+      items.forEach((item, idx) => {
+        html += `<tr>
+          <td data-label="#">${idx + 1}</td>
+          <td data-label="Description"><div class="max-w-[150px] md:max-w-none truncate">${item.description}</div></td>
+          <td data-label="SAC" class="hidden md:table-cell">${item.sacCode || '-'}</td>
+          <td data-label="Qty" style="text-align:right">${item.quantity}</td>
+          <td data-label="Rate" style="text-align:right">₹${Number(item.rate).toFixed(2)}</td>
+          <td data-label="Amount" style="text-align:right; font-weight:600;">₹${Number(item.amount).toFixed(2)}</td>
+        </tr>`;
+      });
+      html += `
+              </tbody>
+            </table>
+          </div>
+          
+          <div class="space-y-2 max-w-xs ml-auto">
+            <div class="flex justify-between"><span class="text-[var(--muted)]">Taxable:</span><span class="font-semibold">₹${totalTaxable.toFixed(2)}</span></div>
+            ${data.isInterstate ? 
+              `<div class="flex justify-between"><span class="text-[var(--muted)]">IGST (${data.igstRate}%):</span><span class="font-semibold">₹${igst.toFixed(2)}</span></div>` :
+              `<div class="flex justify-between"><span class="text-[var(--muted)]">CGST (${data.cgstRate}%):</span><span class="font-semibold">₹${cgst.toFixed(2)}</span></div>
+               <div class="flex justify-between"><span class="text-[var(--muted)]">SGST (${data.sgstRate}%):</span><span class="font-semibold">₹${sgst.toFixed(2)}</span></div>`
+            }
+            <div class="flex justify-between pt-3 mt-1 border-t border-[var(--border)]"><span class="text-header">Total:</span><span class="text-header text-[var(--primary)]">₹${grandTotal.toFixed(2)}</span></div>
+          </div>
+        </div>
+      `;
+      content.innerHTML = html;
+      modal.classList.remove('hidden');
+    }
+
+    function closeReviewModal() {
+      document.getElementById('review-invoice-modal').classList.add('hidden');
+      pendingInvoiceData = null;
+    }
+
+    async function confirmInvoice() {
+      if (!pendingInvoiceData) return;
+      const btn = document.getElementById('confirm-invoice-btn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner" style="border-top-color:#fff;"></span>';
+
+      try {
+        const url = pendingIsRevise ? `${API_URL}/api/invoices/revise` : `${API_URL}/api/invoices`;
+        const body = pendingIsRevise ? { invoiceNo: pendingReviseNo, invoiceData: pendingInvoiceData } : { invoiceData: pendingInvoiceData };
+        
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+        const data = await response.json();
+        
+        btn.disabled = false;
+        btn.innerHTML = 'Confirm & Create';
+        
+        if (data.success) {
+          showToast(`Invoice ${data.invoiceNo || 'created'}!`);
+          closeReviewModal();
+          navigateTo('dashboard');
+        } else {
+          showToast(data.error || 'Failed to create', 'error');
+        }
+      } catch (error) {
+        btn.disabled = false;
+        btn.innerHTML = 'Confirm & Create';
+        showToast(error.message || 'Failed to create', 'error');
+      }
+    }
+
+    // ==================== REVISE INVOICE ====================
+    function handleReviseInvoice(invoiceNo) {
+      currentReviseInvoiceNo = invoiceNo;
+      const invoice = invoicesData.find(inv => inv.invoice_no === invoiceNo && inv.status === 'ACTIVE');
+      if (!invoice) { showToast('Active invoice not found', 'error'); return; }
+
+      document.getElementById('revise-invoice-modal').classList.remove('hidden');
+      document.getElementById('revise-invoice-content').innerHTML = `
+        <div class="flex items-center justify-center py-20"><div class="spinner"></div></div>
+      `;
+      renderReviseForm(invoice);
+    }
+
+    function closeReviseModal() {
+      document.getElementById('revise-invoice-modal').classList.add('hidden');
+      currentReviseInvoiceNo = null;
+      reviseLineItemCounter = 0;
+    }
+
+    function renderReviseForm(invoice) {
+      const container = document.getElementById('revise-invoice-content');
+      reviseLineItemCounter = 0;
+      const items = typeof invoice.items === 'string' ? JSON.parse(invoice.items) : (invoice.items || []);
+      const hasIGST = Number(invoice.igst || 0) > 0;
+      const isInterstate = hasIGST;
+      const cgstRate = Number(invoice.cgst || 0) > 0 ? Math.round((invoice.cgst / invoice.taxable_amount) * 100) : 9;
+      const sgstRate = Number(invoice.sgst || 0) > 0 ? Math.round((invoice.sgst / invoice.taxable_amount) * 100) : 9;
+      const igstRate = Number(invoice.igst || 0) > 0 ? Math.round((invoice.igst / invoice.taxable_amount) * 100) : 18;
+
+      let html = `
+        <form id="revise-invoice-form" onsubmit="handleSubmitReviseInvoice(event)" class="space-y-5 pb-24 md:pb-0">
+          <div class="p-4 rounded-xl" style="background:rgba(245, 158, 11, 0.1); border: 1px solid var(--warning);">
+            <div style="font-weight:600; color:var(--warning)">Revising: ${invoice.invoice_no}</div>
+            <div class="text-helper" style="color:var(--warning); opacity:0.8; margin-top:4px">v${invoice.version || 1} → v${(invoice.version || 1) + 1}</div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+            <div>
+              <label>Client Name *</label>
+              <select id="revise-client-select" class="input-field">
+                <option value="">Select a client...</option>
+              </select>
+              <input type="text" id="revise-client-name-manual" placeholder="Custom name..." class="input-field mt-2 hidden">
+              <button type="button" onclick="toggleReviseClientInput()" class="text-helper mt-2 text-[var(--primary)] bg-transparent border-none p-0">Enter custom name instead</button>
+            </div>
+            <div>
+              <label>Place of Supply *</label>
+              <input type="text" id="revise-place-of-supply" required value="${invoice.place_of_supply || 'West Bengal'}" class="input-field">
+            </div>
+            <div class="grid grid-cols-2 gap-4 md:col-span-2">
+              <div>
+                <label>Date *</label>
+                <input type="date" id="revise-invoice-date" required value="${formatDateForInput(invoice.date)}" class="input-field px-2">
+              </div>
+              <div>
+                <label>Due Date</label>
+                <input type="date" id="revise-due-date" value="${formatDateForInput(invoice.due_date)}" class="input-field px-2">
+              </div>
+            </div>
+          </div>
+
+          <div class="p-4 md:p-6 rounded-xl border border-[var(--border)] bg-[var(--surface)]">
+            <div class="text-header mb-4">Tax Configuration</div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div>
+                <label>Type</label>
+                <select id="revise-tax-type" onchange="updateReviseTaxFields()" class="input-field">
+                  <option value="intra" ${!isInterstate ? 'selected' : ''}>Intra-State</option>
+                  <option value="inter" ${isInterstate ? 'selected' : ''}>Inter-State</option>
+                </select>
+              </div>
+              <div id="revise-cgst-field" class="${isInterstate ? 'hidden' : ''}">
+                <label>CGST (%)</label>
+                <input type="number" id="revise-cgst-rate" value="${cgstRate}" step="0.1" min="0" max="100" onchange="recalculateReviseTotals()" class="input-field">
+              </div>
+              <div id="revise-sgst-field" class="${isInterstate ? 'hidden' : ''}">
+                <label>SGST (%)</label>
+                <input type="number" id="revise-sgst-rate" value="${sgstRate}" step="0.1" min="0" max="100" onchange="recalculateReviseTotals()" class="input-field">
+              </div>
+              <div id="revise-igst-field" class="${isInterstate ? '' : 'hidden'}">
+                <label>IGST (%)</label>
+                <input type="number" id="revise-igst-rate" value="${igstRate}" step="0.1" min="0" max="100" onchange="recalculateReviseTotals()" class="input-field">
+              </div>
+            </div>
+          </div>
+
+          <div class="p-4 md:p-6 rounded-xl border border-[var(--border)] bg-[var(--surface)]">
+            <div class="flex items-center justify-between mb-4">
+              <div class="text-header">Line Items</div>
+              <button type="button" onclick="addReviseLineItem()" class="btn btn-secondary btn-sm">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Add
+              </button>
+            </div>
+            <div id="revise-line-items-container" class="space-y-4"></div>
+          </div>
+
+          <div class="p-4 md:p-6 rounded-xl border border-[var(--border)] relative">
+            <div class="text-header mb-4">Summary</div>
+            <div class="space-y-3 max-w-sm ml-auto">
+              <div class="flex justify-between"><span class="text-[var(--muted)]">Taxable:</span><span id="revise-summary-taxable" class="font-semibold">₹0.00</span></div>
+              <div class="flex justify-between"><span class="text-[var(--muted)]" id="revise-summary-tax-label">CGST:</span><span id="revise-summary-tax1" class="font-semibold">₹0.00</span></div>
+              <div class="flex justify-between" id="revise-summary-tax2-row"><span class="text-[var(--muted)]">SGST:</span><span id="revise-summary-tax2" class="font-semibold">₹0.00</span></div>
+              <div class="flex justify-between pt-4 mt-2 border-t border-[var(--border)]"><span class="text-header">Total:</span><span id="revise-summary-total" class="text-header text-[var(--primary)]">₹0.00</span></div>
+            </div>
+          </div>
+
+          <div class="mobile-sticky-btn flex gap-3 justify-end md:pt-4 md:border-t-[var(--border)] md:bg-transparent">
+            <button type="button" onclick="closeReviseModal()" class="btn btn-secondary flex-1 md:flex-none">Cancel</button>
+            <button type="submit" class="btn btn-warning flex-1 md:flex-none text-[#fff]">Review</button>
+          </div>
+        </form>
+      `;
+
+      container.innerHTML = html;
+
+      // Load clients for revise select
+      (async () => {
+        try {
+          const response = await fetch(`${API_URL}/api/clients`);
+          const data = await response.json();
+          if (data.success && data.clients) {
+            const select = document.getElementById('revise-client-select');
+            let found = false;
+            data.clients.forEach(client => {
+              const option = document.createElement('option');
+              option.value = client[1];
+              option.textContent = `${client[1]} (${client[4] || 'N/A'})`;
+              if (client[1] === invoice.client_name) { option.selected = true; found = true; }
+              select.appendChild(option);
+            });
+            if (!found && invoice.client_name) {
+              document.getElementById('revise-client-name-manual').classList.remove('hidden');
+              document.getElementById('revise-client-name-manual').value = invoice.client_name;
+              select.classList.add('hidden');
+            }
+          }
+        } catch (error) {
+          console.error('Failed to load clients:', error);
+        }
+      })();
+
+      const lineItemsContainer = document.getElementById('revise-line-items-container');
+      if (items.length > 0) {
+        items.forEach(item => {
+          reviseLineItemCounter++;
+          lineItemsContainer.insertAdjacentHTML('beforeend', createReviseLineItemHTML(reviseLineItemCounter, item));
+        });
+      } else {
+        addReviseLineItem();
+      }
+      recalculateReviseTotals();
+    }
+
+    function toggleReviseClientInput() {
+      const select = document.getElementById('revise-client-select');
+      const manual = document.getElementById('revise-client-name-manual');
+      if (manual.classList.contains('hidden')) {
+        manual.classList.remove('hidden');
+        select.classList.add('hidden');
+        select.value = '';
+      } else {
+        manual.classList.add('hidden');
+        select.classList.remove('hidden');
+        manual.value = '';
+      }
+    }
+
+    function createReviseLineItemHTML(counter, item) {
+      return `
+        <div class="revise-line-item grid grid-cols-12 gap-3 md:gap-4 items-end p-4 rounded-xl bg-[var(--bg)] border border-[var(--border)] relative" data-item-id="${counter}">
+          <button type="button" onclick="removeReviseLineItem(${counter})" class="absolute top-2 right-2 p-2 text-[var(--muted)] hover:text-[var(--danger)] bg-transparent border-none">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+          <div class="col-span-12 md:col-span-5 pr-6 md:pr-0">
+            <label>Description *</label>
+            <input type="text" value="${item?.description || ''}" class="revise-item-desc input-field" oninput="recalculateReviseTotals()">
+          </div>
+          <div class="col-span-6 md:col-span-2">
+            <label>SAC/HSN</label>
+            <input type="text" value="${item?.sacCode || ''}" class="revise-item-sac input-field">
+          </div>
+          <div class="col-span-6 md:col-span-1">
+            <label>Qty</label>
+            <input type="number" value="${item?.quantity || 1}" min="1" step="1" class="revise-item-qty input-field px-2 text-center" oninput="recalculateReviseTotals()">
+          </div>
+          <div class="col-span-6 md:col-span-2">
+            <label>Rate</label>
+            <input type="number" value="${item?.rate || 0}" min="0" step="0.01" class="revise-item-rate input-field" oninput="recalculateReviseTotals()">
+          </div>
+          <div class="col-span-6 md:col-span-2 text-right">
+            <label class="md:hidden">Amount</label>
+            <span class="revise-item-amount block py-3 font-semibold text-[var(--primary)] md:text-[var(--text)]">₹${((item?.quantity || 0) * (item?.rate || 0)).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
+          </div>
+        </div>
+      `;
+    }
+
+    function addReviseLineItem() {
+      reviseLineItemCounter++;
+      const container = document.getElementById('revise-line-items-container');
+      container.insertAdjacentHTML('beforeend', createReviseLineItemHTML(reviseLineItemCounter, null));
+      recalculateReviseTotals();
+    }
+
+    function removeReviseLineItem(itemId) {
+      const item = document.querySelector(`.revise-line-item[data-item-id="${itemId}"]`);
+      if (item) item.remove();
+      recalculateReviseTotals();
+    }
+
+    function updateReviseTaxFields() {
+      const type = document.getElementById('revise-tax-type').value;
+      document.getElementById('revise-cgst-field').classList.toggle('hidden', type === 'inter');
+      document.getElementById('revise-sgst-field').classList.toggle('hidden', type === 'inter');
+      document.getElementById('revise-igst-field').classList.toggle('hidden', type !== 'inter');
+      recalculateReviseTotals();
+    }
+
+    function recalculateReviseTotals() {
+      const items = document.querySelectorAll('.revise-line-item');
+      let totalTaxable = 0;
+      items.forEach(item => {
+        const qty = parseFloat(item.querySelector('.revise-item-qty')?.value) || 0;
+        const rate = parseFloat(item.querySelector('.revise-item-rate')?.value) || 0;
+        const amount = qty * rate;
+        const amountEl = item.querySelector('.revise-item-amount');
+        if (amountEl) amountEl.textContent = `₹${amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+        totalTaxable += amount;
+      });
+
+      const taxType = document.getElementById('revise-tax-type').value;
+      let cgst = 0, sgst = 0, igst = 0;
+      if (taxType === 'inter') {
+        const rate = parseFloat(document.getElementById('revise-igst-rate').value) || 0;
+        igst = totalTaxable * (rate / 100);
+      } else {
+        const cgstRate = parseFloat(document.getElementById('revise-cgst-rate').value) || 0;
+        const sgstRate = parseFloat(document.getElementById('revise-sgst-rate').value) || 0;
+        cgst = totalTaxable * (cgstRate / 100);
+        sgst = totalTaxable * (sgstRate / 100);
+      }
+      const grandTotal = totalTaxable + cgst + sgst + igst;
+
+      document.getElementById('revise-summary-taxable').textContent = `₹${totalTaxable.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+      if (taxType === 'inter') {
+        document.getElementById('revise-summary-tax-label').textContent = 'IGST:';
+        document.getElementById('revise-summary-tax1').textContent = `₹${igst.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+        document.getElementById('revise-summary-tax2-row').classList.add('hidden');
+      } else {
+        document.getElementById('revise-summary-tax-label').textContent = 'CGST:';
+        document.getElementById('revise-summary-tax1').textContent = `₹${cgst.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+        document.getElementById('revise-summary-tax2-row').classList.remove('hidden');
+        document.getElementById('revise-summary-tax2').textContent = `₹${sgst.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+      }
+      document.getElementById('revise-summary-total').textContent = `₹${grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+    }
+
+    function handleSubmitReviseInvoice(event) {
+      event.preventDefault();
+      if (!currentReviseInvoiceNo) { showToast('No invoice selected', 'error'); return; }
+
+      let clientName = document.getElementById('revise-client-select').value;
+      const manualName = document.getElementById('revise-client-name-manual').value.trim();
+      if (manualName) clientName = manualName;
+      if (!clientName) { showToast('Select or enter a client', 'error'); return; }
+
+      const placeOfSupply = document.getElementById('revise-place-of-supply').value.trim();
+      if (!placeOfSupply) { showToast('Enter place of supply', 'error'); return; }
+
+      const date = document.getElementById('revise-invoice-date').value;
+      const dueDate = document.getElementById('revise-due-date').value;
+      const taxType = document.getElementById('revise-tax-type').value;
+      const isInterstate = taxType === 'inter';
+      const cgstRate = parseFloat(document.getElementById('revise-cgst-rate').value) || 0;
+      const sgstRate = parseFloat(document.getElementById('revise-sgst-rate').value) || 0;
+      const igstRate = parseFloat(document.getElementById('revise-igst-rate').value) || 0;
+
+      const lineItems = [];
+      const itemElements = document.querySelectorAll('.revise-line-item');
+      let hasError = false;
+      itemElements.forEach(item => {
+        const desc = item.querySelector('.revise-item-desc')?.value.trim();
+        const sac = item.querySelector('.revise-item-sac')?.value.trim();
+        const qty = parseFloat(item.querySelector('.revise-item-qty')?.value) || 0;
+        const rate = parseFloat(item.querySelector('.revise-item-rate')?.value) || 0;
+        if (!desc) { showToast('Fill all descriptions', 'error'); hasError = true; return; }
+        lineItems.push({ description: desc, sacCode: sac || '', quantity: qty, rate: rate, amount: qty * rate });
+      });
+      if (hasError) return;
+      if (lineItems.length === 0) { showToast('Add at least one item', 'error'); return; }
+
+      const invoiceData = { clientName, placeOfSupply, date, dueDate, isInterstate, cgstRate, sgstRate, igstRate, items: lineItems };
+      pendingInvoiceData = invoiceData;
+      pendingIsRevise = true;
+      pendingReviseNo = currentReviseInvoiceNo;
+      showReviewModal(invoiceData);
+    }
+
+    // ==================== CLIENTS ====================
+    async function loadClients() {
+      setLoading('clients-content');
+      try {
+        const response = await fetch(`${API_URL}/api/clients`);
+        const data = await response.json();
+        renderClients(data);
+      } catch (error) {
+        document.getElementById('clients-content').innerHTML = 
+          `<div class="erp-card text-center" style="color:var(--danger)">Failed to load: ${error.message}</div>`;
+      }
+    }
+
+    function renderClients(response) {
+      const container = document.getElementById('clients-content');
+      if (!response || !response.success) {
+        container.innerHTML = `<div class="erp-card text-center" style="color:var(--danger)">Failed to load</div>`;
+        return;
+      }
+      const clients = response.clients || [];
+      clientsData = clients;
+
+      if (clients.length === 0) {
+        container.innerHTML = `
+          <div class="erp-card flex flex-col items-center justify-center p-10 md:p-16 text-center">
+            <svg class="mb-4 text-[var(--muted)] opacity-50" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            <div class="text-header mb-6">No Clients Yet</div>
+            <button onclick="showAddClientForm()" class="btn btn-primary w-full md:w-auto">
+              Add First Client
+            </button>
+          </div>
+        `;
+        return;
+      }
+
+      let html = `
+        <div class="erp-card">
+          <div class="mb-4 md:mb-6 flex flex-col md:flex-row gap-3 md:items-center">
+            <div class="flex-1 relative">
+              <input type="text" id="clients-search" placeholder="Search..." class="input-field" oninput="filterClients()" style="padding-left:44px">
+              <svg style="position:absolute;left:14px;top:16px;color:var(--muted)" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            </div>
+            <button onclick="resetClientsFilters()" class="btn btn-secondary hidden md:inline-flex">Reset</button>
+          </div>
+          <div class="table-container">
+            <table class="erp-table">
+              <thead>
+                <tr>
+                  <th>Client Name</th>
+                  <th>GSTIN</th>
+                  <th>State</th>
+                  <th class="hidden md:table-cell">Code</th>
+                  <th>Phone</th>
+                </tr>
+              </thead>
+              <tbody id="clients-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      `;
+
+      container.innerHTML = html;
+      window.clientsDataStore = clients;
+      filterClients();
+    }
+
+    function filterClients() {
+      const search = (document.getElementById('clients-search')?.value || '').toLowerCase();
+      const data = window.clientsDataStore || [];
+      
+      const filtered = data.filter(row => {
+        const name = (row[1] || '').toLowerCase();
+        const gstin = (row[3] || '').toLowerCase();
+        const state = (row[4] || '').toLowerCase();
+        return name.includes(search) || gstin.includes(search) || state.includes(search);
+      });
+
+      const tbody = document.getElementById('clients-tbody');
+      if (tbody) {
+        if (filtered.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--muted)">No results found</td></tr>`;
+        } else {
+          tbody.innerHTML = filtered.map(row => `
+            <tr>
+              <td data-label="Client Name" style="font-weight:600"><div class="truncate w-full ml-4 max-w-[180px] md:max-w-none text-right md:text-left md:ml-0">${row[1] || 'N/A'}</div></td>
+              <td data-label="GSTIN">${row[3] || 'NONE'}</td>
+              <td data-label="State">${row[4] || 'N/A'}</td>
+              <td data-label="Code" class="hidden md:table-cell">${row[5] || 'N/A'}</td>
+              <td data-label="Phone">${row[6] || '-'}</td>
+            </tr>
+          `).join('');
+        }
+      }
+    }
+
+    function resetClientsFilters() {
+      document.getElementById('clients-search').value = '';
+      filterClients();
+    }
+
+    function showAddClientForm() {
+      document.getElementById('add-client-modal').classList.remove('hidden');
+    }
+
+    function closeAddClientModal() {
+      document.getElementById('add-client-modal').classList.add('hidden');
+      document.getElementById('add-client-form').reset();
+    }
+
+    async function handleAddClient(event) {
+      event.preventDefault();
+      const form = event.target;
+      const formData = new FormData(form);
+      const clientData = {
+        name: formData.get('name'),
+        address: formData.get('address'),
+        gstin: formData.get('gstin') || 'NONE',
+        state: formData.get('state'),
+        stateCode: formData.get('stateCode'),
+        phone: formData.get('phone') || '-',
+        email: formData.get('email') || '-'
+      };
+
+      const submitBtn = form.querySelector('button[type="submit"]');
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span class="spinner" style="border-top-color:#fff;"></span>';
+
+      try {
+        const response = await fetch(`${API_URL}/api/clients`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ clientData })
+        });
+        const data = await response.json();
+        
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = 'Save';
+        
+        if (data.success) {
+          showToast('Client added!');
+          closeAddClientModal();
+          loadClients();
+        } else {
+          showToast(data.error || 'Failed', 'error');
+        }
+      } catch (error) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = 'Save';
+        showToast(error.message || 'Failed', 'error');
+      }
+    }
+
+    // ==================== BUSINESSES ====================
+    async function loadBusinesses() {
+      setLoading('businesses-content');
+      try {
+        const response = await fetch(`${API_URL}/api/businesses`);
+        const data = await response.json();
+        renderBusinesses(data);
+      } catch (error) {
+        document.getElementById('businesses-content').innerHTML = 
+          `<div class="erp-card text-center" style="color:var(--danger)">Failed to load: ${error.message}</div>`;
+      }
+    }
+
+    function renderBusinesses(response) {
+      const container = document.getElementById('businesses-content');
+      if (!response || !response.success) {
+        container.innerHTML = `<div class="erp-card text-center" style="color:var(--danger)">Failed to load</div>`;
+        return;
+      }
+      const businesses = response.businesses || [];
+      businessesData = businesses;
+
+      if (businesses.length === 0) {
+        container.innerHTML = `
+          <div class="erp-card flex flex-col items-center justify-center p-10 md:p-16 text-center">
+            <svg class="mb-4 text-[var(--muted)] opacity-50" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01"/><path d="M16 6h.01"/><path d="M12 6h.01"/><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/></svg>
+            <div class="text-header mb-6">No Businesses Yet</div>
+            <button onclick="showAddBusinessForm()" class="btn btn-primary w-full md:w-auto">
+              Add Business
+            </button>
+          </div>
+        `;
+        return;
+      }
+
+      let html = `
+        <div class="erp-card">
+          <div class="mb-4 md:mb-6 flex flex-col md:flex-row gap-3 md:items-center">
+            <div class="flex-1 relative">
+              <input type="text" id="businesses-search" placeholder="Search..." class="input-field" oninput="filterBusinesses()" style="padding-left:44px">
+              <svg style="position:absolute;left:14px;top:16px;color:var(--muted)" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            </div>
+            <button onclick="resetBusinessesFilters()" class="btn btn-secondary hidden md:inline-flex">Reset</button>
+          </div>
+          <div class="table-container">
+            <table class="erp-table">
+              <thead>
+                <tr>
+                  <th>Business Name</th>
+                  <th class="hidden sm:table-cell">GSTIN</th>
+                  <th>Status</th>
+                  <th style="text-align:center">Action</th>
+                </tr>
+              </thead>
+              <tbody id="businesses-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      `;
+
+      container.innerHTML = html;
+      window.businessesDataStore = businesses;
+      filterBusinesses();
+    }
+
+    function filterBusinesses() {
+      const search = (document.getElementById('businesses-search')?.value || '').toLowerCase();
+      const data = window.businessesDataStore || [];
+      
+      const filtered = data.filter(row => {
+        const name = (row[1] || '').toLowerCase();
+        const gstin = (row[4] || '').toLowerCase();
+        return name.includes(search) || gstin.includes(search);
+      });
+
+      const tbody = document.getElementById('businesses-tbody');
+      if (tbody) {
+        if (filtered.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;padding:40px;color:var(--muted)">No results found</td></tr>`;
+        } else {
+          tbody.innerHTML = filtered.map(row => {
+            const isDefault = row[13] === true;
+            return `
+              <tr>
+                <td data-label="Business Name" style="font-weight:600"><div class="truncate w-full ml-4 max-w-[180px] md:max-w-none text-right md:text-left md:ml-0">${row[1] || 'N/A'}</div></td>
+                <td data-label="GSTIN" class="hidden sm:table-cell">${row[4] || 'N/A'}</td>
+                <td data-label="Status">${isDefault ? '<span class="badge badge-default text-[10px]">Default</span>' : '<span style="color:var(--muted)">—</span>'}</td>
+                <td data-label="Action" style="text-align:center">${!isDefault ? `<button onclick="setDefaultBusiness('${row[0]}')" class="btn btn-secondary btn-sm w-full md:w-auto h-8">Set Default</button>` : '<span class="text-helper text-[var(--muted)] w-full block text-right md:text-center">Active</span>'}</td>
+              </tr>
+            `;
+          }).join('');
+        }
+      }
+    }
+
+    function resetBusinessesFilters() {
+      document.getElementById('businesses-search').value = '';
+      filterBusinesses();
+    }
+
+    function showAddBusinessForm() {
+      document.getElementById('add-business-modal').classList.remove('hidden');
+    }
+
+    function closeAddBusinessModal() {
+      document.getElementById('add-business-modal').classList.add('hidden');
+      document.getElementById('add-business-form').reset();
+    }
+
+    async function handleAddBusiness(event) {
+      event.preventDefault();
+      const form = event.target;
+      const formData = new FormData(form);
+      const businessData = {
+        name: formData.get('name'),
+        address: formData.get('address'),
+        gstin: formData.get('gstin'),
+        pan: formData.get('pan'),
+        email: formData.get('email'),
+        phone: formData.get('phone'),
+        bankName: formData.get('bankName'),
+        branch: formData.get('branch'),
+        accountNo: formData.get('accountNo'),
+        ifsc: formData.get('ifsc'),
+        signatureText: formData.get('signatureText') || 'Authorised Signatory',
+        isDefault: formData.get('isDefault') === 'on'
+      };
+
+      const submitBtn = form.querySelector('button[type="submit"]');
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span class="spinner" style="border-top-color:#fff;"></span>';
+
+      try {
+        const response = await fetch(`${API_URL}/api/businesses`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ businessData })
+        });
+        const data = await response.json();
+        
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = 'Save';
+        
+        if (data.success) {
+          showToast('Business added!');
+          closeAddBusinessModal();
+          loadBusinesses();
+        } else {
+          showToast(data.error || 'Failed', 'error');
+        }
+      } catch (error) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = 'Save';
+        showToast(error.message || 'Failed', 'error');
+      }
+    }
+
+    async function setDefaultBusiness(businessId) {
+      const confirmed = await appConfirm('Set as default business?');
+      if (!confirmed) return;
+      
+      try {
+        const response = await fetch(`${API_URL}/api/businesses/default`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ businessId })
+        });
+        const data = await response.json();
+        
+        if (data.success) {
+          showToast('Default business updated!');
+          loadBusinesses();
+        } else {
+          showToast(data.error || 'Failed', 'error');
+        }
+      } catch (error) {
+        showToast(error.message || 'Failed', 'error');
+      }
+    }
+
+    // ==================== EXPORT INVOICES ====================
+    async function loadExportInvoices() {
+      setLoading('export-invoices-content');
+      try {
+        const response = await fetch(`${API_URL}/api/export-invoices`);
+        const data = await response.json();
+        renderExportInvoices(data);
+      } catch (error) {
+        document.getElementById('export-invoices-content').innerHTML = 
+          `<div class="erp-card text-center" style="color:var(--danger)">Failed to load: ${error.message}</div>`;
+      }
+    }
+
+    function renderExportInvoices(response) {
+      const container = document.getElementById('export-invoices-content');
+      if (!response || !response.success) {
+        container.innerHTML = `<div class="erp-card text-center" style="color:var(--danger)">Failed to load</div>`;
+        return;
+      }
+      const invoices = response.invoices || [];
+      exportInvoicesData = invoices;
+
+      if (invoices.length === 0) {
+        container.innerHTML = `
+          <div class="erp-card flex flex-col items-center justify-center p-10 md:p-16 text-center">
+            <svg class="mb-4 text-[var(--muted)] opacity-50" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            <div class="text-header mb-6">No Export Invoices</div>
+            <button onclick="showCreateExportForm()" class="btn btn-primary w-full md:w-auto">
+              Create Export
+            </button>
+          </div>
+        `;
+        return;
+      }
+
+      let html = `
+        <div class="erp-card">
+          <div class="mb-4 md:mb-6 flex flex-col md:flex-row gap-3 md:items-center">
+            <div class="flex-1 relative">
+              <input type="text" id="export-search" placeholder="Search..." class="input-field" oninput="filterExports()" style="padding-left:44px">
+              <svg style="position:absolute;left:14px;top:16px;color:var(--muted)" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            </div>
+            <button onclick="resetExportsFilters()" class="btn btn-secondary hidden md:inline-flex">Reset</button>
+          </div>
+          <div class="table-container">
+            <table class="erp-table">
+              <thead>
+                <tr>
+                  <th>No</th>
+                  <th>Date</th>
+                  <th>Client</th>
+                  <th style="text-align:right">USD</th>
+                  <th style="text-align:center">Action</th>
+                </tr>
+              </thead>
+              <tbody id="export-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      `;
+
+      container.innerHTML = html;
+      window.exportDataStore = invoices;
+      filterExports();
+    }
+
+    function filterExports() {
+      const search = (document.getElementById('export-search')?.value || '').toLowerCase();
+      const data = window.exportDataStore || [];
+      
+      const filtered = data.filter(row => {
+        const invNo = (row.invoice_no || '').toLowerCase();
+        const client = (row.client_name || '').toLowerCase();
+        const country = (row.country || '').toLowerCase();
+        return invNo.includes(search) || client.includes(search) || country.includes(search);
+      });
+
+      const tbody = document.getElementById('export-tbody');
+      if (tbody) {
+        if (filtered.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--muted)">No results found</td></tr>`;
+        } else {
+          tbody.innerHTML = filtered.map(inv => {
+            let actions = '';
+            if (inv.status === 'ACTIVE') {
+              actions = `
+                <div class="flex gap-2 justify-center w-full">
+                  <button onclick="handleCancelInvoice('${inv.invoice_no}')" class="btn btn-danger btn-sm flex-1 md:flex-none h-8 px-2" title="Cancel">✕ Cancel</button>
+                </div>
+              `;
+            } else {
+              actions = `<div style="text-align:right md:text-center;color:var(--muted);width:100%;">—</div>`;
+            }
+            return `
+              <tr>
+                <td data-label="No"><span style="font-weight:600">${inv.invoice_no || 'N/A'}</span></td>
+                <td data-label="Date">${inv.date || 'N/A'}</td>
+                <td data-label="Client"><div class="truncate w-full ml-4 max-w-[180px] md:max-w-none text-right md:text-left md:ml-0">${inv.client_name || 'N/A'}</div></td>
+                <td data-label="USD" style="text-align:right;font-weight:600">$${Number(inv.amount_usd || 0).toFixed(2)}</td>
+                <td data-label="Action">${actions}</td>
+              </tr>
+            `;
+          }).join('');
+        }
+      }
+    }
+
+    function resetExportsFilters() {
+      document.getElementById('export-search').value = '';
+      filterExports();
+    }
+
+    function showCreateExportForm() {
+      document.getElementById('create-export-modal').classList.remove('hidden');
+      document.getElementById('export-date').value = new Date().toISOString().split('T')[0];
+    }
+
+    function closeCreateExportModal() {
+      document.getElementById('create-export-modal').classList.add('hidden');
+      document.getElementById('create-export-form').reset();
+    }
+
+    async function handleCreateExportInvoice(event) {
+      event.preventDefault();
+      const form = event.target;
+      const formData = new FormData(form);
+      const invoiceData = {
+        clientName: formData.get('clientName'),
+        country: formData.get('country'),
+        address: formData.get('address'),
+        description: formData.get('description'),
+        sacCode: formData.get('sacCode'),
+        quantity: parseFloat(formData.get('quantity')) || 0,
+        rate: parseFloat(formData.get('rate')) || 0,
+        date: formData.get('date') || new Date().toISOString().split('T')[0]
+      };
+
+      if (invoiceData.quantity <= 0 || invoiceData.rate <= 0) {
+        showToast('Quantity and rate must be > 0', 'error');
+        return;
+      }
+
+      const submitBtn = form.querySelector('button[type="submit"]');
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span class="spinner" style="border-top-color:#fff;"></span>';
+
+      try {
+        const response = await fetch(`${API_URL}/api/export-invoices`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(invoiceData)
+        });
+        const data = await response.json();
+        
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = 'Create';
+        
+        if (data.success) {
+          showToast(`Export ${data.invoiceNo} created!`);
+          closeCreateExportModal();
+          loadExportInvoices();
+        } else {
+          showToast(data.error || 'Failed', 'error');
+        }
+      } catch (error) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = 'Create';
+        showToast(error.message || 'Failed', 'error');
+      }
+    }
+
+    // ==================== CANCELLED INVOICES ====================
+    async function loadCancelledInvoices() {
+      setLoading('cancelled-content');
+      try {
+        const response = await fetch(`${API_URL}/api/invoices`);
+        const data = await response.json();
+        renderCancelled(data);
+      } catch (error) {
+        document.getElementById('cancelled-content').innerHTML = 
+          `<div class="erp-card text-center" style="color:var(--danger)">Failed to load: ${error.message}</div>`;
+      }
+    }
+
+    function renderCancelled(response) {
+      const container = document.getElementById('cancelled-content');
+      if (!response || !response.success) {
+        container.innerHTML = `<div class="erp-card text-center" style="color:var(--danger)">Failed to load</div>`;
+        return;
+      }
+
+      const cancelled = (response.invoices || []).filter(inv => inv.status === 'CANCELLED');
+      if (cancelled.length === 0) {
+        container.innerHTML = `
+          <div class="erp-card flex flex-col items-center justify-center p-10 md:p-16 text-center">
+            <svg class="mb-4 text-[var(--muted)] opacity-50" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+            <div class="text-header mb-6">No Cancelled Invoices</div>
+          </div>
+        `;
+        return;
+      }
+
+      let html = `
+        <div class="erp-card">
+          <div class="mb-4 md:mb-6 flex flex-col md:flex-row gap-3 md:items-center">
+            <div class="flex-1 relative">
+              <input type="text" id="cancelled-search" placeholder="Search..." class="input-field" oninput="filterCancelled()" style="padding-left:44px">
+              <svg style="position:absolute;left:14px;top:16px;color:var(--muted)" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            </div>
+            <button onclick="resetCancelledFilters()" class="btn btn-secondary hidden md:inline-flex">Reset</button>
+          </div>
+          <div class="table-container">
+            <table class="erp-table">
+              <thead>
+                <tr>
+                  <th>No</th>
+                  <th>Client</th>
+                  <th style="text-align:right">Total</th>
+                  <th class="hidden sm:table-cell">Reason</th>
+                </tr>
+              </thead>
+              <tbody id="cancelled-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      `;
+
+      container.innerHTML = html;
+      window.cancelledDataStore = cancelled;
+      filterCancelled();
+    }
+
+    function filterCancelled() {
+      const search = (document.getElementById('cancelled-search')?.value || '').toLowerCase();
+      const data = window.cancelledDataStore || [];
+      
+      const filtered = data.filter(row => {
+        const invNo = (row.invoice_no || '').toLowerCase();
+        const client = (row.client_name || '').toLowerCase();
+        const reason = (row.cancelled_reason || '').toLowerCase();
+        return invNo.includes(search) || client.includes(search) || reason.includes(search);
+      });
+
+      const tbody = document.getElementById('cancelled-tbody');
+      if (tbody) {
+        if (filtered.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;padding:40px;color:var(--muted)">No results found</td></tr>`;
+        } else {
+          tbody.innerHTML = filtered.map(inv => `
+            <tr>
+              <td data-label="No"><span style="font-weight:600">${inv.invoice_no || 'N/A'}</span></td>
+              <td data-label="Client"><div class="truncate w-full ml-4 max-w-[180px] md:max-w-none text-right md:text-left md:ml-0">${inv.client_name || 'N/A'}</div></td>
+              <td data-label="Total" style="text-align:right;font-weight:600;color:var(--danger)">₹${Number(inv.total_amount || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+              <td data-label="Reason" class="hidden sm:table-cell text-[var(--muted)]"><div class="max-w-[150px] truncate">${inv.cancelled_reason || 'N/A'}</div></td>
+            </tr>
+          `).join('');
+        }
+      }
+    }
+
+    function resetCancelledFilters() {
+      document.getElementById('cancelled-search').value = '';
+      filterCancelled();
+    }
+
+    // ==================== UTILITY ====================
+    function formatDateForInput(dateStr) {
+      if (!dateStr) return '';
+      const parts = dateStr.split('-');
+      if (parts.length === 3) {
+        if (parts[0].length === 4) return dateStr;
+        return `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+      }
+      return dateStr;
+    }
+
+    function handleError(error) {
+      console.error('Error:', error);
+      showToast(`Error: ${error.message || 'Something went wrong'}`, 'error');
+    }
+
+    // ==================== INITIALIZATION ====================
+    document.addEventListener('DOMContentLoaded', function() {
+      navigateTo('dashboard');
+    });
+
+    // Close modals on outside click
+    document.addEventListener('click', function(event) {
+      const modals = {
+        'add-client-modal': closeAddClientModal,
+        'add-business-modal': closeAddBusinessModal,
+        'create-export-modal': closeCreateExportModal,
+        'revise-invoice-modal': closeReviseModal,
+        'review-invoice-modal': closeReviewModal
+      };
+      Object.keys(modals).forEach(id => {
+        const modal = document.getElementById(id);
+        if (event.target === modal) modals[id]();
+      });
+    });
+
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape') {
+        closeAddClientModal();
+        closeAddBusinessModal();
+        closeCreateExportModal();
+        closeReviseModal();
+        closeReviewModal();
+      }
+    });
+  </script>
+</body>
+</html>
