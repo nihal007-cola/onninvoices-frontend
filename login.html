@@ -41,8 +41,8 @@
       width: 100%;
     }
     .logo { text-align: center; margin-bottom: 32px; }
-    .logo img { height: 48px; width: auto; }
-    .logo h1 { font-size: 24px; font-weight: 700; margin-top: 8px; }
+    .logo img { height: 56px; width: auto; margin-bottom: 8px; }
+    .logo h1 { font-size: 24px; font-weight: 700; }
     .logo p { color: var(--muted); font-size: 14px; margin-top: 4px; }
     .form-group { margin-bottom: 16px; }
     .form-group label { display: block; font-size: 14px; font-weight: 500; margin-bottom: 6px; color: var(--muted); }
@@ -96,8 +96,11 @@
     .resend { text-align: center; margin-top: 12px; font-size: 14px; color: var(--muted); }
     .resend a { color: var(--primary); cursor: pointer; text-decoration: none; }
     .resend a:hover { text-decoration: underline; }
+    .resend a.disabled { color: var(--muted); cursor: default; pointer-events: none; }
     .divider { border-top: 1px solid var(--border); margin: 24px 0; }
     .footer-text { text-align: center; font-size: 12px; color: var(--muted); margin-top: 16px; }
+    .text-center { text-align: center; }
+    .mt-4 { margin-top: 16px; }
   </style>
 </head>
 <body>
@@ -141,7 +144,7 @@
     </div>
   </div>
 
-  <div id="message" class="mt-4 text-center"></div>
+  <div id="message" class="text-center mt-4"></div>
   <div class="divider"></div>
   <div class="footer-text">Secure authentication • OTP verified via SMS</div>
 </div>
@@ -191,6 +194,25 @@
     let otp = '';
     document.querySelectorAll('.otp-input').forEach(el => otp += el.value);
     return otp;
+  }
+
+  // ==================== SHOW/HIDE ERROR ====================
+  function showError(id, message) {
+    const el = document.getElementById(id);
+    el.textContent = message;
+    el.classList.remove('hidden');
+    setTimeout(() => el.classList.add('hidden'), 5000);
+  }
+
+  function hideError(id) {
+    document.getElementById(id).classList.add('hidden');
+  }
+
+  function showMessage(message, type) {
+    const el = document.getElementById('message');
+    el.textContent = message;
+    el.className = type === 'success' ? 'success' : 'error';
+    setTimeout(() => { el.textContent = ''; }, 4000);
   }
 
   // ==================== PHONE SUBMISSION ====================
@@ -269,9 +291,9 @@
 
         setTimeout(() => {
           if (data.user.role === 'OWNER') {
-            window.location.href = '/admin-panel.html';
+            window.location.href = '/onninvoices-frontend/admin-panel.html';
           } else {
-            window.location.href = '/dashboard.html';
+            window.location.href = '/onninvoices-frontend/dashboard.html';
           }
         }, 1000);
       } else {
@@ -335,25 +357,6 @@
         resendLink.textContent = `Resend (${secondsLeft}s)`;
       }
     }, 1000);
-  }
-
-  // ==================== HELPERS ====================
-  function showError(id, message) {
-    const el = document.getElementById(id);
-    el.textContent = message;
-    el.classList.remove('hidden');
-    setTimeout(() => el.classList.add('hidden'), 5000);
-  }
-
-  function hideError(id) {
-    document.getElementById(id).classList.add('hidden');
-  }
-
-  function showMessage(message, type) {
-    const el = document.getElementById('message');
-    el.textContent = message;
-    el.className = type === 'success' ? 'success' : 'error';
-    setTimeout(() => { el.textContent = ''; }, 4000);
   }
 
   // ==================== ENTER KEY ON OTP ====================
