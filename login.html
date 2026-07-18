@@ -47,23 +47,9 @@
       justify-content: center;
       margin-bottom: 32px;
     }
-    .logo img {
-      height: 64px;
-      width: auto;
-      margin-bottom: 8px;
-      display: block;
-    }
-    .logo h1 {
-      font-size: 24px;
-      font-weight: 700;
-      text-align: center;
-    }
-    .logo p {
-      color: var(--muted);
-      font-size: 14px;
-      margin-top: 4px;
-      text-align: center;
-    }
+    .logo img { height: 64px; width: auto; margin-bottom: 8px; display: block; }
+    .logo h1 { font-size: 24px; font-weight: 700; text-align: center; }
+    .logo p { color: var(--muted); font-size: 14px; margin-top: 4px; text-align: center; }
     .form-group { margin-bottom: 16px; }
     .form-group label { display: block; font-size: 14px; font-weight: 500; margin-bottom: 6px; color: var(--muted); }
     .form-group input {
@@ -310,10 +296,12 @@
         showMessage('✅ Login successful!', 'success');
 
         setTimeout(() => {
+          // The correct pages exist in the frontend folder
           if (data.user.role === 'OWNER') {
             window.location.href = '/onninvoices-frontend/admin-panel.html';
           } else {
-            window.location.href = '/onninvoices-frontend/dashboard.html';
+            // All other users go to the main app (index.html)
+            window.location.href = '/onninvoices-frontend/';
           }
         }, 1000);
       } else {
