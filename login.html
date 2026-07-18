@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#111827">
+  <title>ONNinvoices - Login</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #111827;
+      --card: #1F2937;
+      --border: #374151;
+      --text: #F9FAFB;
+      --muted: #9CA3AF;
+      --primary: #2563EB;
+      --primary-hover: #3B82F6;
+      --success: #10B981;
+      --danger: #EF4444;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .login-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 40px 32px;
+      max-width: 420px;
+      width: 100%;
+    }
+    .logo { text-align: center; margin-bottom: 32px; }
+    .logo img { height: 48px; width: auto; }
+    .logo h1 { font-size: 24px; font-weight: 700; margin-top: 8px; }
+    .logo p { color: var(--muted); font-size: 14px; margin-top: 4px; }
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; font-size: 14px; font-weight: 500; margin-bottom: 6px; color: var(--muted); }
+    .form-group input {
+      width: 100%;
+      padding: 12px 16px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 16px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .form-group input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); }
+    .form-group input::placeholder { color: var(--muted); }
+    .btn {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: white;
+    }
+    .btn-primary { background: var(--primary); }
+    .btn-primary:hover { background: var(--primary-hover); }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-success { background: var(--success); }
+    .btn-success:hover { opacity: 0.9; }
+    .hidden { display: none !important; }
+    .error { color: var(--danger); font-size: 14px; margin-top: 8px; }
+    .success { color: var(--success); font-size: 14px; margin-top: 8px; }
+    .otp-input-container { display: flex; gap: 8px; justify-content: center; margin: 16px 0; }
+    .otp-input {
+      width: 48px;
+      height: 56px;
+      text-align: center;
+      font-size: 24px;
+      font-weight: 600;
+      background: var(--bg);
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      outline: none;
+    }
+    .otp-input:focus { border-color: var(--primary); }
+    .otp-input-filled { border-color: var(--success); }
+    .resend { text-align: center; margin-top: 12px; font-size: 14px; color: var(--muted); }
+    .resend a { color: var(--primary); cursor: pointer; text-decoration: none; }
+    .resend a:hover { text-decoration: underline; }
+    .divider { border-top: 1px solid var(--border); margin: 24px 0; }
+    .footer-text { text-align: center; font-size: 12px; color: var(--muted); margin-top: 16px; }
+  </style>
+</head>
+<body>
+
+<div class="login-card">
+  <div class="logo">
+    <img src="https://nihal007-cola.github.io/logo.png" alt="ONNinvoices">
+    <h1>ONNinvoices</h1>
+    <p>Sign in to your account</p>
+  </div>
+
+  <!-- Step 1: Phone Number -->
+  <div id="phoneStep">
+    <form id="phoneForm">
+      <div class="form-group">
+        <label>Phone Number</label>
+        <input type="tel" id="phoneInput" placeholder="+91XXXXXXXXXX" required autofocus>
+      </div>
+      <button type="submit" class="btn btn-primary" id="sendOtpBtn">Send OTP</button>
+      <div id="phoneError" class="error hidden"></div>
+    </form>
+  </div>
+
+  <!-- Step 2: OTP Verification -->
+  <div id="otpStep" class="hidden">
+    <p style="text-align:center;color:var(--muted);font-size:14px;margin-bottom:16px;">
+      Enter the 6-digit OTP sent to <strong id="otpPhoneDisplay"></strong>
+    </p>
+    <div class="otp-input-container" id="otpContainer">
+      <input type="text" class="otp-input" maxlength="1" data-index="0" inputmode="numeric">
+      <input type="text" class="otp-input" maxlength="1" data-index="1" inputmode="numeric">
+      <input type="text" class="otp-input" maxlength="1" data-index="2" inputmode="numeric">
+      <input type="text" class="otp-input" maxlength="1" data-index="3" inputmode="numeric">
+      <input type="text" class="otp-input" maxlength="1" data-index="4" inputmode="numeric">
+      <input type="text" class="otp-input" maxlength="1" data-index="5" inputmode="numeric">
+    </div>
+    <button type="button" class="btn btn-success" id="verifyOtpBtn">Verify OTP</button>
+    <div id="otpError" class="error hidden"></div>
+    <div class="resend">
+      Didn't receive the OTP? <a id="resendOtp">Resend</a>
+    </div>
+  </div>
+
+  <div id="message" class="mt-4 text-center"></div>
+  <div class="divider"></div>
+  <div class="footer-text">Secure authentication • OTP verified via SMS</div>
+</div>
+
+<script>
+  const API_URL = 'https://api.jamesmoriarty.in';
+  let currentPhone = '';
+  let otpTimer = null;
+  let secondsLeft = 30;
+
+  // ==================== OTP INPUT HANDLING ====================
+  document.querySelectorAll('.otp-input').forEach((input, index) => {
+    input.addEventListener('input', function(e) {
+      this.value = this.value.replace(/\D/g, '');
+      if (this.value.length === 1) {
+        this.classList.add('otp-input-filled');
+        if (index < 5) {
+          document.querySelector(`.otp-input[data-index="${index + 1}"]`).focus();
+        }
+      }
+    });
+
+    input.addEventListener('keydown', function(e) {
+      if (e.key === 'Backspace' && this.value === '' && index > 0) {
+        document.querySelector(`.otp-input[data-index="${index - 1}"]`).focus();
+      }
+    });
+
+    input.addEventListener('paste', function(e) {
+      e.preventDefault();
+      const paste = (e.clipboardData || window.clipboardData).getData('text');
+      const digits = paste.replace(/\D/g, '').slice(0, 6);
+      document.querySelectorAll('.otp-input').forEach((el, i) => {
+        if (i < digits.length) {
+          el.value = digits[i];
+          el.classList.add('otp-input-filled');
+        }
+      });
+      if (digits.length === 6) {
+        document.getElementById('verifyOtpBtn').focus();
+      }
+    });
+  });
+
+  // ==================== GET OTP VALUE ====================
+  function getOtp() {
+    let otp = '';
+    document.querySelectorAll('.otp-input').forEach(el => otp += el.value);
+    return otp;
+  }
+
+  // ==================== PHONE SUBMISSION ====================
+  document.getElementById('phoneForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const phone = document.getElementById('phoneInput').value.trim();
+    if (!phone) {
+      showError('phoneError', 'Please enter your phone number');
+      return;
+    }
+
+    hideError('phoneError');
+    const btn = document.getElementById('sendOtpBtn');
+    btn.disabled = true;
+    btn.textContent = 'Sending...';
+
+    try {
+      const response = await fetch(`${API_URL}/api/auth/send-otp`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone })
+      });
+      const data = await response.json();
+
+      btn.disabled = false;
+      btn.textContent = 'Send OTP';
+
+      if (response.ok && data.success) {
+        currentPhone = phone;
+        document.getElementById('otpPhoneDisplay').textContent = phone;
+        document.getElementById('phoneStep').classList.add('hidden');
+        document.getElementById('otpStep').classList.remove('hidden');
+        showMessage('OTP sent successfully!', 'success');
+        startTimer();
+        document.querySelector('.otp-input').focus();
+      } else {
+        showError('phoneError', data.detail || 'Failed to send OTP. Please contact admin.');
+      }
+    } catch (error) {
+      btn.disabled = false;
+      btn.textContent = 'Send OTP';
+      showError('phoneError', 'Network error. Please try again.');
+    }
+  });
+
+  // ==================== VERIFY OTP ====================
+  document.getElementById('verifyOtpBtn').addEventListener('click', async function() {
+    const otp = getOtp();
+    if (otp.length < 6) {
+      showError('otpError', 'Please enter the complete 6-digit OTP');
+      return;
+    }
+
+    hideError('otpError');
+    this.disabled = true;
+    this.textContent = 'Verifying...';
+
+    try {
+      const response = await fetch(`${API_URL}/api/auth/verify-otp`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone: currentPhone, otp })
+      });
+      const data = await response.json();
+
+      this.disabled = false;
+      this.textContent = 'Verify OTP';
+
+      if (response.ok && data.success) {
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('userRole', data.user.role);
+        localStorage.setItem('userPhone', data.user.phone);
+        localStorage.setItem('userEmail', data.user.email || '');
+        showMessage('✅ Login successful!', 'success');
+
+        setTimeout(() => {
+          if (data.user.role === 'OWNER') {
+            window.location.href = '/admin-panel.html';
+          } else {
+            window.location.href = '/dashboard.html';
+          }
+        }, 1000);
+      } else {
+        showError('otpError', data.detail || 'Invalid OTP. Please try again.');
+        document.querySelectorAll('.otp-input').forEach(el => {
+          el.value = '';
+          el.classList.remove('otp-input-filled');
+        });
+        document.querySelector('.otp-input').focus();
+      }
+    } catch (error) {
+      this.disabled = false;
+      this.textContent = 'Verify OTP';
+      showError('otpError', 'Network error. Please try again.');
+    }
+  });
+
+  // ==================== RESEND OTP ====================
+  document.getElementById('resendOtp').addEventListener('click', async function() {
+    if (this.classList.contains('disabled')) return;
+
+    try {
+      const response = await fetch(`${API_URL}/api/auth/send-otp`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone: currentPhone })
+      });
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        showMessage('OTP resent successfully!', 'success');
+        startTimer();
+        document.querySelector('.otp-input').focus();
+      } else {
+        showError('otpError', data.detail || 'Failed to resend OTP');
+      }
+    } catch (error) {
+      showError('otpError', 'Network error. Please try again.');
+    }
+  });
+
+  // ==================== TIMER ====================
+  function startTimer() {
+    const resendLink = document.getElementById('resendOtp');
+    secondsLeft = 30;
+    resendLink.classList.add('disabled');
+    resendLink.style.color = 'var(--muted)';
+    resendLink.style.cursor = 'default';
+    resendLink.textContent = `Resend (${secondsLeft}s)`;
+
+    clearInterval(otpTimer);
+    otpTimer = setInterval(() => {
+      secondsLeft--;
+      if (secondsLeft <= 0) {
+        clearInterval(otpTimer);
+        resendLink.textContent = 'Resend';
+        resendLink.style.color = 'var(--primary)';
+        resendLink.style.cursor = 'pointer';
+        resendLink.classList.remove('disabled');
+      } else {
+        resendLink.textContent = `Resend (${secondsLeft}s)`;
+      }
+    }, 1000);
+  }
+
+  // ==================== HELPERS ====================
+  function showError(id, message) {
+    const el = document.getElementById(id);
+    el.textContent = message;
+    el.classList.remove('hidden');
+    setTimeout(() => el.classList.add('hidden'), 5000);
+  }
+
+  function hideError(id) {
+    document.getElementById(id).classList.add('hidden');
+  }
+
+  function showMessage(message, type) {
+    const el = document.getElementById('message');
+    el.textContent = message;
+    el.className = type === 'success' ? 'success' : 'error';
+    setTimeout(() => { el.textContent = ''; }, 4000);
+  }
+
+  // ==================== ENTER KEY ON OTP ====================
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+      const otpStep = document.getElementById('otpStep');
+      if (!otpStep.classList.contains('hidden')) {
+        const otp = getOtp();
+        if (otp.length === 6) {
+          document.getElementById('verifyOtpBtn').click();
+        }
+      }
+    }
+  });
+</script>
+</body>
+</html>
