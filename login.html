@@ -296,12 +296,20 @@
         showMessage('✅ Login successful!', 'success');
 
         setTimeout(() => {
-          // The correct pages exist in the frontend folder
+          // OWNER gets a choice: Admin Panel or App
           if (data.user.role === 'OWNER') {
-            window.location.href = '/onninvoices-frontend/admin-panel.html';
+            const goToAdmin = confirm(
+              'Welcome Owner! 🎉\n\n' +
+              'Click OK to go to Admin Panel\n' +
+              'Click Cancel to go to the App'
+            );
+            if (goToAdmin) {
+              window.location.href = '/onninvoices-frontend/admin-panel.html';
+            } else {
+              window.location.href = '/onninvoices-frontend/index.html';
+            }
           } else {
-            // All other users go to the main app (index.html)
-            window.location.href = '/onninvoices-frontend/';
+            window.location.href = '/onninvoices-frontend/index.html';
           }
         }, 1000);
       } else {
@@ -379,6 +387,12 @@
       }
     }
   });
+
+  // ==================== LOGOUT ====================
+  // If user somehow has token but tries to login, clear it
+  if (localStorage.getItem('token')) {
+    localStorage.clear();
+  }
 </script>
 </body>
 </html>
