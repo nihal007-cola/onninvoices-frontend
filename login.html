@@ -66,8 +66,7 @@
     .form-group input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); }
     .form-group input::placeholder { color: var(--muted); }
     .btn {
-      width: 100%;
-      padding: 12px;
+      padding: 12px 24px;
       border: none;
       border-radius: 8px;
       font-size: 16px;
@@ -81,6 +80,9 @@
     .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
     .btn-success { background: var(--success); }
     .btn-success:hover { opacity: 0.9; }
+    .btn-secondary { background: var(--border); color: var(--text); }
+    .btn-secondary:hover { background: #4B5563; }
+    .btn-block { width: 100%; }
     .hidden { display: none !important; }
     .error { color: var(--danger); font-size: 14px; margin-top: 8px; }
     .success { color: var(--success); font-size: 14px; margin-top: 8px; }
@@ -107,6 +109,93 @@
     .footer-text { text-align: center; font-size: 12px; color: var(--muted); margin-top: 16px; }
     .text-center { text-align: center; }
     .mt-4 { margin-top: 16px; }
+
+    /* ==================== ONN CUSTOM MODAL ==================== */
+    .onn-modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      padding: 20px;
+      animation: fadeIn 0.3s ease-out;
+    }
+    .onn-modal {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px;
+      max-width: 400px;
+      width: 100%;
+      animation: slideUp 0.3s ease-out;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    }
+    .onn-modal .modal-icon {
+      text-align: center;
+      font-size: 48px;
+      margin-bottom: 12px;
+    }
+    .onn-modal .modal-title {
+      font-size: 20px;
+      font-weight: 700;
+      text-align: center;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+    .onn-modal .modal-message {
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .onn-modal .modal-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+    .onn-modal .modal-actions .btn {
+      flex: 1;
+      text-align: center;
+      justify-content: center;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .onn-modal .modal-actions .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+    .onn-modal .modal-actions .btn-primary:hover {
+      background: var(--primary-hover);
+    }
+    .onn-modal .modal-actions .btn-secondary {
+      background: var(--border);
+      color: var(--text);
+    }
+    .onn-modal .modal-actions .btn-secondary:hover {
+      background: #4B5563;
+    }
+    .onn-modal .modal-actions .btn-success {
+      background: var(--success);
+      color: white;
+    }
+    .onn-modal .modal-actions .btn-success:hover {
+      opacity: 0.9;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes slideUp {
+      from { transform: translateY(30px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
   </style>
 </head>
 <body>
@@ -125,7 +214,7 @@
         <label>Phone Number</label>
         <input type="tel" id="phoneInput" placeholder="+91XXXXXXXXXX" required autofocus>
       </div>
-      <button type="submit" class="btn btn-primary" id="sendOtpBtn">Send OTP</button>
+      <button type="submit" class="btn btn-primary btn-block" id="sendOtpBtn">Send OTP</button>
       <div id="phoneError" class="error hidden"></div>
     </form>
   </div>
@@ -143,7 +232,7 @@
       <input type="text" class="otp-input" maxlength="1" data-index="4" inputmode="numeric">
       <input type="text" class="otp-input" maxlength="1" data-index="5" inputmode="numeric">
     </div>
-    <button type="button" class="btn btn-success" id="verifyOtpBtn">Verify OTP</button>
+    <button type="button" class="btn btn-success btn-block" id="verifyOtpBtn">Verify OTP</button>
     <div id="otpError" class="error hidden"></div>
     <div class="resend">
       Didn't receive the OTP? <a id="resendOtp">Resend</a>
@@ -155,11 +244,95 @@
   <div class="footer-text">Secure authentication • OTP verified via SMS</div>
 </div>
 
+<!-- ==================== ONN CUSTOM MODAL ==================== -->
+<div id="onnModal" class="onn-modal-overlay hidden">
+  <div class="onn-modal">
+    <div class="modal-icon" id="modalIcon">👑</div>
+    <div class="modal-title" id="modalTitle">Welcome Owner!</div>
+    <div class="modal-message" id="modalMessage">Where would you like to go?</div>
+    <div class="modal-actions" id="modalActions">
+      <button class="btn btn-secondary" id="modalCancelBtn">Cancel</button>
+      <button class="btn btn-primary" id="modalConfirmBtn">Confirm</button>
+    </div>
+  </div>
+</div>
+
 <script>
   const API_URL = 'https://api.jamesmoriarty.in';
   let currentPhone = '';
   let otpTimer = null;
   let secondsLeft = 30;
+  let pendingRedirect = null;
+
+  // ==================== ONN CUSTOM MODAL ====================
+  function showOnnModal(options) {
+    return new Promise((resolve) => {
+      const modal = document.getElementById('onnModal');
+      const icon = document.getElementById('modalIcon');
+      const title = document.getElementById('modalTitle');
+      const message = document.getElementById('modalMessage');
+      const cancelBtn = document.getElementById('modalCancelBtn');
+      const confirmBtn = document.getElementById('modalConfirmBtn');
+
+      icon.textContent = options.icon || '👑';
+      title.textContent = options.title || 'ONNinvoices';
+      message.textContent = options.message || 'Choose an option';
+      
+      if (options.type === 'choice') {
+        cancelBtn.textContent = options.cancelText || 'Cancel';
+        confirmBtn.textContent = options.confirmText || 'Confirm';
+        cancelBtn.classList.remove('hidden');
+        confirmBtn.classList.remove('hidden');
+        confirmBtn.className = 'btn ' + (options.confirmClass || 'btn-primary');
+        
+        // Store the pending redirect
+        pendingRedirect = options.redirect || null;
+        
+        // Clean up old listeners
+        const newCancelBtn = cancelBtn.cloneNode(true);
+        const newConfirmBtn = confirmBtn.cloneNode(true);
+        cancelBtn.parentNode.replaceChild(newCancelBtn, cancelBtn);
+        confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+        
+        // Add listeners
+        newCancelBtn.addEventListener('click', function() {
+          modal.classList.add('hidden');
+          resolve(false);
+        });
+        
+        newConfirmBtn.addEventListener('click', function() {
+          modal.classList.add('hidden');
+          if (pendingRedirect) {
+            window.location.href = pendingRedirect;
+          }
+          resolve(true);
+        });
+        
+        document.getElementById('modalCancelBtn').textContent = options.cancelText || 'Cancel';
+        document.getElementById('modalConfirmBtn').textContent = options.confirmText || 'Confirm';
+      } else if (options.type === 'alert') {
+        cancelBtn.classList.add('hidden');
+        confirmBtn.textContent = options.confirmText || 'OK';
+        confirmBtn.className = 'btn ' + (options.confirmClass || 'btn-primary');
+        
+        // Clean up old listeners
+        const newConfirmBtn = confirmBtn.cloneNode(true);
+        confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+        
+        newConfirmBtn.addEventListener('click', function() {
+          modal.classList.add('hidden');
+          if (options.redirect) {
+            window.location.href = options.redirect;
+          }
+          resolve(true);
+        });
+        
+        document.getElementById('modalConfirmBtn').textContent = options.confirmText || 'OK';
+      }
+      
+      modal.classList.remove('hidden');
+    });
+  }
 
   // ==================== OTP INPUT HANDLING ====================
   document.querySelectorAll('.otp-input').forEach((input, index) => {
@@ -295,17 +468,22 @@
         localStorage.setItem('userEmail', data.user.email || '');
         showMessage('✅ Login successful!', 'success');
 
-        setTimeout(() => {
-          // OWNER gets a choice: Admin Panel or App
+        setTimeout(async () => {
           if (data.user.role === 'OWNER') {
-            const goToAdmin = confirm(
-              'Welcome Owner! 🎉\n\n' +
-              'Click OK to go to Admin Panel\n' +
-              'Click Cancel to go to the App'
-            );
-            if (goToAdmin) {
-              window.location.href = '/onninvoices-frontend/admin-panel.html';
-            } else {
+            // Show ONN-style custom modal
+            await showOnnModal({
+              type: 'choice',
+              icon: '👑',
+              title: 'Welcome Owner!',
+              message: 'Where would you like to go?',
+              cancelText: 'Go to App',
+              confirmText: 'Go to Admin Panel',
+              confirmClass: 'btn-primary',
+              redirect: '/onninvoices-frontend/admin-panel.html'
+            });
+            // If user clicks "Go to App" (cancel), redirect manually
+            // The modal handles confirm redirect, cancel goes to else below
+            if (!pendingRedirect) {
               window.location.href = '/onninvoices-frontend/index.html';
             }
           } else {
@@ -389,7 +567,6 @@
   });
 
   // ==================== LOGOUT ====================
-  // If user somehow has token but tries to login, clear it
   if (localStorage.getItem('token')) {
     localStorage.clear();
   }
