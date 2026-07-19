@@ -812,7 +812,8 @@
     async function apiFetch(endpoint, options = {}) {
       const token = localStorage.getItem('token');
       if (!token) {
-        window.location.href = '/onninvoices-frontend/login.html';
+        showToast('Please login first', 'error');
+        setTimeout(() => window.location.href = '/onninvoices-frontend/login.html', 1500);
         return null;
       }
       
@@ -822,18 +823,25 @@
         ...options.headers
       };
       
-      const response = await fetch(`${API_URL}${endpoint}`, {
-        ...options,
-        headers
-      });
-      
-      if (response.status === 401) {
-        localStorage.clear();
-        window.location.href = '/onninvoices-frontend/login.html';
+      try {
+        const response = await fetch(`${API_URL}${endpoint}`, {
+          ...options,
+          headers
+        });
+        
+        if (response.status === 401) {
+          localStorage.clear();
+          showToast('Session expired. Please login again.', 'error');
+          setTimeout(() => window.location.href = '/onninvoices-frontend/login.html', 1500);
+          return null;
+        }
+        
+        return response;
+      } catch (error) {
+        console.error('API Error:', error);
+        showToast('Network error: ' + error.message, 'error');
         return null;
       }
-      
-      return response;
     }
 
     // ==================== HELPER FUNCTIONS ====================
@@ -846,13 +854,6 @@
       const div = document.createElement('div');
       div.textContent = text;
       return div.innerHTML;
-    }
-
-    function createSafeElement(tag, className, text) {
-      const el = document.createElement(tag);
-      if (className) el.className = className;
-      if (text) el.textContent = text;
-      return el;
     }
 
     // ==================== STATE ====================
@@ -872,7 +873,8 @@
     // ==================== LOGOUT ====================
     function logout() {
         localStorage.clear();
-        window.location.href = '/onninvoices-frontend/login.html';
+        showToast('Logged out successfully', 'info');
+        setTimeout(() => window.location.href = '/onninvoices-frontend/login.html', 500);
     }
 
     // ==================== CUSTOM DIALOG SYSTEM ====================
@@ -1203,28 +1205,63 @@
 
     // ==================== INVOICE ACTIONS ====================
     async function handleCancelInvoice(invoiceNo) {
-      const confirmed = await appConfirm(`Cancel invoice ${invoiceNo}?`);
+      const token = localStorage.getItem('token');
+      if (!token) {
+        showToast('Please login first', 'error');
+        window.location.href = '/onninvoices-frontend/login.html';
+        return;
+      }
+      
+      const confirmed = await appConfirm(`Are you sure you want to cancel invoice ${invoiceNo}?`);
       if (!confirmed) return;
       
-      const reason = await appPrompt('Cancellation reason:');
-      if (!reason) return;
+      const reason = await appPrompt('Enter cancellation reason:');
+      if (!reason || reason.trim() === '') {
+        showToast('Cancellation cancelled - no reason provided', 'info');
+        return;
+      }
       
       try {
+        showToast('Cancelling invoice...', 'info');
         const response = await apiFetch('/api/invoices/cancel', {
           method: 'POST',
-          body: JSON.stringify({ invoiceNo, reason })
+          body: JSON.stringify({ 
+            invoiceNo: invoiceNo, 
+            reason: reason.trim() 
+          })
         });
         if (!response) return;
         const data = await response.json();
         if (data.success) {
-          showToast(`Invoice ${invoiceNo} cancelled`);
+          showToast(`✅ Invoice ${invoiceNo} cancelled successfully!`, 'success');
           loadDashboard();
         } else {
-          showToast(data.error || 'Failed to cancel', 'error');
+          showToast(`❌ Failed to cancel: ${data.error || 'Unknown error'}`, 'error');
         }
       } catch (error) {
-        showToast(error.message || 'Failed to cancel', 'error');
+        console.error('Cancel invoice error:', error);
+        showToast(`❌ Error: ${error.message}`, 'error');
       }
+    }
+
+    async function handleReviseInvoice(invoiceNo) {
+      currentReviseInvoiceNo = invoiceNo;
+      const invoice = invoicesData.find(inv => inv.invoice_no === invoiceNo && inv.status === 'ACTIVE');
+      if (!invoice) { 
+        showToast('Active invoice not found', 'error'); 
+        return; 
+      }
+      document.getElementById('revise-invoice-modal').classList.remove('hidden');
+      document.getElementById('revise-invoice-content').innerHTML = `
+        <div class="flex items-center justify-center py-20"><div class="spinner"></div></div>
+      `;
+      renderReviseForm(invoice);
+    }
+
+    function closeReviseModal() {
+      document.getElementById('revise-invoice-modal').classList.add('hidden');
+      currentReviseInvoiceNo = null;
+      reviseLineItemCounter = 0;
     }
 
     // ==================== CREATE INVOICE ====================
@@ -1563,19 +1600,13 @@
       try {
         const url = pendingIsRevise ? '/api/invoices/revise' : '/api/invoices';
         const body = pendingIsRevise ? { invoiceNo: pendingReviseNo, invoiceData: pendingInvoiceData } : { invoiceData: pendingInvoiceData };
-        
-        const response = await apiFetch(url, {
-          method: 'POST',
-          body: JSON.stringify(body)
-        });
+        const response = await apiFetch(url, { method: 'POST', body: JSON.stringify(body) });
         if (!response) return;
         const data = await response.json();
-        
         btn.disabled = false;
         btn.innerHTML = 'Confirm & Create';
-        
         if (data.success) {
-          showToast(`Invoice ${data.invoiceNo || 'created'}!`);
+          showToast(`Invoice ${data.invoiceNo || 'created'}!`, 'success');
           closeReviewModal();
           navigateTo('dashboard');
         } else {
@@ -1589,24 +1620,6 @@
     }
 
     // ==================== REVISE INVOICE ====================
-    function handleReviseInvoice(invoiceNo) {
-      currentReviseInvoiceNo = invoiceNo;
-      const invoice = invoicesData.find(inv => inv.invoice_no === invoiceNo && inv.status === 'ACTIVE');
-      if (!invoice) { showToast('Active invoice not found', 'error'); return; }
-
-      document.getElementById('revise-invoice-modal').classList.remove('hidden');
-      document.getElementById('revise-invoice-content').innerHTML = `
-        <div class="flex items-center justify-center py-20"><div class="spinner"></div></div>
-      `;
-      renderReviseForm(invoice);
-    }
-
-    function closeReviseModal() {
-      document.getElementById('revise-invoice-modal').classList.add('hidden');
-      currentReviseInvoiceNo = null;
-      reviseLineItemCounter = 0;
-    }
-
     function renderReviseForm(invoice) {
       const container = document.getElementById('revise-invoice-content');
       reviseLineItemCounter = 0;
@@ -2014,18 +2027,13 @@
       submitBtn.innerHTML = '<span class="spinner" style="border-top-color:#fff;"></span>';
 
       try {
-        const response = await apiFetch('/api/clients', {
-          method: 'POST',
-          body: JSON.stringify({ clientData })
-        });
+        const response = await apiFetch('/api/clients', { method: 'POST', body: JSON.stringify({ clientData }) });
         if (!response) return;
         const data = await response.json();
-        
         submitBtn.disabled = false;
         submitBtn.innerHTML = 'Save';
-        
         if (data.success) {
-          showToast('Client added!');
+          showToast('Client added!', 'success');
           closeAddClientModal();
           loadClients();
         } else {
@@ -2170,18 +2178,13 @@
       submitBtn.innerHTML = '<span class="spinner" style="border-top-color:#fff;"></span>';
 
       try {
-        const response = await apiFetch('/api/businesses', {
-          method: 'POST',
-          body: JSON.stringify({ businessData })
-        });
+        const response = await apiFetch('/api/businesses', { method: 'POST', body: JSON.stringify({ businessData }) });
         if (!response) return;
         const data = await response.json();
-        
         submitBtn.disabled = false;
         submitBtn.innerHTML = 'Save';
-        
         if (data.success) {
-          showToast('Business added!');
+          showToast('Business added!', 'success');
           closeAddBusinessModal();
           loadBusinesses();
         } else {
@@ -2197,17 +2200,12 @@
     async function setDefaultBusiness(businessId) {
       const confirmed = await appConfirm('Set as default business?');
       if (!confirmed) return;
-      
       try {
-        const response = await apiFetch('/api/businesses/default', {
-          method: 'POST',
-          body: JSON.stringify({ businessId })
-        });
+        const response = await apiFetch('/api/businesses/default', { method: 'POST', body: JSON.stringify({ businessId }) });
         if (!response) return;
         const data = await response.json();
-        
         if (data.success) {
-          showToast('Default business updated!');
+          showToast('Default business updated!', 'success');
           loadBusinesses();
         } else {
           showToast(data.error || 'Failed', 'error');
@@ -2363,18 +2361,13 @@
       submitBtn.innerHTML = '<span class="spinner" style="border-top-color:#fff;"></span>';
 
       try {
-        const response = await apiFetch('/api/export-invoices', {
-          method: 'POST',
-          body: JSON.stringify(invoiceData)
-        });
+        const response = await apiFetch('/api/export-invoices', { method: 'POST', body: JSON.stringify(invoiceData) });
         if (!response) return;
         const data = await response.json();
-        
         submitBtn.disabled = false;
         submitBtn.innerHTML = 'Create';
-        
         if (data.success) {
-          showToast(`Export ${data.invoiceNo} created!`);
+          showToast(`Export ${data.invoiceNo} created!`, 'success');
           closeCreateExportModal();
           loadExportInvoices();
         } else {
