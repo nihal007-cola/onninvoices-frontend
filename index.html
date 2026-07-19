@@ -808,6 +808,34 @@
     // ==================== CONFIGURATION ====================
     const API_URL = 'https://api.jamesmoriarty.in';
 
+    // ==================== API HELPER ====================
+    async function apiFetch(endpoint, options = {}) {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        window.location.href = '/onninvoices-frontend/login.html';
+        return null;
+      }
+      
+      const headers = {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+        ...options.headers
+      };
+      
+      const response = await fetch(`${API_URL}${endpoint}`, {
+        ...options,
+        headers
+      });
+      
+      if (response.status === 401) {
+        localStorage.clear();
+        window.location.href = '/onninvoices-frontend/login.html';
+        return null;
+      }
+      
+      return response;
+    }
+
     // ==================== HELPER FUNCTIONS ====================
     function roundCurrency(value) {
       return Math.round((value + Number.EPSILON) * 100) / 100;
@@ -990,7 +1018,6 @@
     async function loadDashboard() {
       setLoading('dashboard-content');
       
-      // Check if user is logged in
       const token = localStorage.getItem('token');
       if (!token) {
         document.getElementById('dashboard-content').innerHTML = `
@@ -1005,21 +1032,8 @@
       }
 
       try {
-        const response = await fetch(`${API_URL}/api/invoices`, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        
-        if (!response.ok) {
-          if (response.status === 401) {
-            localStorage.clear();
-            window.location.href = '/onninvoices-frontend/login.html';
-            return;
-          }
-          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        }
-        
+        const response = await apiFetch('/api/invoices');
+        if (!response) return;
         const data = await response.json();
         renderDashboard(data);
       } catch (error) {
@@ -1196,11 +1210,11 @@
       if (!reason) return;
       
       try {
-        const response = await fetch(`${API_URL}/api/invoices/cancel`, {
+        const response = await apiFetch('/api/invoices/cancel', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ invoiceNo, reason })
         });
+        if (!response) return;
         const data = await response.json();
         if (data.success) {
           showToast(`Invoice ${invoiceNo} cancelled`);
@@ -1313,7 +1327,8 @@
 
     async function loadClientsForSelect() {
       try {
-        const response = await fetch(`${API_URL}/api/clients`);
+        const response = await apiFetch('/api/clients');
+        if (!response) return;
         const data = await response.json();
         if (data.success && data.clients) {
           clientsData = data.clients;
@@ -1546,14 +1561,14 @@
       btn.innerHTML = '<span class="spinner" style="border-top-color:#fff;"></span>';
 
       try {
-        const url = pendingIsRevise ? `${API_URL}/api/invoices/revise` : `${API_URL}/api/invoices`;
+        const url = pendingIsRevise ? '/api/invoices/revise' : '/api/invoices';
         const body = pendingIsRevise ? { invoiceNo: pendingReviseNo, invoiceData: pendingInvoiceData } : { invoiceData: pendingInvoiceData };
         
-        const response = await fetch(url, {
+        const response = await apiFetch(url, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(body)
         });
+        if (!response) return;
         const data = await response.json();
         
         btn.disabled = false;
@@ -1691,7 +1706,8 @@
 
       (async () => {
         try {
-          const response = await fetch(`${API_URL}/api/clients`);
+          const response = await apiFetch('/api/clients');
+          if (!response) return;
           const data = await response.json();
           if (data.success && data.clients) {
             const select = document.getElementById('revise-client-select');
@@ -1875,7 +1891,8 @@
     async function loadClients() {
       setLoading('clients-content');
       try {
-        const response = await fetch(`${API_URL}/api/clients`);
+        const response = await apiFetch('/api/clients');
+        if (!response) return;
         const data = await response.json();
         renderClients(data);
       } catch (error) {
@@ -1997,11 +2014,11 @@
       submitBtn.innerHTML = '<span class="spinner" style="border-top-color:#fff;"></span>';
 
       try {
-        const response = await fetch(`${API_URL}/api/clients`, {
+        const response = await apiFetch('/api/clients', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ clientData })
         });
+        if (!response) return;
         const data = await response.json();
         
         submitBtn.disabled = false;
@@ -2025,7 +2042,8 @@
     async function loadBusinesses() {
       setLoading('businesses-content');
       try {
-        const response = await fetch(`${API_URL}/api/businesses`);
+        const response = await apiFetch('/api/businesses');
+        if (!response) return;
         const data = await response.json();
         renderBusinesses(data);
       } catch (error) {
@@ -2152,11 +2170,11 @@
       submitBtn.innerHTML = '<span class="spinner" style="border-top-color:#fff;"></span>';
 
       try {
-        const response = await fetch(`${API_URL}/api/businesses`, {
+        const response = await apiFetch('/api/businesses', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ businessData })
         });
+        if (!response) return;
         const data = await response.json();
         
         submitBtn.disabled = false;
@@ -2181,11 +2199,11 @@
       if (!confirmed) return;
       
       try {
-        const response = await fetch(`${API_URL}/api/businesses/default`, {
+        const response = await apiFetch('/api/businesses/default', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ businessId })
         });
+        if (!response) return;
         const data = await response.json();
         
         if (data.success) {
@@ -2203,7 +2221,8 @@
     async function loadExportInvoices() {
       setLoading('export-invoices-content');
       try {
-        const response = await fetch(`${API_URL}/api/export-invoices`);
+        const response = await apiFetch('/api/export-invoices');
+        if (!response) return;
         const data = await response.json();
         renderExportInvoices(data);
       } catch (error) {
@@ -2344,11 +2363,11 @@
       submitBtn.innerHTML = '<span class="spinner" style="border-top-color:#fff;"></span>';
 
       try {
-        const response = await fetch(`${API_URL}/api/export-invoices`, {
+        const response = await apiFetch('/api/export-invoices', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(invoiceData)
         });
+        if (!response) return;
         const data = await response.json();
         
         submitBtn.disabled = false;
@@ -2372,7 +2391,8 @@
     async function loadCancelledInvoices() {
       setLoading('cancelled-content');
       try {
-        const response = await fetch(`${API_URL}/api/invoices`);
+        const response = await apiFetch('/api/invoices');
+        if (!response) return;
         const data = await response.json();
         renderCancelled(data);
       } catch (error) {
