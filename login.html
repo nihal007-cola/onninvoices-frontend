@@ -241,7 +241,7 @@
 
   <div id="message" class="text-center mt-4"></div>
   <div class="divider"></div>
-  <div class="footer-text">Secure authentication • OTP verified via SMS</div>
+  <div class="footer-text">Secure authentication • OTP verified via Email</div>
 </div>
 
 <!-- ==================== ONN CUSTOM MODAL ==================== -->
@@ -251,8 +251,8 @@
     <div class="modal-title" id="modalTitle">Welcome Owner!</div>
     <div class="modal-message" id="modalMessage">Where would you like to go?</div>
     <div class="modal-actions" id="modalActions">
-      <button class="btn btn-secondary" id="modalCancelBtn">Cancel</button>
-      <button class="btn btn-primary" id="modalConfirmBtn">Confirm</button>
+      <button class="btn btn-secondary" id="modalCancelBtn">Go to App</button>
+      <button class="btn btn-primary" id="modalConfirmBtn">Go to Admin Panel</button>
     </div>
   </div>
 </div>
@@ -279,24 +279,22 @@
       message.textContent = options.message || 'Choose an option';
       
       if (options.type === 'choice') {
-        cancelBtn.textContent = options.cancelText || 'Cancel';
-        confirmBtn.textContent = options.confirmText || 'Confirm';
+        cancelBtn.textContent = options.cancelText || 'Go to App';
+        confirmBtn.textContent = options.confirmText || 'Go to Admin Panel';
         cancelBtn.classList.remove('hidden');
         confirmBtn.classList.remove('hidden');
         confirmBtn.className = 'btn ' + (options.confirmClass || 'btn-primary');
         
-        // Store the pending redirect
         pendingRedirect = options.redirect || null;
         
-        // Clean up old listeners
         const newCancelBtn = cancelBtn.cloneNode(true);
         const newConfirmBtn = confirmBtn.cloneNode(true);
         cancelBtn.parentNode.replaceChild(newCancelBtn, cancelBtn);
         confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
         
-        // Add listeners
         newCancelBtn.addEventListener('click', function() {
           modal.classList.add('hidden');
+          window.location.href = '/onninvoices-frontend/index.html';
           resolve(false);
         });
         
@@ -308,14 +306,13 @@
           resolve(true);
         });
         
-        document.getElementById('modalCancelBtn').textContent = options.cancelText || 'Cancel';
-        document.getElementById('modalConfirmBtn').textContent = options.confirmText || 'Confirm';
+        document.getElementById('modalCancelBtn').textContent = options.cancelText || 'Go to App';
+        document.getElementById('modalConfirmBtn').textContent = options.confirmText || 'Go to Admin Panel';
       } else if (options.type === 'alert') {
         cancelBtn.classList.add('hidden');
         confirmBtn.textContent = options.confirmText || 'OK';
         confirmBtn.className = 'btn ' + (options.confirmClass || 'btn-primary');
         
-        // Clean up old listeners
         const newConfirmBtn = confirmBtn.cloneNode(true);
         confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
         
@@ -425,7 +422,7 @@
         document.getElementById('otpPhoneDisplay').textContent = phone;
         document.getElementById('phoneStep').classList.add('hidden');
         document.getElementById('otpStep').classList.remove('hidden');
-        showMessage('OTP sent successfully!', 'success');
+        showMessage('OTP sent to your registered email!', 'success');
         startTimer();
         document.querySelector('.otp-input').focus();
       } else {
@@ -470,7 +467,6 @@
 
         setTimeout(async () => {
           if (data.user.role === 'OWNER') {
-            // Show ONN-style custom modal
             await showOnnModal({
               type: 'choice',
               icon: '👑',
@@ -481,11 +477,6 @@
               confirmClass: 'btn-primary',
               redirect: '/onninvoices-frontend/admin-panel.html'
             });
-            // If user clicks "Go to App" (cancel), redirect manually
-            // The modal handles confirm redirect, cancel goes to else below
-            if (!pendingRedirect) {
-              window.location.href = '/onninvoices-frontend/index.html';
-            }
           } else {
             window.location.href = '/onninvoices-frontend/index.html';
           }
