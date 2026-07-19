@@ -989,11 +989,41 @@
     // ==================== DASHBOARD ====================
     async function loadDashboard() {
       setLoading('dashboard-content');
+      
+      // Check if user is logged in
+      const token = localStorage.getItem('token');
+      if (!token) {
+        document.getElementById('dashboard-content').innerHTML = `
+          <div class="erp-card text-center" style="color:var(--warning)">
+            <p>Please login first</p>
+            <button onclick="window.location.href='/onninvoices-frontend/login.html'" class="btn btn-primary mt-4">
+              Go to Login
+            </button>
+          </div>
+        `;
+        return;
+      }
+
       try {
-        const response = await fetch(`${API_URL}/api/invoices`);
+        const response = await fetch(`${API_URL}/api/invoices`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (!response.ok) {
+          if (response.status === 401) {
+            localStorage.clear();
+            window.location.href = '/onninvoices-frontend/login.html';
+            return;
+          }
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
         const data = await response.json();
         renderDashboard(data);
       } catch (error) {
+        console.error('Load dashboard error:', error);
         document.getElementById('dashboard-content').innerHTML = 
           `<div class="erp-card text-center" style="color:var(--danger)">Failed to load: ${error.message}</div>`;
       }
@@ -1734,7 +1764,7 @@
           </div>
           <div class="col-span-6 md:col-span-2 text-right">
             <label class="md:hidden">Amount</label>
-            <span class="revise-item-amount block py-3 font-semibold text-[var(--primary)] md:text-[var(--text)]">₹${roundCurrency((item?.quantity || 0) * (item?.rate || 0)).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
+            <span class="revise-item-amount block py-3 font-semibold text-[var(--primary)] md:text-[var(--text)]">${roundCurrency((item?.quantity || 0) * (item?.rate || 0)).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
           </div>
         </div>
       `;
@@ -1769,7 +1799,7 @@
         const rate = parseFloat(item.querySelector('.revise-item-rate')?.value) || 0;
         const amount = roundCurrency(qty * rate);
         const amountEl = item.querySelector('.revise-item-amount');
-        if (amountEl) amountEl.textContent = `₹${amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+        if (amountEl) amountEl.textContent = `${amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
         totalTaxable += amount;
       });
 
@@ -1786,18 +1816,18 @@
       }
       const grandTotal = roundCurrency(totalTaxable + cgst + sgst + igst);
 
-      document.getElementById('revise-summary-taxable').textContent = `₹${totalTaxable.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+      document.getElementById('revise-summary-taxable').textContent = `${totalTaxable.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
       if (taxType === 'inter') {
         document.getElementById('revise-summary-tax-label').textContent = 'IGST:';
-        document.getElementById('revise-summary-tax1').textContent = `₹${igst.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+        document.getElementById('revise-summary-tax1').textContent = `${igst.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
         document.getElementById('revise-summary-tax2-row').classList.add('hidden');
       } else {
         document.getElementById('revise-summary-tax-label').textContent = 'CGST:';
-        document.getElementById('revise-summary-tax1').textContent = `₹${cgst.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+        document.getElementById('revise-summary-tax1').textContent = `${cgst.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
         document.getElementById('revise-summary-tax2-row').classList.remove('hidden');
-        document.getElementById('revise-summary-tax2').textContent = `₹${sgst.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+        document.getElementById('revise-summary-tax2').textContent = `${sgst.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
       }
-      document.getElementById('revise-summary-total').textContent = `₹${grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+      document.getElementById('revise-summary-total').textContent = `${grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
     }
 
     function handleSubmitReviseInvoice(event) {
@@ -2450,6 +2480,11 @@
 
     // ==================== INITIALIZATION ====================
     document.addEventListener('DOMContentLoaded', function() {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        window.location.href = '/onninvoices-frontend/login.html';
+        return;
+      }
       navigateTo('dashboard');
     });
 
