@@ -1584,9 +1584,9 @@
 
   try {
     const response = await apiFetch('/api/invoices', {
-      method: 'POST',
-      body: JSON.stringify({ invoiceData })
-    });
+  method: 'POST',
+  body: JSON.stringify(invoiceData)
+});
     
     if (!response) {
       btn.disabled = false;
