@@ -1205,44 +1205,51 @@
 
     // ==================== INVOICE ACTIONS ====================
     async function handleCancelInvoice(invoiceNo) {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        showToast('Please login first', 'error');
-        window.location.href = '/onninvoices-frontend/login.html';
-        return;
-      }
-      
-      const confirmed = await appConfirm(`Are you sure you want to cancel invoice ${invoiceNo}?`);
-      if (!confirmed) return;
-      
-      const reason = await appPrompt('Enter cancellation reason:');
-      if (!reason || reason.trim() === '') {
-        showToast('Cancellation cancelled - no reason provided', 'info');
-        return;
-      }
-      
-      try {
-        showToast('Cancelling invoice...', 'info');
-        const response = await apiFetch('/api/invoices/cancel', {
-          method: 'POST',
-          body: JSON.stringify({ 
-            invoiceNo: invoiceNo, 
-            reason: reason.trim() 
-          })
-        });
-        if (!response) return;
-        const data = await response.json();
-        if (data.success) {
-          showToast(`✅ Invoice ${invoiceNo} cancelled successfully!`, 'success');
-          loadDashboard();
-        } else {
-          showToast(`❌ Failed to cancel: ${data.error || 'Unknown error'}`, 'error');
-        }
-      } catch (error) {
-        console.error('Cancel invoice error:', error);
-        showToast(`❌ Error: ${error.message}`, 'error');
-      }
+  const token = localStorage.getItem('token');
+  if (!token) {
+    showToast('Please login first', 'error');
+    window.location.href = '/onninvoices-frontend/login.html';
+    return;
+  }
+  
+  // Confirm cancellation
+  const confirmed = await appConfirm(`⚠️ Are you sure you want to cancel invoice ${invoiceNo}?`);
+  if (!confirmed) return;
+  
+  // Get reason
+  const reason = await appPrompt('📝 Enter cancellation reason:');
+  if (!reason || reason.trim() === '') {
+    showToast('Cancellation cancelled - no reason provided', 'info');
+    return;
+  }
+  
+  try {
+    showToast('⏳ Cancelling invoice...', 'info');
+    
+    const response = await apiFetch('/api/invoices/cancel', {
+      method: 'POST',
+      body: JSON.stringify({ 
+        invoiceNo: invoiceNo, 
+        reason: reason.trim() 
+      })
+    });
+    
+    if (!response) return;
+    
+    const data = await response.json();
+    
+    if (data.success) {
+      showToast(`✅ Invoice ${invoiceNo} cancelled successfully!`, 'success');
+      // Reload dashboard
+      loadDashboard();
+    } else {
+      showToast(`❌ Failed to cancel: ${data.error || 'Unknown error'}`, 'error');
     }
+  } catch (error) {
+    console.error('Cancel invoice error:', error);
+    showToast(`❌ Error: ${error.message}`, 'error');
+  }
+}
 
     async function handleReviseInvoice(invoiceNo) {
       currentReviseInvoiceNo = invoiceNo;
@@ -1491,43 +1498,126 @@
       document.getElementById('summary-total').textContent = `₹${grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
     }
 
-    async function handleCreateInvoice(event) {
-      event.preventDefault();
-      let clientName = document.getElementById('client-select').value;
-      const manualName = document.getElementById('client-name-manual').value.trim();
-      if (manualName) clientName = manualName;
-      if (!clientName) { showToast('Select or enter a client', 'error'); return; }
+   async function handleCreateInvoice(event) {
+  event.preventDefault();
+  
+  // Get client name
+  let clientName = document.getElementById('client-select').value;
+  const manualName = document.getElementById('client-name-manual').value.trim();
+  if (manualName) clientName = manualName;
+  if (!clientName) {
+    showToast('Select or enter a client', 'error');
+    return;
+  }
 
-      const placeOfSupply = document.getElementById('place-of-supply').value.trim();
-      if (!placeOfSupply) { showToast('Enter place of supply', 'error'); return; }
+  // Get place of supply
+  const placeOfSupply = document.getElementById('place-of-supply').value.trim();
+  if (!placeOfSupply) {
+    showToast('Enter place of supply', 'error');
+    return;
+  }
 
-      const date = document.getElementById('invoice-date').value;
-      const dueDate = document.getElementById('due-date').value;
-      const taxType = document.getElementById('tax-type').value;
-      const isInterstate = taxType === 'inter';
-      const cgstRate = parseFloat(document.getElementById('cgst-rate').value) || 0;
-      const sgstRate = parseFloat(document.getElementById('sgst-rate').value) || 0;
-      const igstRate = parseFloat(document.getElementById('igst-rate').value) || 0;
+  // Get dates
+  const date = document.getElementById('invoice-date').value;
+  const dueDate = document.getElementById('due-date').value;
+  
+  // Get tax config
+  const taxType = document.getElementById('tax-type').value;
+  const isInterstate = taxType === 'inter';
+  const cgstRate = parseFloat(document.getElementById('cgst-rate').value) || 0;
+  const sgstRate = parseFloat(document.getElementById('sgst-rate').value) || 0;
+  const igstRate = parseFloat(document.getElementById('igst-rate').value) || 0;
 
-      const lineItems = [];
-      const itemElements = document.querySelectorAll('.line-item');
-      let hasError = false;
-      itemElements.forEach(item => {
-        const desc = item.querySelector('.item-desc')?.value.trim();
-        const sac = item.querySelector('.item-sac')?.value.trim();
-        const qty = parseFloat(item.querySelector('.item-qty')?.value) || 0;
-        const rate = parseFloat(item.querySelector('.item-rate')?.value) || 0;
-        if (!desc) { showToast('Fill all descriptions', 'error'); hasError = true; return; }
-        lineItems.push({ description: desc, sacCode: sac || '', quantity: qty, rate: rate, amount: roundCurrency(qty * rate) });
-      });
-      if (hasError) return;
-      if (lineItems.length === 0) { showToast('Add at least one item', 'error'); return; }
-
-      const invoiceData = { clientName, placeOfSupply, date, dueDate, isInterstate, cgstRate, sgstRate, igstRate, items: lineItems };
-      pendingInvoiceData = invoiceData;
-      pendingIsRevise = false;
-      showReviewModal(invoiceData);
+  // Get line items
+  const lineItems = [];
+  const itemElements = document.querySelectorAll('.line-item');
+  let hasError = false;
+  
+  itemElements.forEach(item => {
+    const desc = item.querySelector('.item-desc')?.value.trim();
+    const sac = item.querySelector('.item-sac')?.value.trim();
+    const qty = parseFloat(item.querySelector('.item-qty')?.value) || 0;
+    const rate = parseFloat(item.querySelector('.item-rate')?.value) || 0;
+    
+    if (!desc) {
+      showToast('Fill all descriptions', 'error');
+      hasError = true;
+      return;
     }
+    if (qty <= 0 || rate <= 0) {
+      showToast('Quantity and rate must be greater than 0', 'error');
+      hasError = true;
+      return;
+    }
+    lineItems.push({ 
+      description: desc, 
+      sacCode: sac || '', 
+      quantity: qty, 
+      rate: rate, 
+      amount: roundCurrency(qty * rate) 
+    });
+  });
+  
+  if (hasError) return;
+  if (lineItems.length === 0) {
+    showToast('Add at least one item', 'error');
+    return;
+  }
+
+  // Prepare data
+  const invoiceData = { 
+    clientName, 
+    placeOfSupply, 
+    date, 
+    dueDate, 
+    isInterstate, 
+    cgstRate, 
+    sgstRate, 
+    igstRate, 
+    items: lineItems 
+  };
+
+  // Show loading
+  const btn = event.target.querySelector('button[type="submit"]');
+  btn.disabled = true;
+  btn.textContent = 'Creating...';
+
+  try {
+    const response = await apiFetch('/api/invoices', {
+      method: 'POST',
+      body: JSON.stringify({ invoiceData })
+    });
+    
+    if (!response) {
+      btn.disabled = false;
+      btn.textContent = 'Generate Invoice';
+      return;
+    }
+    
+    const data = await response.json();
+    
+    btn.disabled = false;
+    btn.textContent = 'Generate Invoice';
+    
+    if (data.success) {
+      showToast(`✅ Invoice ${data.invoiceNo} created successfully!`, 'success');
+      // Reset form
+      document.getElementById('invoice-form').reset();
+      document.getElementById('line-items-container').innerHTML = '';
+      document.getElementById('no-items-msg').classList.remove('hidden');
+      lineItemCounter = 0;
+      recalculateTotals();
+      // Navigate to dashboard
+      setTimeout(() => navigateTo('dashboard'), 1500);
+    } else {
+      showToast(`❌ Failed to create: ${data.error || 'Unknown error'}`, 'error');
+    }
+  } catch (error) {
+    btn.disabled = false;
+    btn.textContent = 'Generate Invoice';
+    showToast(`❌ Error: ${error.message}`, 'error');
+  }
+}
 
     // ==================== REVIEW MODAL ====================
     function showReviewModal(data) {
