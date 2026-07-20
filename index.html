@@ -840,8 +840,14 @@
     // ========================================================================
     // CUSTOM DIALOG
     // ========================================================================
+    let customDialogTimeout;
+
     function showCustomDialog(options) {
       return new Promise((resolve) => {
+        if (customDialogTimeout) {
+          clearTimeout(customDialogTimeout);
+        }
+
         const dialog = document.getElementById('custom-dialog');
         const card = document.getElementById('custom-dialog-card');
         const titleEl = document.getElementById('custom-dialog-title');
@@ -873,7 +879,7 @@
 
         const cleanup = () => {
           card.classList.add('scale-95', 'opacity-0');
-          setTimeout(() => dialog.classList.add('hidden'), 200);
+          customDialogTimeout = setTimeout(() => dialog.classList.add('hidden'), 200);
           cancelBtn.onclick = null;
           okBtn.onclick = null;
         };
@@ -1159,7 +1165,9 @@
         return; 
       }
       showToast('⏳ Generating PDF...', 'info');
-      const url = type === 'export' ? `${API_URL}/api/export-invoices/${invoiceNo}/pdf` : `${API_URL}/api/invoices/${invoiceNo}/pdf`;
+
+      const encodedInvoiceNo = encodeURIComponent(invoiceNo);
+      const url = type === 'export' ? `${API_URL}/api/export-invoices/${encodedInvoiceNo}/pdf` : `${API_URL}/api/invoices/${encodedInvoiceNo}/pdf`;
       
       fetch(url, { headers: { 'Authorization': `Bearer ${getToken()}` } })
         .then(response => { 
