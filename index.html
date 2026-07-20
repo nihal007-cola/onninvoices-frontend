@@ -401,12 +401,102 @@
     ::-webkit-scrollbar-thumb { background: var(--muted); border-radius: 10px; }
     @media (max-width: 768px) { ::-webkit-scrollbar { display: none; } * { -ms-overflow-style: none; scrollbar-width: none; } }
 
+    /* Print Styles for Invoice */
     @media print {
       .no-print { display: none !important; }
       body { background: white !important; color: black !important; }
-      .erp-card { background: white !important; border: none !important; padding: 0 !important; box-shadow: none !important; }
-      .erp-table td, .erp-table th { color: #000 !important; border-color: #DDD !important; }
+      .invoice-print { background: white !important; color: black !important; padding: 20px !important; }
+      .invoice-print .erp-card { background: white !important; border: 1px solid #ddd !important; box-shadow: none !important; }
+      .invoice-print .erp-table td, .invoice-print .erp-table th { color: #000 !important; border-color: #DDD !important; }
+      .invoice-print .badge { background: #f0f0f0 !important; color: #000 !important; }
+      .invoice-print .text-muted { color: #666 !important; }
     }
+
+    /* Invoice Print Preview */
+    .invoice-print {
+      font-family: 'Inter', system-ui, sans-serif;
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .invoice-print .invoice-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border-bottom: 2px solid #1a237e;
+      padding-bottom: 12px;
+      margin-bottom: 16px;
+    }
+    .invoice-print .invoice-header .left { display: flex; align-items: center; gap: 12px; }
+    .invoice-print .invoice-header .left .logo-text { font-size: 20px; font-weight: 700; color: #1a237e; }
+    .invoice-print .invoice-header .right { text-align: right; }
+    .invoice-print .invoice-header .right .title { font-size: 18px; font-weight: 700; color: #1a237e; letter-spacing: 1px; }
+    .invoice-print .invoice-header .right .invoice-no { font-size: 14px; font-weight: 600; }
+    .invoice-print .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .invoice-print .info-grid .box {
+      border: 1px solid #ccc;
+      padding: 10px 14px;
+      border-radius: 4px;
+    }
+    .invoice-print .info-grid .box h4 {
+      font-size: 11px;
+      font-weight: 700;
+      color: #1a237e;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 4px;
+      margin-bottom: 6px;
+    }
+    .invoice-print .info-grid .box .name { font-weight: 700; font-size: 14px; }
+    .invoice-print .info-item { display: flex; font-size: 12px; }
+    .invoice-print .info-item .lbl { font-weight: 600; min-width: 80px; color: #555; }
+    .invoice-print .info-item .val { color: #222; }
+    .invoice-print table.invoice-items {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0;
+      font-size: 12px;
+    }
+    .invoice-print table.invoice-items th {
+      background: #1a237e;
+      color: #fff;
+      padding: 8px 10px;
+      text-align: center;
+      font-weight: 600;
+      font-size: 10px;
+      text-transform: uppercase;
+    }
+    .invoice-print table.invoice-items th:first-child, .invoice-print table.invoice-items th:nth-child(2) { text-align: left; }
+    .invoice-print table.invoice-items th:last-child { text-align: right; }
+    .invoice-print table.invoice-items td {
+      padding: 6px 10px;
+      border-bottom: 1px solid #e0e0e0;
+      text-align: center;
+    }
+    .invoice-print table.invoice-items td:first-child { text-align: center; }
+    .invoice-print table.invoice-items td:nth-child(4), .invoice-print table.invoice-items td:nth-child(5), .invoice-print table.invoice-items td:last-child { text-align: right; }
+    .invoice-print .total-section {
+      margin-top: 8px;
+      max-width: 350px;
+      margin-left: auto;
+    }
+    .invoice-print .total-section .row { display: flex; justify-content: space-between; padding: 4px 0; font-size: 12px; }
+    .invoice-print .total-section .row.grand { font-size: 16px; font-weight: 700; color: #1a237e; border-top: 2px solid #1a237e; padding-top: 8px; margin-top: 4px; }
+    .invoice-print .amount-words { font-size: 12px; font-style: italic; color: #555; padding: 8px 12px; background: #f5f5f5; border-left: 3px solid #1a237e; margin: 8px 0; }
+    .invoice-print .bottom-row { display: flex; gap: 16px; margin-top: 16px; }
+    .invoice-print .bottom-row .bank-box { flex: 1.2; border: 1px solid #ccc; padding: 10px 14px; border-radius: 4px; }
+    .invoice-print .bottom-row .bank-box h4 { font-size: 11px; font-weight: 700; color: #1a237e; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+    .invoice-print .bottom-row .bank-box p { font-size: 11px; margin: 2px 0; }
+    .invoice-print .bottom-row .sign-box { flex: 0.8; text-align: right; padding-top: 30px; }
+    .invoice-print .bottom-row .sign-box .sign-line { font-size: 12px; margin-top: 20px; border-top: 1px solid #333; display: inline-block; padding-top: 4px; min-width: 120px; }
+    .invoice-print .bottom-row .sign-box .company-name { font-size: 12px; font-weight: 600; }
+    .invoice-print .footer { text-align: center; margin-top: 16px; font-size: 10px; color: #999; border-top: 1px solid #eee; padding-top: 8px; }
   </style>
 </head>
 <body class="pb-[env(safe-area-inset-bottom)]">
@@ -642,7 +732,7 @@
     <div class="modal-card max-w-4xl w-full p-6 max-h-[90vh] overflow-y-auto">
       <div class="text-header mb-6">Create Export Invoice</div>
       <form id="create-export-form" onsubmit="handleCreateExportInvoice(event)" class="space-y-4">
-        <div class="erp-card">
+        <div class="glass erp-card">
           <div class="text-header mb-5">Details</div>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
             <div>
@@ -664,7 +754,7 @@
           </div>
         </div>
 
-        <div class="erp-card">
+        <div class="glass erp-card">
           <div class="flex items-center justify-between mb-5">
             <div class="text-header">Line Items</div>
             <button type="button" onclick="addExportLineItem()" class="btn btn-secondary btn-sm h-8 px-3">Add Item</button>
@@ -673,7 +763,7 @@
           <div id="export-no-items-msg" class="text-center py-8 text-[var(--muted)]">No items added yet.</div>
         </div>
 
-        <div class="erp-card">
+        <div class="glass erp-card">
           <div class="text-header mb-5">Summary</div>
           <div class="space-y-3 max-w-sm ml-auto">
             <div class="flex justify-between"><span class="text-[var(--muted)]">Total (USD):</span><span id="export-summary-total" class="font-semibold">$0.00</span></div>
@@ -701,6 +791,20 @@
         <button onclick="closeReviewModal()" class="btn btn-secondary flex-1 md:flex-none">Cancel</button>
         <button id="confirm-invoice-btn" onclick="confirmInvoice()" class="btn btn-success flex-1 md:flex-none">Confirm & Create</button>
       </div>
+    </div>
+  </div>
+
+  <!-- INVOICE PRINT PREVIEW MODAL -->
+  <div id="invoice-preview-modal" class="hidden fixed inset-0 modal-overlay z-50 flex items-center justify-center p-4 no-print">
+    <div class="modal-card max-w-5xl w-full p-6 max-h-[95vh] overflow-y-auto flex flex-col bg-white dark:bg-[#1a1a2e]">
+      <div class="flex items-center justify-between mb-4 shrink-0 no-print">
+        <div class="text-header text-black dark:text-white">Invoice Preview</div>
+        <div class="flex gap-3">
+          <button onclick="printInvoice()" class="btn btn-primary">🖨️ Print / PDF</button>
+          <button onclick="closeInvoicePreview()" class="btn btn-secondary">Close</button>
+        </div>
+      </div>
+      <div id="invoice-preview-content" class="overflow-y-auto flex-1 invoice-print"></div>
     </div>
   </div>
 
@@ -1098,7 +1202,7 @@
                 <div class="flex gap-2 justify-center w-full">
                   <button onclick="handleReviseInvoice('${escapeHtml(row.inv.invoice_no)}')" class="btn btn-warning btn-sm flex-1 md:flex-none">Revise</button>
                   <button onclick="handleCancelInvoice('${escapeHtml(row.inv.invoice_no)}')" class="btn btn-danger btn-sm flex-1 md:flex-none">Cancel</button>
-                  <button onclick="handleGeneratePDF('${escapeHtml(row.inv.invoice_no)}', 'invoice')" class="btn btn-primary btn-sm flex-1 md:flex-none">PDF</button>
+                  <button onclick="showInvoicePreview('${escapeHtml(row.inv.invoice_no)}', 'invoice')" class="btn btn-primary btn-sm flex-1 md:flex-none">Print</button>
                 </div>`;
             } else {
               actions = `<div style="text-align:center;color:var(--muted);width:100%;">—</div>`;
@@ -1163,7 +1267,6 @@
       const confirmed = await appConfirm(`⚠️ Are you sure you want to cancel export invoice ${invoiceNo}?`);
       if (!confirmed) return;
       
-      // Export table doesn't have cancelled_reason, so we don't ask for it
       try {
         showToast('⏳ Cancelling export invoice...', 'info');
         const response = await apiFetch('/api/export-invoices/cancel', { 
@@ -1183,47 +1286,258 @@
       }
     }
 
-    function handleGeneratePDF(invoiceNo, type = 'invoice') {
-      if (!isLoggedIn()) { 
-        showToast('Please login first', 'error'); 
-        window.location.href = FRONTEND_BASE + '/login.html'; 
-        return; 
-      }
-      showToast('⏳ Generating PDF...', 'info');
+    // ========================================================================
+    // INVOICE PRINT PREVIEW (Replaces PDF)
+    // ========================================================================
 
-      // Send raw invoiceNo so the backend :path parameter captures it cleanly without encoding confusion
-      const url = type === 'export' ? `${API_URL}/api/export-invoices/${invoiceNo}/pdf` : `${API_URL}/api/invoices/${invoiceNo}/pdf`;
+    function numberToWords(num) {
+      var ones = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
+      var tens = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
       
-      fetch(url, { headers: { 'Authorization': `Bearer ${getToken()}` } })
-        .then(response => { 
-          if (!response.ok) throw new Error(`HTTP ${response.status}`); 
-          return response.blob(); 
-        })
-        .then(blob => { 
-          const pdfUrl = URL.createObjectURL(blob); 
-          
-          // BYPASS POPUP BLOCKER: Force a direct file download using a hidden anchor tag
-          const a = document.createElement('a');
-          a.style.display = 'none';
-          a.href = pdfUrl;
-          const safeName = invoiceNo.replace(/\//g, '_');
-          a.download = `Invoice_${safeName}.pdf`;
-          
-          document.body.appendChild(a);
-          a.click();
-          
-          setTimeout(() => {
-            document.body.removeChild(a);
-            URL.revokeObjectURL(pdfUrl);
-          }, 100);
-
-          showToast('✅ PDF downloaded successfully!', 'success'); 
-        })
-        .catch(error => { 
-          console.error('PDF error:', error); 
-          showToast('❌ Failed to generate PDF: ' + error.message, 'error'); 
-        });
+      if (num === 0) return 'Zero';
+      
+      function convert(n) {
+        if (n < 20) return ones[n];
+        if (n < 100) return tens[Math.floor(n / 10)] + (n % 10 ? ' ' + ones[n % 10] : '');
+        if (n < 1000) return ones[Math.floor(n / 100)] + ' Hundred' + (n % 100 ? ' and ' + convert(n % 100) : '');
+        if (n < 100000) return convert(Math.floor(n / 1000)) + ' Thousand' + (n % 1000 ? ' ' + convert(n % 1000) : '');
+        if (n < 10000000) return convert(Math.floor(n / 100000)) + ' Lakh' + (n % 100000 ? ' ' + convert(n % 100000) : '');
+        return convert(Math.floor(n / 10000000)) + ' Crore' + (n % 10000000 ? ' ' + convert(n % 10000000) : '');
+      }
+      
+      return convert(Math.floor(num));
     }
+
+    function buildInvoiceHTML(invoice, business, client) {
+      var items = typeof invoice.items === 'string' ? JSON.parse(invoice.items) : (invoice.items || []);
+      var totalTaxable = Number(invoice.taxable_amount) || 0;
+      var cgst = Number(invoice.cgst) || 0;
+      var sgst = Number(invoice.sgst) || 0;
+      var igst = Number(invoice.igst) || 0;
+      var totalAmount = Number(invoice.total_amount) || 0;
+      var amountWords = numberToWords(totalAmount) + ' Only';
+
+      var html = '';
+      html += '<div class="invoice-print">';
+      
+      // Header
+      html += '<div class="invoice-header">';
+      html += '<div class="left">';
+      if (business && business[2]) { html += '<img src="' + escapeHtml(business[2]) + '" alt="Logo" style="max-height:50px;width:auto;">'; }
+      html += '<div><div class="logo-text">' + escapeHtml(business ? business[1] : 'ONNinvoices') + '</div>';
+      html += '<div style="font-size:11px;color:#666;">' + escapeHtml(business ? business[3] : '') + '</div>';
+      html += '<div style="font-size:10px;color:#666;">GSTIN: ' + escapeHtml(business ? business[4] : '') + ' | PAN: ' + escapeHtml(business ? business[5] : '') + '</div>';
+      html += '</div></div>';
+      html += '<div class="right"><div class="title">TAX INVOICE</div>';
+      html += '<div class="invoice-no">' + escapeHtml(invoice.invoice_no) + '</div></div>';
+      html += '</div>';
+
+      // Info Grid
+      html += '<div class="info-grid">';
+      html += '<div class="box"><h4>Invoice Details</h4>';
+      html += '<div class="info-item"><span class="lbl">Invoice No:</span><span class="val">' + escapeHtml(invoice.invoice_no) + '</span></div>';
+      html += '<div class="info-item"><span class="lbl">Date:</span><span class="val">' + escapeHtml(invoice.date) + '</span></div>';
+      html += '<div class="info-item"><span class="lbl">Due Date:</span><span class="val">' + escapeHtml(invoice.due_date || 'N/A') + '</span></div>';
+      html += '<div class="info-item"><span class="lbl">Place of Supply:</span><span class="val">' + escapeHtml(invoice.place_of_supply) + '</span></div>';
+      html += '</div>';
+
+      html += '<div class="box"><h4>Bill To / Receiver</h4>';
+      html += '<div class="name">' + escapeHtml(invoice.client_name) + '</div>';
+      if (client) {
+        html += '<div style="font-size:11px;color:#555;">' + escapeHtml(client[2] || '') + '</div>';
+        html += '<div class="info-item"><span class="lbl">GSTIN:</span><span class="val">' + escapeHtml(client[3] || 'NONE') + '</span></div>';
+        html += '<div class="info-item"><span class="lbl">State:</span><span class="val">' + escapeHtml(client[4] || '') + ' (Code: ' + escapeHtml(client[5] || '') + ')</span></div>';
+      }
+      html += '</div></div>';
+
+      // Items Table
+      html += '<table class="invoice-items"><thead><tr>';
+      html += '<th style="width:5%;">#</th><th style="width:38%;">Description of Services/Goods</th>';
+      html += '<th style="width:12%;">SAC/HSN</th><th style="width:10%;">Qty</th>';
+      html += '<th style="width:15%;">Rate (₹)</th><th style="width:20%;">Amount (₹)</th>';
+      html += '</tr></thead><tbody>';
+      
+      items.forEach(function(item, idx) {
+        html += '<tr>';
+        html += '<td>' + (idx + 1) + '</td>';
+        html += '<td>' + escapeHtml(item.description || '') + '</td>';
+        html += '<td>' + escapeHtml(item.sacCode || '-') + '</td>';
+        html += '<td>' + (item.quantity || 0) + '</td>';
+        html += '<td>' + Number(item.rate || 0).toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + '</td>';
+        html += '<td>' + Number(item.amount || 0).toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + '</td>';
+        html += '</tr>';
+      });
+      
+      html += '</tbody></table>';
+
+      // Totals
+      html += '<div class="total-section">';
+      html += '<div class="row"><span>Taxable Value:</span><span>₹ ' + totalTaxable.toLocaleString('en-IN', {minimumFractionDigits: 2}) + '</span></div>';
+      if (igst > 0) {
+        html += '<div class="row"><span>IGST (18%):</span><span>₹ ' + igst.toLocaleString('en-IN', {minimumFractionDigits: 2}) + '</span></div>';
+      } else {
+        html += '<div class="row"><span>CGST (9%):</span><span>₹ ' + cgst.toLocaleString('en-IN', {minimumFractionDigits: 2}) + '</span></div>';
+        html += '<div class="row"><span>SGST (9%):</span><span>₹ ' + sgst.toLocaleString('en-IN', {minimumFractionDigits: 2}) + '</span></div>';
+      }
+      html += '<div class="row grand"><span>GRAND TOTAL:</span><span>₹ ' + totalAmount.toLocaleString('en-IN', {minimumFractionDigits: 2}) + '</span></div>';
+      html += '</div>';
+
+      // Amount in Words
+      html += '<div class="amount-words"><strong>Amount in Words:</strong> ' + amountWords + '</div>';
+
+      // Bank Details and Signature
+      html += '<div class="bottom-row">';
+      html += '<div class="bank-box"><h4>Bank Account Details</h4>';
+      html += '<p><strong>Account Name:</strong> ' + escapeHtml(business ? business[1] : '') + '</p>';
+      html += '<p><strong>Bank:</strong> ' + escapeHtml(business ? business[8] : '') + '</p>';
+      html += '<p><strong>Branch:</strong> ' + escapeHtml(business ? business[9] : '-') + '</p>';
+      html += '<p><strong>Account No:</strong> ' + escapeHtml(business ? business[10] : '') + '</p>';
+      html += '<p><strong>IFSC Code:</strong> ' + escapeHtml(business ? business[11] : '') + '</p>';
+      html += '</div>';
+      html += '<div class="sign-box">';
+      html += '<p class="company-name">For ' + escapeHtml(business ? business[1] : '') + '</p>';
+      html += '<div class="sign-line">' + escapeHtml(business ? business[12] : 'Authorised Signatory') + '</div>';
+      html += '</div></div>';
+
+      // Footer
+      html += '<div class="footer">';
+      html += 'This is a computer-generated invoice and does not require a physical signature. | Generated on: ' + new Date().toLocaleDateString('en-IN') + '<br>';
+      html += 'Subject to West Bengal Jurisdiction | E. & O.E.';
+      html += '</div>';
+
+      html += '</div>';
+      return html;
+    }
+
+    function buildExportInvoiceHTML(invoice, business) {
+      var items = typeof invoice.items === 'string' ? JSON.parse(invoice.items) : (invoice.items || []);
+      var amountUSD = Number(invoice.amount_usd) || 0;
+
+      var html = '';
+      html += '<div class="invoice-print">';
+      
+      // Header
+      html += '<div class="invoice-header">';
+      html += '<div class="left">';
+      if (business && business[2]) { html += '<img src="' + escapeHtml(business[2]) + '" alt="Logo" style="max-height:50px;width:auto;">'; }
+      html += '<div><div class="logo-text">' + escapeHtml(business ? business[1] : 'ONNinvoices') + '</div>';
+      html += '<div style="font-size:11px;color:#666;">' + escapeHtml(business ? business[3] : '') + '</div>';
+      html += '<div style="font-size:10px;color:#666;">GSTIN: ' + escapeHtml(business ? business[4] : '') + ' | PAN: ' + escapeHtml(business ? business[5] : '') + '</div>';
+      html += '</div></div>';
+      html += '<div class="right"><div class="title">EXPORT INVOICE</div>';
+      html += '<div class="invoice-no">' + escapeHtml(invoice.invoice_no) + '</div>';
+      html += '<div style="font-size:11px;color:#1a237e;font-weight:600;">ZERO GST - Under LUT</div>';
+      html += '</div></div>';
+
+      // Info Grid
+      html += '<div class="info-grid">';
+      html += '<div class="box"><h4>Client Details</h4>';
+      html += '<div class="name">' + escapeHtml(invoice.client_name) + '</div>';
+      html += '<div style="font-size:11px;color:#555;">' + escapeHtml(invoice.address || '') + '</div>';
+      html += '<div class="info-item"><span class="lbl">Country:</span><span class="val">' + escapeHtml(invoice.country || '') + '</span></div>';
+      html += '</div>';
+      html += '<div class="box"><h4>Invoice Details</h4>';
+      html += '<div class="info-item"><span class="lbl">Invoice No:</span><span class="val">' + escapeHtml(invoice.invoice_no) + '</span></div>';
+      html += '<div class="info-item"><span class="lbl">Date:</span><span class="val">' + escapeHtml(invoice.date) + '</span></div>';
+      html += '<div class="info-item"><span class="lbl">LUT Ref:</span><span class="val">' + escapeHtml(invoice.lut_ref || 'LUT-EXPORT-2024') + '</span></div>';
+      html += '</div></div>';
+
+      // Items Table
+      html += '<table class="invoice-items"><thead><tr>';
+      html += '<th style="width:5%;">#</th><th style="width:38%;">Description</th>';
+      html += '<th style="width:12%;">SAC/HSN</th><th style="width:10%;">Qty</th>';
+      html += '<th style="width:15%;">Rate (USD)</th><th style="width:20%;">Amount (USD)</th>';
+      html += '</tr></thead><tbody>';
+      
+      items.forEach(function(item, idx) {
+        var amt = (item.quantity || 0) * (item.rate || 0);
+        html += '<tr>';
+        html += '<td>' + (idx + 1) + '</td>';
+        html += '<td>' + escapeHtml(item.description || '') + '</td>';
+        html += '<td>' + escapeHtml(item.sacCode || '-') + '</td>';
+        html += '<td>' + (item.quantity || 0) + '</td>';
+        html += '<td>$' + Number(item.rate || 0).toFixed(2) + '</td>';
+        html += '<td>$' + Number(amt).toFixed(2) + '</td>';
+        html += '</tr>';
+      });
+      
+      html += '</tbody></table>';
+
+      // Totals
+      html += '<div class="total-section">';
+      html += '<div class="row grand"><span>Total Amount (USD):</span><span>$' + amountUSD.toFixed(2) + '</span></div>';
+      html += '<div class="row" style="font-style:italic;color:#666;"><span>Zero GST Export (LUT):</span><span>N/A</span></div>';
+      html += '</div>';
+
+      // Footer
+      html += '<div class="footer">';
+      html += 'This is a ZERO GST export invoice under LUT. | Generated on: ' + new Date().toLocaleDateString('en-IN') + '<br>';
+      html += 'Subject to West Bengal Jurisdiction | E. & O.E.';
+      html += '</div>';
+
+      html += '</div>';
+      return html;
+    }
+
+    async function showInvoicePreview(invoiceNo, type) {
+      if (!isLoggedIn()) { showToast('Please login first', 'error'); window.location.href = FRONTEND_BASE + '/login.html'; return; }
+      
+      showToast('⏳ Loading invoice...', 'info');
+      
+      try {
+        // Fetch invoice detail
+        var endpoint = type === 'export' ? '/api/export-invoices/' + encodeURIComponent(invoiceNo) : '/api/invoices/' + encodeURIComponent(invoiceNo);
+        var response = await apiFetch(endpoint);
+        if (!response) return;
+        var data = await response.json();
+        
+        if (!data.success) {
+          showToast('❌ Failed to load invoice: ' + (data.error || 'Unknown'), 'error');
+          return;
+        }
+        
+        var invoice = type === 'export' ? data.invoice : data.invoice;
+        if (!invoice) { showToast('❌ Invoice not found', 'error'); return; }
+        
+        // Fetch business
+        var bizResponse = await apiFetch('/api/businesses');
+        var bizData = await bizResponse.json();
+        var business = bizData.success && bizData.businesses && bizData.businesses.length > 0 ? bizData.businesses[0] : null;
+        
+        // For normal invoices, fetch client
+        var client = null;
+        if (type !== 'export') {
+          var clientResponse = await apiFetch('/api/clients');
+          var clientData = await clientResponse.json();
+          if (clientData.success && clientData.clients) {
+            client = clientData.clients.find(function(c) { return c[1] === invoice.client_name; });
+          }
+        }
+        
+        // Build HTML
+        var html = type === 'export' ? buildExportInvoiceHTML(invoice, business) : buildInvoiceHTML(invoice, business, client);
+        
+        document.getElementById('invoice-preview-content').innerHTML = html;
+        document.getElementById('invoice-preview-modal').classList.remove('hidden');
+        showToast('✅ Invoice loaded', 'success');
+        
+      } catch (error) {
+        console.error('Preview error:', error);
+        showToast('❌ Failed to load invoice: ' + error.message, 'error');
+      }
+    }
+
+    function closeInvoicePreview() {
+      document.getElementById('invoice-preview-modal').classList.add('hidden');
+    }
+
+    function printInvoice() {
+      window.print();
+    }
+
+    // ========================================================================
+    // REVISE INVOICE
+    // ========================================================================
 
     function handleReviseInvoice(invoiceNo) {
       const invoice = invoicesData.find(inv => inv.invoice_no === invoiceNo && inv.status === 'ACTIVE');
@@ -2271,7 +2585,7 @@
                 <div class="flex gap-2 justify-center w-full">
                   <button onclick="handleReviseExportInvoice('${escapeHtml(inv.invoice_no)}')" class="btn btn-warning btn-sm flex-1 md:flex-none">Revise</button>
                   <button onclick="handleCancelExportInvoice('${escapeHtml(inv.invoice_no)}')" class="btn btn-danger btn-sm flex-1 md:flex-none">Cancel</button>
-                  <button onclick="handleGeneratePDF('${escapeHtml(inv.invoice_no)}', 'export')" class="btn btn-primary btn-sm flex-1 md:flex-none">PDF</button>
+                  <button onclick="showInvoicePreview('${escapeHtml(inv.invoice_no)}', 'export')" class="btn btn-primary btn-sm flex-1 md:flex-none">Print</button>
                 </div>`;
             } else {
               actions = `<div style="text-align:center;color:var(--muted);width:100%;">—</div>`;
@@ -2522,7 +2836,8 @@
         'revise-export-modal': closeReviseExportModal,
         'review-invoice-modal': closeReviewModal,
         'remove-business-modal': closeRemoveBusinessModal,
-        'remove-client-modal': closeRemoveClientModal
+        'remove-client-modal': closeRemoveClientModal,
+        'invoice-preview-modal': closeInvoicePreview
       };
       Object.keys(modals).forEach(id => {
         const modal = document.getElementById(id);
@@ -2540,8 +2855,14 @@
         closeReviewModal();
         closeRemoveBusinessModal();
         closeRemoveClientModal();
+        closeInvoicePreview();
       }
     });
+
+    // Override print to close preview after print
+    window.onafterprint = function() {
+      // Don't auto-close, user can close manually
+    };
   </script>
 </body>
 </html>
