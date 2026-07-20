@@ -110,7 +110,6 @@
     .text-center { text-align: center; }
     .mt-4 { margin-top: 16px; }
 
-    /* ==================== ONN CUSTOM MODAL ==================== */
     .onn-modal-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -134,68 +133,20 @@
       animation: slideUp 0.3s ease-out;
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
     }
-    .onn-modal .modal-icon {
-      text-align: center;
-      font-size: 48px;
-      margin-bottom: 12px;
-    }
-    .onn-modal .modal-title {
-      font-size: 20px;
-      font-weight: 700;
-      text-align: center;
-      color: var(--text);
-      margin-bottom: 8px;
-    }
-    .onn-modal .modal-message {
-      text-align: center;
-      color: var(--muted);
-      font-size: 14px;
-      line-height: 1.6;
-      margin-bottom: 24px;
-    }
-    .onn-modal .modal-actions {
-      display: flex;
-      gap: 12px;
-      justify-content: center;
-    }
-    .onn-modal .modal-actions .btn {
-      flex: 1;
-      text-align: center;
-      justify-content: center;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .onn-modal .modal-actions .btn-primary {
-      background: var(--primary);
-      color: white;
-    }
-    .onn-modal .modal-actions .btn-primary:hover {
-      background: var(--primary-hover);
-    }
-    .onn-modal .modal-actions .btn-secondary {
-      background: var(--border);
-      color: var(--text);
-    }
-    .onn-modal .modal-actions .btn-secondary:hover {
-      background: #4B5563;
-    }
-    .onn-modal .modal-actions .btn-success {
-      background: var(--success);
-      color: white;
-    }
-    .onn-modal .modal-actions .btn-success:hover {
-      opacity: 0.9;
-    }
+    .onn-modal .modal-icon { text-align: center; font-size: 48px; margin-bottom: 12px; }
+    .onn-modal .modal-title { font-size: 20px; font-weight: 700; text-align: center; color: var(--text); margin-bottom: 8px; }
+    .onn-modal .modal-message { text-align: center; color: var(--muted); font-size: 14px; line-height: 1.6; margin-bottom: 24px; }
+    .onn-modal .modal-actions { display: flex; gap: 12px; justify-content: center; }
+    .onn-modal .modal-actions .btn { flex: 1; text-align: center; justify-content: center; display: flex; align-items: center; gap: 8px; }
+    .onn-modal .modal-actions .btn-primary { background: var(--primary); color: white; }
+    .onn-modal .modal-actions .btn-primary:hover { background: var(--primary-hover); }
+    .onn-modal .modal-actions .btn-secondary { background: var(--border); color: var(--text); }
+    .onn-modal .modal-actions .btn-secondary:hover { background: #4B5563; }
+    .onn-modal .modal-actions .btn-success { background: var(--success); color: white; }
+    .onn-modal .modal-actions .btn-success:hover { opacity: 0.9; }
 
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-    @keyframes slideUp {
-      from { transform: translateY(30px); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
-    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
   </style>
 </head>
 <body>
@@ -259,6 +210,7 @@
 
 <script>
   const API_URL = 'https://api.jamesmoriarty.in';
+  const FRONTEND_BASE = '/onninvoices-frontend';
   let currentPhone = '';
   let otpTimer = null;
   let secondsLeft = 30;
@@ -294,7 +246,7 @@
         
         newCancelBtn.addEventListener('click', function() {
           modal.classList.add('hidden');
-          window.location.href = '/onninvoices-frontend/index.html';
+          window.location.href = FRONTEND_BASE + '/index.html';
           resolve(false);
         });
         
@@ -475,10 +427,10 @@
               cancelText: 'Go to App',
               confirmText: 'Go to Admin Panel',
               confirmClass: 'btn-primary',
-              redirect: '/onninvoices-frontend/admin-panel.html'
+              redirect: FRONTEND_BASE + '/admin-panel.html'
             });
           } else {
-            window.location.href = '/onninvoices-frontend/index.html';
+            window.location.href = FRONTEND_BASE + '/index.html';
           }
         }, 1000);
       } else {
