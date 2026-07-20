@@ -13,12 +13,14 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,500;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #F8FAFC;
-      --surface: #F1F5F9;
-      --card: #FFFFFF;
-      --border: #CBD5E1;
+      --bg: #F2F4F8;
+      --surface: rgba(255, 255, 255, 0.65);
+      --surface-border: rgba(255, 255, 255, 0.3);
+      --card: rgba(255, 255, 255, 0.72);
+      --card-border: rgba(255, 255, 255, 0.25);
+      --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
       --text: #111827;
-      --muted: #64748B;
+      --muted: #6B7280;
       --primary: #2563EB;
       --primary-hover: #1D4ED8;
       --danger: #DC2626;
@@ -27,25 +29,30 @@
       --success-hover: #15803D;
       --warning: #D97706;
       --warning-hover: #B45309;
-      --overlay: rgba(17, 24, 39, 0.4);
+      --overlay: rgba(0, 0, 0, 0.35);
+      --blur: blur(20px);
+      --card-rgb: 255, 255, 255;
     }
     
     [data-theme="dark"] {
-      --bg: #111827;
-      --surface: #0F172A;
-      --card: #1F2937;
-      --border: #374151;
-      --text: #F9FAFB;
+      --bg: #0F1117;
+      --surface: rgba(30, 33, 44, 0.65);
+      --surface-border: rgba(255, 255, 255, 0.05);
+      --card: rgba(30, 33, 44, 0.72);
+      --card-border: rgba(255, 255, 255, 0.06);
+      --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      --text: #F1F3F5;
       --muted: #9CA3AF;
-      --primary: #2563EB;
-      --primary-hover: #3B82F6;
+      --primary: #3B82F6;
+      --primary-hover: #60A5FA;
       --danger: #EF4444;
       --danger-hover: #F87171;
-      --success: #10B981;
-      --success-hover: #34D399;
-      --warning: #F59E0B;
-      --warning-hover: #FBBF24;
-      --overlay: rgba(0, 0, 0, 0.6);
+      --success: #34D399;
+      --success-hover: #6EE7B7;
+      --warning: #FBBF24;
+      --warning-hover: #FCD34D;
+      --overlay: rgba(0, 0, 0, 0.5);
+      --card-rgb: 30, 33, 44;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -57,8 +64,25 @@
       min-height: -webkit-fill-available;
       font-size: 14px;
       font-weight: 500;
-      transition: background 0.3s ease, color 0.3s ease;
+      transition: background 0.4s ease, color 0.4s ease;
       overscroll-behavior-y: none;
+      backdrop-filter: var(--blur);
+      -webkit-backdrop-filter: var(--blur);
+    }
+
+    /* Glassmorphism base */
+    .glass {
+      background: var(--card);
+      backdrop-filter: var(--blur);
+      -webkit-backdrop-filter: var(--blur);
+      border: 1px solid var(--card-border);
+      box-shadow: var(--glass-shadow);
+    }
+    .glass-surface {
+      background: var(--surface);
+      backdrop-filter: var(--blur);
+      -webkit-backdrop-filter: var(--blur);
+      border: 1px solid var(--surface-border);
     }
 
     h1, h2, h3, h4, h5, h6, .text-header {
@@ -68,36 +92,19 @@
       margin: 0;
       color: var(--text);
     }
-    
-    .text-helper, th, .badge, small, .sidebar-link-sub {
-      font-size: 12px !important;
-      font-weight: 500 !important;
-      line-height: 1.4 !important;
-    }
-    
-    body, input, button, select, textarea, div, p, span, td {
-      font-size: 14px;
-      font-weight: 500;
-    }
-
-    ::-webkit-scrollbar { width: 4px; height: 4px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
-    @media (max-width: 768px) {
-      ::-webkit-scrollbar { display: none; }
-      * { -ms-overflow-style: none; scrollbar-width: none; }
-    }
+    .text-helper { font-size: 12px !important; font-weight: 500 !important; color: var(--muted); }
 
     .sidebar {
       background: var(--surface);
-      border-right: 1px solid var(--border);
+      backdrop-filter: var(--blur);
+      -webkit-backdrop-filter: var(--blur);
+      border-right: 1px solid var(--surface-border);
       transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       user-select: none;
     }
-    
     .sidebar-link {
       padding: 14px 16px;
-      border-radius: 8px;
+      border-radius: 12px;
       transition: all 0.2s ease;
       display: flex;
       align-items: center;
@@ -107,28 +114,26 @@
       cursor: pointer;
       margin-bottom: 4px;
     }
-    
-    .sidebar-link svg { width: 20px; height: 20px; opacity: 0.8; }
-    .sidebar-link:active { transform: scale(0.98); }
-    .sidebar-link:hover { background: var(--bg); color: var(--text); }
+    .sidebar-link svg { width: 20px; height: 20px; opacity: 0.7; }
+    .sidebar-link:hover { background: rgba(128, 128, 128, 0.08); color: var(--text); }
     .sidebar-link.active {
-      background: rgba(37, 99, 235, 0.1);
+      background: rgba(37, 99, 235, 0.12);
       color: var(--primary);
       border-left: 3px solid var(--primary);
-      border-radius: 0 8px 8px 0;
+      border-radius: 0 12px 12px 0;
     }
 
     .erp-card {
       background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 16px;
+      backdrop-filter: var(--blur);
+      -webkit-backdrop-filter: var(--blur);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
       padding: 24px;
       transition: all 0.3s ease;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+      box-shadow: var(--glass-shadow);
     }
-    @media (max-width: 768px) {
-      .erp-card { padding: 16px; border-radius: 12px; }
-    }
+    @media (max-width: 768px) { .erp-card { padding: 16px; border-radius: 16px; } }
 
     .stat-card { padding: 20px; display: flex; flex-direction: column; gap: 8px; }
 
@@ -139,47 +144,46 @@
       gap: 8px;
       height: 48px;
       padding: 0 20px;
-      border-radius: 8px;
+      border-radius: 12px;
       border: 1px solid transparent;
       cursor: pointer;
       transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
       white-space: nowrap;
-      user-select: none;
       font-weight: 600;
+      backdrop-filter: var(--blur);
+      -webkit-backdrop-filter: var(--blur);
     }
-    .btn:active { transform: scale(0.97); }
-    .btn-sm { height: 36px; padding: 0 14px; border-radius: 6px; }
+    .btn:active { transform: scale(0.96); }
+    .btn-sm { height: 36px; padding: 0 14px; border-radius: 8px; font-size: 13px; }
     .btn-primary { background: var(--primary); color: #FFFFFF; }
     .btn-primary:hover { background: var(--primary-hover); color: #FFFFFF; }
-    .btn-secondary { background: var(--surface); border-color: var(--border); color: var(--text); }
-    .btn-secondary:hover { background: var(--border); color: var(--text); }
+    .btn-secondary { background: var(--surface); border-color: var(--surface-border); color: var(--text); }
+    .btn-secondary:hover { background: rgba(128, 128, 128, 0.12); color: var(--text); }
     .btn-danger { background: var(--danger); color: #FFFFFF; }
     .btn-danger:hover { background: var(--danger-hover); color: #FFFFFF; }
     .btn-success { background: var(--success); color: #FFFFFF; }
     .btn-success:hover { background: var(--success-hover); color: #FFFFFF; }
-    .btn-warning { background: var(--warning); color: #FFFFFF; }
-    .btn-warning:hover { background: var(--warning-hover); color: #FFFFFF; }
+    .btn-warning { background: var(--warning); color: #111827; }
+    .btn-warning:hover { background: var(--warning-hover); color: #111827; }
 
     .input-field {
       height: 48px;
       width: 100%;
       background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 8px;
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
       padding: 0 16px;
       color: var(--text);
       outline: none;
       transition: all 0.2s ease;
-      appearance: none;
+      backdrop-filter: var(--blur);
+      -webkit-backdrop-filter: var(--blur);
     }
-    .input-field:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
-    }
+    .input-field:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); }
     .input-field::placeholder { color: var(--muted); }
     textarea.input-field { min-height: 100px; padding: 16px; resize: vertical; }
     select.input-field {
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
       background-repeat: no-repeat;
       background-position: right 16px center;
       padding-right: 40px;
@@ -189,26 +193,29 @@
     .table-container {
       width: 100%;
       overflow-x: auto;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      -webkit-overflow-scrolling: touch;
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      background: var(--card);
+      backdrop-filter: var(--blur);
+      -webkit-backdrop-filter: var(--blur);
     }
     .erp-table { width: 100%; border-collapse: collapse; white-space: nowrap; }
     .erp-table th {
       padding: 16px;
       text-align: left;
       color: var(--muted);
-      border-bottom: 1px solid var(--border);
+      border-bottom: 1px solid var(--card-border);
       background: var(--surface);
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      user-select: none;
       position: sticky;
       top: 0;
       z-index: 10;
+      font-size: 11px;
+      font-weight: 600;
     }
-    .erp-table td { padding: 16px; border-bottom: 1px solid var(--border); color: var(--text); }
-    .erp-table tr:hover td { background: rgba(128, 128, 128, 0.04); }
+    .erp-table td { padding: 16px; border-bottom: 1px solid var(--card-border); color: var(--text); }
+    .erp-table tr:hover td { background: rgba(128, 128, 128, 0.03); }
 
     @media (max-width: 768px) {
       .table-container { border: none; border-radius: 0; background: transparent; overflow-x: visible; }
@@ -216,17 +223,19 @@
       .erp-table thead { display: none; }
       .erp-table tr {
         margin-bottom: 16px;
-        border: 1px solid var(--border);
-        border-radius: 12px;
+        border: 1px solid var(--card-border);
+        border-radius: 16px;
         background: var(--card);
-        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        backdrop-filter: var(--blur);
+        -webkit-backdrop-filter: var(--blur);
+        box-shadow: var(--glass-shadow);
       }
       .erp-table td {
         display: flex;
         justify-content: space-between;
         align-items: center;
         padding: 14px 16px;
-        border-bottom: 1px solid var(--border);
+        border-bottom: 1px solid var(--card-border);
         text-align: right;
       }
       .erp-table td:last-child { border-bottom: none; }
@@ -239,23 +248,24 @@
         text-align: left;
         margin-right: 16px;
       }
-      .erp-table td[data-label="Actions"], .erp-table td[data-label="Action"] {
+      .erp-table td[data-label="Actions"] {
         justify-content: center;
         background: var(--surface);
-        border-bottom-left-radius: 12px;
-        border-bottom-right-radius: 12px;
+        border-bottom-left-radius: 16px;
+        border-bottom-right-radius: 16px;
       }
-      .erp-table td[data-label="Actions"]::before, .erp-table td[data-label="Action"]::before { display: none; }
+      .erp-table td[data-label="Actions"]::before { display: none; }
     }
 
     .badge {
       display: inline-flex;
       align-items: center;
-      padding: 6px 10px;
-      border-radius: 6px;
+      padding: 6px 12px;
+      border-radius: 8px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
       font-weight: 600;
+      font-size: 11px;
     }
     .badge-active { background: rgba(22, 163, 74, 0.15); color: var(--success); }
     .badge-cancelled { background: rgba(220, 38, 38, 0.15); color: var(--danger); }
@@ -264,11 +274,19 @@
 
     .modal-overlay {
       background: var(--overlay);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
     }
     .modal-card {
+      background: var(--card);
+      backdrop-filter: var(--blur);
+      -webkit-backdrop-filter: var(--blur);
+      border: 1px solid var(--card-border);
+      box-shadow: var(--glass-shadow);
+      border-radius: 24px;
       transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      max-height: 90vh;
+      overflow-y: auto;
     }
 
     @media (max-width: 768px) {
@@ -277,7 +295,7 @@
         margin-top: auto;
         border-bottom-left-radius: 0;
         border-bottom-right-radius: 0;
-        max-height: 90vh;
+        max-height: 92vh;
         width: 100% !important;
         animation: slideUp 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
         padding: 20px !important;
@@ -286,8 +304,10 @@
         position: sticky;
         bottom: 0;
         background: var(--card);
+        backdrop-filter: var(--blur);
+        -webkit-backdrop-filter: var(--blur);
         padding: 16px 0;
-        border-top: 1px solid var(--border);
+        border-top: 1px solid var(--card-border);
         margin-top: 16px;
         z-index: 20;
       }
@@ -295,7 +315,7 @@
     @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 
     .spinner {
-      border: 2px solid var(--border);
+      border: 2px solid var(--card-border);
       border-top: 2px solid var(--primary);
       border-radius: 50%;
       width: 20px;
@@ -305,7 +325,7 @@
     }
     @keyframes spin { to { transform: rotate(360deg); } }
     .fade-in { animation: fadeIn 0.25s ease-out; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
 
     .toast {
       position: fixed;
@@ -318,15 +338,15 @@
       gap: 12px;
       pointer-events: none;
     }
-    @media (min-width: 768px) {
-      .toast { left: auto; max-width: 400px; }
-    }
+    @media (min-width: 768px) { .toast { left: auto; max-width: 400px; } }
     .toast-content {
       padding: 16px 20px;
-      border-radius: 12px;
+      border-radius: 16px;
       background: var(--card);
-      border: 1px solid var(--border);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+      backdrop-filter: var(--blur);
+      -webkit-backdrop-filter: var(--blur);
+      border: 1px solid var(--card-border);
+      box-shadow: var(--glass-shadow);
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -344,7 +364,7 @@
       background: var(--bg);
       border-radius: 14px;
       cursor: pointer;
-      border: 1px solid var(--border);
+      border: 1px solid var(--card-border);
       transition: background 0.3s ease;
     }
     .toggle-switch.active { background: var(--primary); border-color: var(--primary); }
@@ -363,14 +383,24 @@
 
     #mobile-menu-backdrop {
       background: var(--overlay);
-      backdrop-filter: blur(4px);
-      -webkit-backdrop-filter: blur(4px);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
     }
     .mobile-drawer {
       transform: translateX(-100%);
       transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      background: var(--surface);
+      backdrop-filter: var(--blur);
+      -webkit-backdrop-filter: var(--blur);
+      border-right: 1px solid var(--surface-border);
     }
     .mobile-drawer.open { transform: translateX(0); }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 4px; height: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--muted); border-radius: 10px; }
+    @media (max-width: 768px) { ::-webkit-scrollbar { display: none; } * { -ms-overflow-style: none; scrollbar-width: none; } }
 
     @media print {
       .no-print { display: none !important; }
@@ -384,16 +414,16 @@
 
   <!-- SIDEBAR -->
   <aside class="sidebar hidden md:flex fixed left-0 top-0 h-full w-64 flex-col z-40 no-print">
-    <div class="p-6 border-b border-[var(--border)]">
+    <div class="p-6 border-b border-[var(--surface-border)]">
       <div class="flex items-center gap-3">
         <img src="https://nihal007-cola.github.io/logo.png" alt="ONN" style="height: 32px; width: auto; object-fit: contain;">
         <div>
           <div class="text-header">ONNinvoices</div>
-          <div class="text-helper text-[var(--muted)] mt-1">Invoice Manager</div>
+          <div class="text-helper mt-1">Invoice Manager</div>
         </div>
       </div>
     </div>
-    <nav class="flex-1 py-4 px-4 space-y-2 overflow-y-auto">
+    <nav class="flex-1 py-4 px-4 space-y-1 overflow-y-auto">
       <a href="#" onclick="navigateTo('dashboard')" id="nav-dashboard" class="sidebar-link active">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
         Dashboard
@@ -419,9 +449,9 @@
         Cancelled
       </a>
     </nav>
-    <div class="p-6 border-t border-[var(--border)] space-y-4">
+    <div class="p-6 border-t border-[var(--surface-border)] space-y-4">
       <div class="flex items-center justify-between">
-        <span class="text-helper text-[var(--muted)] font-semibold">Dark Mode</span>
+        <span class="text-helper font-semibold">Dark Mode</span>
         <div class="toggle-switch active" onclick="toggleTheme()" id="theme-toggle">
           <div class="toggle-knob"></div>
         </div>
@@ -431,7 +461,7 @@
   </aside>
 
   <!-- MOBILE HEADER -->
-  <div class="md:hidden fixed top-0 left-0 right-0 z-40 no-print border-b border-[var(--border)] bg-[var(--surface)] backdrop-blur-md bg-opacity-90 pt-[env(safe-area-inset-top)]">
+  <div class="md:hidden fixed top-0 left-0 right-0 z-40 no-print border-b border-[var(--surface-border)] bg-[var(--surface)] backdrop-blur-[20px] bg-opacity-70 pt-[env(safe-area-inset-top)]">
     <div class="flex items-center justify-between px-4 h-16">
       <div class="flex items-center gap-3">
         <img src="https://nihal007-cola.github.io/logo.png" alt="ONN" style="height: 24px; width: auto; object-fit: contain;">
@@ -444,14 +474,14 @@
   </div>
 
   <!-- MOBILE DRAWER -->
-  <div id="mobile-drawer" class="mobile-drawer fixed top-0 left-0 bottom-0 w-[280px] bg-[var(--surface)] z-50 flex flex-col md:hidden no-print border-r border-[var(--border)] pt-[env(safe-area-inset-top)]">
-    <div class="p-5 flex items-center justify-between border-b border-[var(--border)]">
+  <div id="mobile-drawer" class="mobile-drawer fixed top-0 left-0 bottom-0 w-[280px] z-50 flex flex-col md:hidden no-print pt-[env(safe-area-inset-top)]">
+    <div class="p-5 flex items-center justify-between border-b border-[var(--surface-border)]">
       <div class="text-header">Menu</div>
       <button onclick="toggleMobileMenu()" class="text-[var(--muted)] p-2 -mr-2">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
-    <nav class="flex-1 overflow-y-auto p-4 space-y-2">
+    <nav class="flex-1 overflow-y-auto p-4 space-y-1">
       <a href="#" onclick="navigateTo('dashboard'); toggleMobileMenu();" id="nav-dashboard-mob" class="sidebar-link active">Dashboard</a>
       <a href="#" onclick="navigateTo('create-invoice'); toggleMobileMenu();" id="nav-create-invoice-mob" class="sidebar-link">Create Invoice</a>
       <a href="#" onclick="navigateTo('clients'); toggleMobileMenu();" id="nav-clients-mob" class="sidebar-link">Clients</a>
@@ -459,7 +489,7 @@
       <a href="#" onclick="navigateTo('export-invoices'); toggleMobileMenu();" id="nav-export-invoices-mob" class="sidebar-link">Export Invoices</a>
       <a href="#" onclick="navigateTo('cancelled'); toggleMobileMenu();" id="nav-cancelled-mob" class="sidebar-link">Cancelled</a>
     </nav>
-    <div class="p-5 border-t border-[var(--border)] space-y-3">
+    <div class="p-5 border-t border-[var(--surface-border)] space-y-3">
       <button onclick="logout(); toggleMobileMenu();" class="btn btn-danger w-full">Logout</button>
     </div>
   </div>
@@ -473,7 +503,7 @@
         <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6 md:mb-8 gap-4">
           <div>
             <div class="text-header text-xl md:text-2xl">Invoice Ledger</div>
-            <div class="text-helper text-[var(--muted)] mt-1">Manage and track billing</div>
+            <div class="text-helper mt-1">Manage and track billing</div>
           </div>
           <div class="flex gap-3">
             <button onclick="navigateTo('create-invoice')" class="btn btn-primary flex-1 md:flex-none">
@@ -489,7 +519,7 @@
       <div id="view-create-invoice" class="view hidden">
         <div class="mb-6 md:mb-8">
           <div class="text-header text-xl md:text-2xl">Create Invoice</div>
-          <div class="text-helper text-[var(--muted)] mt-1">Generate a GST-compliant document</div>
+          <div class="text-helper mt-1">Generate a GST-compliant document</div>
         </div>
         <div id="create-invoice-content"></div>
       </div>
@@ -499,7 +529,7 @@
         <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6 md:mb-8 gap-4">
           <div>
             <div class="text-header text-xl md:text-2xl">Clients</div>
-            <div class="text-helper text-[var(--muted)] mt-1">Manage network database</div>
+            <div class="text-helper mt-1">Manage network database</div>
           </div>
           <button onclick="showAddClientForm()" class="btn btn-primary w-full md:w-auto">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -514,7 +544,7 @@
         <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6 md:mb-8 gap-4">
           <div>
             <div class="text-header text-xl md:text-2xl">Businesses</div>
-            <div class="text-helper text-[var(--muted)] mt-1">Manage company profiles</div>
+            <div class="text-helper mt-1">Manage company profiles</div>
           </div>
           <button onclick="showAddBusinessForm()" class="btn btn-primary w-full md:w-auto">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -529,7 +559,7 @@
         <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6 md:mb-8 gap-4">
           <div>
             <div class="text-header text-xl md:text-2xl">Export Invoices</div>
-            <div class="text-helper text-[var(--muted)] mt-1">Zero GST exports under LUT</div>
+            <div class="text-helper mt-1">Zero GST exports under LUT</div>
           </div>
           <button onclick="showCreateExportForm()" class="btn btn-primary w-full md:w-auto">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -543,7 +573,7 @@
       <div id="view-cancelled" class="view hidden">
         <div class="mb-6 md:mb-8">
           <div class="text-header text-xl md:text-2xl">Cancelled Invoices</div>
-          <div class="text-helper text-[var(--muted)] mt-1">History and reasoning</div>
+          <div class="text-helper mt-1">History and reasoning</div>
         </div>
         <div id="cancelled-content"></div>
       </div>
@@ -552,8 +582,8 @@
   </main>
 
   <!-- MODALS -->
-  <div id="add-client-modal" class="hidden fixed inset-0 modal-overlay z-50 flex items-center justify-center p-0 md:p-4 no-print">
-    <div class="erp-card modal-card max-w-lg w-full">
+  <div id="add-client-modal" class="hidden fixed inset-0 modal-overlay z-50 flex items-center justify-center p-4 no-print">
+    <div class="modal-card max-w-lg w-full p-6">
       <div class="text-header mb-6">New Client</div>
       <form id="add-client-form" onsubmit="handleAddClient(event)" class="space-y-4">
         <div><label>Client Name *</label><input type="text" name="name" required class="input-field"></div>
@@ -575,8 +605,8 @@
     </div>
   </div>
 
-  <div id="add-business-modal" class="hidden fixed inset-0 modal-overlay z-50 flex items-center justify-center p-0 md:p-4 no-print">
-    <div class="erp-card modal-card max-w-lg w-full overflow-y-auto">
+  <div id="add-business-modal" class="hidden fixed inset-0 modal-overlay z-50 flex items-center justify-center p-4 no-print">
+    <div class="modal-card max-w-lg w-full p-6 max-h-[90vh] overflow-y-auto">
       <div class="text-header mb-6">New Business</div>
       <form id="add-business-form" onsubmit="handleAddBusiness(event)" class="space-y-4">
         <div><label>Business Name *</label><input type="text" name="name" required class="input-field"></div>
@@ -608,30 +638,70 @@
     </div>
   </div>
 
-  <div id="create-export-modal" class="hidden fixed inset-0 modal-overlay z-50 flex items-center justify-center p-0 md:p-4 no-print">
-    <div class="erp-card modal-card max-w-lg w-full overflow-y-auto">
+  <div id="create-export-modal" class="hidden fixed inset-0 modal-overlay z-50 flex items-center justify-center p-4 no-print">
+    <div class="modal-card max-w-4xl w-full p-6 max-h-[90vh] overflow-y-auto">
       <div class="text-header mb-6">Create Export Invoice</div>
       <form id="create-export-form" onsubmit="handleCreateExportInvoice(event)" class="space-y-4">
-        <div><label>Client Name *</label><input type="text" name="clientName" required class="input-field"></div>
-        <div><label>Country *</label><input type="text" name="country" required placeholder="e.g. Turkey" class="input-field"></div>
-        <div><label>Address *</label><textarea name="address" required class="input-field" style="min-height:80px;"></textarea></div>
-        <div><label>Service Description *</label><input type="text" name="description" required class="input-field"></div>
-        <div><label>SAC/HSN Code *</label><input type="text" name="sacCode" required class="input-field"></div>
-        <div class="grid grid-cols-2 gap-4">
-          <div><label>Quantity *</label><input type="number" name="quantity" required min="1" step="1" class="input-field"></div>
-          <div><label>Rate (USD) *</label><input type="number" name="rate" required min="0" step="0.01" class="input-field"></div>
+        <div class="erp-card">
+          <div class="text-header mb-5">Details</div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+            <div>
+              <label>Client Name *</label>
+              <input type="text" name="clientName" required class="input-field">
+            </div>
+            <div>
+              <label>Country *</label>
+              <input type="text" name="country" required placeholder="e.g. Turkey" class="input-field">
+            </div>
+            <div class="md:col-span-2">
+              <label>Address *</label>
+              <textarea name="address" required class="input-field" style="min-height:80px;"></textarea>
+            </div>
+            <div>
+              <label>Invoice Date</label>
+              <input type="date" name="date" id="export-date" class="input-field">
+            </div>
+          </div>
         </div>
-        <div class="pb-4"><label>Invoice Date</label><input type="date" name="date" id="export-date" class="input-field"></div>
+
+        <div class="erp-card">
+          <div class="text-header mb-5">Service Details</div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+            <div>
+              <label>Service Description *</label>
+              <input type="text" name="description" required class="input-field">
+            </div>
+            <div>
+              <label>SAC/HSN Code *</label>
+              <input type="text" name="sacCode" required class="input-field">
+            </div>
+          </div>
+        </div>
+
+        <div class="erp-card">
+          <div class="text-header mb-5">Pricing</div>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label>Quantity *</label>
+              <input type="number" name="quantity" required min="1" step="1" class="input-field">
+            </div>
+            <div>
+              <label>Rate (USD) *</label>
+              <input type="number" name="rate" required min="0" step="0.01" class="input-field">
+            </div>
+          </div>
+        </div>
+
         <div class="mobile-sticky-btn flex gap-3 justify-end md:pt-4 md:mt-2">
           <button type="button" onclick="closeCreateExportModal()" class="btn btn-secondary flex-1 md:flex-none">Cancel</button>
-          <button type="submit" class="btn btn-primary flex-1 md:flex-none">Create</button>
+          <button type="submit" class="btn btn-primary flex-1 md:flex-none">Create Export</button>
         </div>
       </form>
     </div>
   </div>
 
-  <div id="review-invoice-modal" class="hidden fixed inset-0 modal-overlay z-50 flex items-center justify-center p-0 md:p-4 no-print">
-    <div class="erp-card modal-card max-w-3xl w-full overflow-y-auto flex flex-col">
+  <div id="review-invoice-modal" class="hidden fixed inset-0 modal-overlay z-50 flex items-center justify-center p-4 no-print">
+    <div class="modal-card max-w-3xl w-full p-6 max-h-[90vh] overflow-y-auto flex flex-col">
       <div class="flex items-center justify-between mb-6 shrink-0">
         <div class="text-header">Review Invoice</div>
         <button onclick="closeReviewModal()" class="text-[var(--muted)] p-2 -mr-2">
@@ -646,8 +716,8 @@
     </div>
   </div>
 
-  <div id="revise-invoice-modal" class="hidden fixed inset-0 modal-overlay z-50 flex items-center justify-center p-0 md:p-4 no-print">
-    <div class="erp-card modal-card max-w-4xl w-full overflow-y-auto flex flex-col">
+  <div id="revise-invoice-modal" class="hidden fixed inset-0 modal-overlay z-50 flex items-center justify-center p-4 no-print">
+    <div class="modal-card max-w-4xl w-full p-6 max-h-[90vh] overflow-y-auto flex flex-col">
       <div class="flex items-center justify-between mb-6 shrink-0">
         <div class="text-header">Revise Invoice</div>
         <button onclick="closeReviseModal()" class="text-[var(--muted)] p-2 -mr-2">
@@ -658,8 +728,8 @@
     </div>
   </div>
 
-  <div id="revise-export-modal" class="hidden fixed inset-0 modal-overlay z-50 flex items-center justify-center p-0 md:p-4 no-print">
-    <div class="erp-card modal-card max-w-4xl w-full overflow-y-auto flex flex-col">
+  <div id="revise-export-modal" class="hidden fixed inset-0 modal-overlay z-50 flex items-center justify-center p-4 no-print">
+    <div class="modal-card max-w-4xl w-full p-6 max-h-[90vh] overflow-y-auto flex flex-col">
       <div class="flex items-center justify-between mb-6 shrink-0">
         <div class="text-header">Revise Export Invoice</div>
         <button onclick="closeReviseExportModal()" class="text-[var(--muted)] p-2 -mr-2">
@@ -670,10 +740,21 @@
     </div>
   </div>
 
+  <div id="remove-business-modal" class="hidden fixed inset-0 modal-overlay z-50 flex items-center justify-center p-4 no-print">
+    <div class="modal-card max-w-md w-full p-6">
+      <div class="text-header mb-4">Confirm Remove</div>
+      <p id="remove-business-message" class="text-[var(--muted)] mb-6">Are you sure you want to remove this business?</p>
+      <div class="flex gap-3 justify-end">
+        <button onclick="closeRemoveBusinessModal()" class="btn btn-secondary flex-1">Cancel</button>
+        <button id="confirm-remove-business-btn" class="btn btn-danger flex-1">Remove</button>
+      </div>
+    </div>
+  </div>
+
   <div id="custom-dialog" class="hidden fixed inset-0 z-[99999] modal-overlay flex items-center justify-center p-4 no-print">
-    <div id="custom-dialog-card" class="erp-card w-full max-w-sm transition-all duration-200 scale-95 opacity-0 flex flex-col">
+    <div id="custom-dialog-card" class="modal-card max-w-sm w-full p-6 transition-all duration-200 scale-95 opacity-0 flex flex-col">
       <h3 id="custom-dialog-title" class="text-lg font-bold mb-2">ONNinvoices</h3>
-      <p id="custom-dialog-message" class="text-[var(--text)] mb-5 leading-relaxed"></p>
+      <p id="custom-dialog-message" class="text-[var(--muted)] mb-5 leading-relaxed"></p>
       <input type="text" id="custom-dialog-input" class="input-field mb-5 hidden" />
       <div class="flex gap-3 justify-end mt-auto">
         <button id="custom-dialog-cancel" class="btn btn-secondary flex-1">Cancel</button>
@@ -841,7 +922,7 @@
       if(mobToggle) mobToggle.classList.toggle('active');
       document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
       const metaThemeColor = document.querySelector('meta[name="theme-color"]');
-      if (metaThemeColor) metaThemeColor.setAttribute('content', isDark ? '#111827' : '#F8FAFC');
+      if (metaThemeColor) metaThemeColor.setAttribute('content', isDark ? '#0F1117' : '#F2F4F8');
     }
 
     function toggleMobileMenu() {
@@ -877,7 +958,7 @@
       setLoading('dashboard-content');
       if (!isLoggedIn()) {
         document.getElementById('dashboard-content').innerHTML = `
-          <div class="erp-card text-center" style="color:var(--warning)">
+          <div class="glass erp-card text-center" style="color:var(--warning)">
             <p>Please login first</p>
             <button onclick="window.location.href='${FRONTEND_BASE}/login.html'" class="btn btn-primary mt-4">Go to Login</button>
           </div>`;
@@ -890,14 +971,14 @@
         const data = await response.json();
         renderDashboard(data);
       } catch (error) {
-        document.getElementById('dashboard-content').innerHTML = `<div class="erp-card text-center" style="color:var(--danger)">Failed to load: ${error.message}</div>`;
+        document.getElementById('dashboard-content').innerHTML = `<div class="glass erp-card text-center" style="color:var(--danger)">Failed to load: ${error.message}</div>`;
       }
     }
 
     function renderDashboard(response) {
       const container = document.getElementById('dashboard-content');
       if (!response || !response.success) {
-        container.innerHTML = `<div class="erp-card text-center" style="color:var(--danger)">Failed to load</div>`;
+        container.innerHTML = `<div class="glass erp-card text-center" style="color:var(--danger)">Failed to load</div>`;
         return;
       }
 
@@ -907,7 +988,7 @@
 
       if (invoices.length === 0) {
         container.innerHTML = `
-          <div class="erp-card flex flex-col items-center justify-center p-10 md:p-16 text-center">
+          <div class="glass erp-card flex flex-col items-center justify-center p-10 md:p-16 text-center">
             <svg class="mb-4 text-[var(--muted)] opacity-50" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
             <div class="text-header mb-6">No Invoices Yet</div>
             <button onclick="navigateTo('create-invoice')" class="btn btn-primary w-full md:w-auto">Create First Invoice</button>
@@ -920,20 +1001,20 @@
 
       let html = `
         <div class="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 mb-6 md:mb-8">
-          <div class="erp-card stat-card col-span-2 md:col-span-1">
-            <div class="text-helper text-[var(--muted)] uppercase tracking-wide">Total Value</div>
+          <div class="glass erp-card stat-card col-span-2 md:col-span-1">
+            <div class="text-helper uppercase tracking-wide">Total Value</div>
             <div class="text-header text-xl md:text-2xl" style="color:var(--primary)">₹${totalAmount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</div>
           </div>
-          <div class="erp-card stat-card">
-            <div class="text-helper text-[var(--muted)] uppercase tracking-wide">Invoices</div>
+          <div class="glass erp-card stat-card">
+            <div class="text-helper uppercase tracking-wide">Invoices</div>
             <div class="text-header text-xl md:text-2xl">${invoices.length}</div>
           </div>
-          <div class="erp-card stat-card">
-            <div class="text-helper text-[var(--muted)] uppercase tracking-wide">Active</div>
+          <div class="glass erp-card stat-card">
+            <div class="text-helper uppercase tracking-wide">Active</div>
             <div class="text-header text-xl md:text-2xl" style="color:var(--success)">${activeInvoices.length}</div>
           </div>
         </div>
-        <div class="erp-card">
+        <div class="glass erp-card">
           <div class="mb-4 md:mb-6 flex flex-col md:flex-row gap-3 md:items-center">
             <div class="flex-1 relative">
               <input type="text" id="dashboard-search" placeholder="Search..." class="input-field" oninput="filterDashboardTable()" style="padding-left:44px">
@@ -1050,23 +1131,47 @@
 
       try {
         showToast('⏳ Cancelling invoice...', 'info');
-        const response = await apiFetch('/api/invoices/cancel', { method: 'POST', body: JSON.stringify({ invoiceNo: invoiceNo, reason: reason.trim() }) });
+        const response = await apiFetch('/api/invoices/cancel', { 
+          method: 'POST', 
+          body: JSON.stringify({ invoiceNo: invoiceNo, reason: reason.trim() }) 
+        });
         if (!response) return;
         const data = await response.json();
-        if (data.success) { showToast(`✅ Invoice ${invoiceNo} cancelled successfully!`, 'success'); loadDashboard(); } 
-        else { showToast(`❌ Failed to cancel: ${data.error || 'Unknown error'}`, 'error'); }
-      } catch (error) { showToast(`❌ Error: ${error.message}`, 'error'); }
+        if (data.success) { 
+          showToast(`✅ Invoice ${invoiceNo} cancelled successfully!`, 'success'); 
+          loadDashboard(); 
+        } else { 
+          showToast(`❌ Failed to cancel: ${data.error || 'Unknown error'}`, 'error'); 
+        }
+      } catch (error) { 
+        showToast(`❌ Error: ${error.message}`, 'error'); 
+      }
     }
 
     function handleGeneratePDF(invoiceNo, type = 'invoice') {
-      if (!isLoggedIn()) { showToast('Please login first', 'error'); window.location.href = FRONTEND_BASE + '/login.html'; return; }
+      if (!isLoggedIn()) { 
+        showToast('Please login first', 'error'); 
+        window.location.href = FRONTEND_BASE + '/login.html'; 
+        return; 
+      }
       showToast('⏳ Generating PDF...', 'info');
       const url = type === 'export' ? `${API_URL}/api/export-invoices/${invoiceNo}/pdf` : `${API_URL}/api/invoices/${invoiceNo}/pdf`;
       
       fetch(url, { headers: { 'Authorization': `Bearer ${getToken()}` } })
-        .then(response => { if (!response.ok) throw new Error(`HTTP ${response.status}`); return response.blob(); })
-        .then(blob => { const pdfUrl = URL.createObjectURL(blob); const win = window.open(pdfUrl, '_blank'); if (!win) showToast('Please allow popups to view PDF', 'error'); else showToast('✅ PDF generated!', 'success'); })
-        .catch(error => { console.error('PDF error:', error); showToast('❌ Failed to generate PDF: ' + error.message, 'error'); });
+        .then(response => { 
+          if (!response.ok) throw new Error(`HTTP ${response.status}`); 
+          return response.blob(); 
+        })
+        .then(blob => { 
+          const pdfUrl = URL.createObjectURL(blob); 
+          const win = window.open(pdfUrl, '_blank'); 
+          if (!win) showToast('Please allow popups to view PDF', 'error'); 
+          else showToast('✅ PDF generated!', 'success'); 
+        })
+        .catch(error => { 
+          console.error('PDF error:', error); 
+          showToast('❌ Failed to generate PDF: ' + error.message, 'error'); 
+        });
     }
 
     function handleReviseInvoice(invoiceNo) {
@@ -1344,7 +1449,7 @@
 
       container.innerHTML = `
         <form id="invoice-form" onsubmit="handleCreateInvoice(event)" class="space-y-4 md:space-y-6 pb-24 md:pb-0">
-          <div class="erp-card">
+          <div class="glass erp-card">
             <div class="text-header mb-5">Details</div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
               <div>
@@ -1360,7 +1465,7 @@
               </div>
             </div>
           </div>
-          <div class="erp-card">
+          <div class="glass erp-card">
             <div class="text-header mb-5">Tax Config</div>
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
               <div><label>Interstate</label><select id="tax-type" onchange="updateTaxFields()" class="input-field">
@@ -1372,7 +1477,7 @@
               <div id="igst-field" class="hidden"><label>IGST (%)</label><input type="number" id="igst-rate" value="18" step="0.1" min="0" max="100" onchange="recalculateTotals()" class="input-field"></div>
             </div>
           </div>
-          <div class="erp-card">
+          <div class="glass erp-card">
             <div class="flex items-center justify-between mb-5">
               <div class="text-header">Line Items</div>
               <button type="button" onclick="addLineItem()" class="btn btn-secondary btn-sm h-8 px-3">Add Item</button>
@@ -1380,7 +1485,7 @@
             <div id="line-items-container" class="space-y-4"></div>
             <div id="no-items-msg" class="text-center py-8 text-[var(--muted)]">No items added yet.</div>
           </div>
-          <div class="erp-card relative">
+          <div class="glass erp-card relative">
             <div class="text-header mb-5">Summary</div>
             <div class="space-y-3 max-w-sm ml-auto">
               <div class="flex justify-between"><span class="text-[var(--muted)]">Taxable:</span><span id="summary-taxable" class="font-semibold">₹0.00</span></div>
@@ -1679,14 +1784,14 @@
         const data = await response.json();
         renderClients(data);
       } catch (error) {
-        document.getElementById('clients-content').innerHTML = `<div class="erp-card text-center" style="color:var(--danger)">Failed to load: ${error.message}</div>`;
+        document.getElementById('clients-content').innerHTML = `<div class="glass erp-card text-center" style="color:var(--danger)">Failed to load: ${error.message}</div>`;
       }
     }
 
     function renderClients(response) {
       const container = document.getElementById('clients-content');
       if (!response || !response.success) {
-        container.innerHTML = `<div class="erp-card text-center" style="color:var(--danger)">Failed to load</div>`;
+        container.innerHTML = `<div class="glass erp-card text-center" style="color:var(--danger)">Failed to load</div>`;
         return;
       }
       const clients = response.clients || [];
@@ -1694,7 +1799,7 @@
 
       if (clients.length === 0) {
         container.innerHTML = `
-          <div class="erp-card flex flex-col items-center justify-center p-10 md:p-16 text-center">
+          <div class="glass erp-card flex flex-col items-center justify-center p-10 md:p-16 text-center">
             <svg class="mb-4 text-[var(--muted)] opacity-50" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
             <div class="text-header mb-6">No Clients Yet</div>
             <button onclick="showAddClientForm()" class="btn btn-primary w-full md:w-auto">Add First Client</button>
@@ -1703,7 +1808,7 @@
       }
 
       let html = `
-        <div class="erp-card">
+        <div class="glass erp-card">
           <div class="mb-4 md:mb-6 flex flex-col md:flex-row gap-3 md:items-center">
             <div class="flex-1 relative">
               <input type="text" id="clients-search" placeholder="Search..." class="input-field" oninput="filterClients()" style="padding-left:44px">
@@ -1800,14 +1905,14 @@
         const data = await response.json();
         renderBusinesses(data);
       } catch (error) {
-        document.getElementById('businesses-content').innerHTML = `<div class="erp-card text-center" style="color:var(--danger)">Failed to load: ${error.message}</div>`;
+        document.getElementById('businesses-content').innerHTML = `<div class="glass erp-card text-center" style="color:var(--danger)">Failed to load: ${error.message}</div>`;
       }
     }
 
     function renderBusinesses(response) {
       const container = document.getElementById('businesses-content');
       if (!response || !response.success) {
-        container.innerHTML = `<div class="erp-card text-center" style="color:var(--danger)">Failed to load</div>`;
+        container.innerHTML = `<div class="glass erp-card text-center" style="color:var(--danger)">Failed to load</div>`;
         return;
       }
       const businesses = response.businesses || [];
@@ -1815,7 +1920,7 @@
 
       if (businesses.length === 0) {
         container.innerHTML = `
-          <div class="erp-card flex flex-col items-center justify-center p-10 md:p-16 text-center">
+          <div class="glass erp-card flex flex-col items-center justify-center p-10 md:p-16 text-center">
             <svg class="mb-4 text-[var(--muted)] opacity-50" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01"/><path d="M16 6h.01"/><path d="M12 6h.01"/><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/></svg>
             <div class="text-header mb-6">No Businesses Yet</div>
             <button onclick="showAddBusinessForm()" class="btn btn-primary w-full md:w-auto">Add Business</button>
@@ -1824,7 +1929,7 @@
       }
 
       let html = `
-        <div class="erp-card">
+        <div class="glass erp-card">
           <div class="mb-4 md:mb-6 flex flex-col md:flex-row gap-3 md:items-center">
             <div class="flex-1 relative">
               <input type="text" id="businesses-search" placeholder="Search..." class="input-field" oninput="filterBusinesses()" style="padding-left:44px">
@@ -1866,7 +1971,7 @@
                 <td data-label="Business Name" style="font-weight:600"><div class="truncate w-full ml-4 max-w-[180px] md:max-w-none text-right md:text-left md:ml-0">${escapeHtml(row[1] || 'N/A')}</div></td>
                 <td data-label="GSTIN" class="hidden sm:table-cell">${escapeHtml(row[4] || 'N/A')}</td>
                 <td data-label="Status">${isDefault ? '<span class="badge badge-default text-[10px]">Default</span>' : '<span style="color:var(--muted)">—</span>'}</td>
-                <td data-label="Action" style="text-align:center">${!isDefault ? `<button onclick="setDefaultBusiness('${row[0]}')" class="btn btn-secondary btn-sm w-full md:w-auto h-8">Set Default</button>` : '<span class="text-helper text-[var(--muted)] w-full block text-right md:text-center">Active</span>'}</td>
+                <td data-label="Action" style="text-align:center">${!isDefault ? `<button onclick="showRemoveBusiness('${row[0]}', '${escapeHtml(row[1])}', ${isDefault})" class="btn btn-danger btn-sm w-full md:w-auto h-8">Remove</button>` : '<span class="text-helper text-[var(--muted)] w-full block text-right md:text-center">Default</span>'}</td>
               </tr>`;
           }).join('');
         }
@@ -1876,6 +1981,50 @@
     function resetBusinessesFilters() {
       document.getElementById('businesses-search').value = '';
       filterBusinesses();
+    }
+
+    let pendingRemoveBusinessId = null;
+
+    function showRemoveBusiness(businessId, businessName, isDefault) {
+      if (isDefault) {
+        showToast('❌ Cannot remove default business', 'error');
+        return;
+      }
+      pendingRemoveBusinessId = businessId;
+      document.getElementById('remove-business-message').textContent = `Are you sure you want to remove "${businessName}"? This action cannot be undone.`;
+      document.getElementById('remove-business-modal').classList.remove('hidden');
+      document.getElementById('confirm-remove-business-btn').onclick = confirmRemoveBusiness;
+    }
+
+    function closeRemoveBusinessModal() {
+      document.getElementById('remove-business-modal').classList.add('hidden');
+      pendingRemoveBusinessId = null;
+    }
+
+    async function confirmRemoveBusiness() {
+      if (!pendingRemoveBusinessId) return;
+      const btn = document.getElementById('confirm-remove-business-btn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner" style="border-top-color:#fff;"></span>';
+
+      try {
+        const response = await apiFetch(`/api/businesses/${pendingRemoveBusinessId}`, { method: 'DELETE' });
+        if (!response) { btn.disabled = false; btn.innerHTML = 'Remove'; return; }
+        const data = await response.json();
+        btn.disabled = false;
+        btn.innerHTML = 'Remove';
+        if (data.success) {
+          showToast('✅ Business removed successfully', 'success');
+          closeRemoveBusinessModal();
+          loadBusinesses();
+        } else {
+          showToast(`❌ Failed: ${data.error || 'Unknown error'}`, 'error');
+        }
+      } catch (error) {
+        btn.disabled = false;
+        btn.innerHTML = 'Remove';
+        showToast(`❌ Error: ${error.message}`, 'error');
+      }
     }
 
     function showAddBusinessForm() { document.getElementById('add-business-modal').classList.remove('hidden'); }
@@ -1939,14 +2088,14 @@
         const data = await response.json();
         renderExportInvoices(data);
       } catch (error) {
-        document.getElementById('export-invoices-content').innerHTML = `<div class="erp-card text-center" style="color:var(--danger)">Failed to load: ${error.message}</div>`;
+        document.getElementById('export-invoices-content').innerHTML = `<div class="glass erp-card text-center" style="color:var(--danger)">Failed to load: ${error.message}</div>`;
       }
     }
 
     function renderExportInvoices(response) {
       const container = document.getElementById('export-invoices-content');
       if (!response || !response.success) {
-        container.innerHTML = `<div class="erp-card text-center" style="color:var(--danger)">Failed to load</div>`;
+        container.innerHTML = `<div class="glass erp-card text-center" style="color:var(--danger)">Failed to load</div>`;
         return;
       }
       const invoices = response.invoices || [];
@@ -1955,7 +2104,7 @@
 
       if (invoices.length === 0) {
         container.innerHTML = `
-          <div class="erp-card flex flex-col items-center justify-center p-10 md:p-16 text-center">
+          <div class="glass erp-card flex flex-col items-center justify-center p-10 md:p-16 text-center">
             <svg class="mb-4 text-[var(--muted)] opacity-50" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
             <div class="text-header mb-6">No Export Invoices</div>
             <button onclick="showCreateExportForm()" class="btn btn-primary w-full md:w-auto">Create Export</button>
@@ -1964,7 +2113,7 @@
       }
 
       let html = `
-        <div class="erp-card">
+        <div class="glass erp-card">
           <div class="mb-4 md:mb-6 flex flex-col md:flex-row gap-3 md:items-center">
             <div class="flex-1 relative">
               <input type="text" id="export-search" placeholder="Search..." class="input-field" oninput="filterExports()" style="padding-left:44px">
@@ -2082,14 +2231,14 @@
         const data = await response.json();
         renderCancelled(data);
       } catch (error) {
-        document.getElementById('cancelled-content').innerHTML = `<div class="erp-card text-center" style="color:var(--danger)">Failed to load: ${error.message}</div>`;
+        document.getElementById('cancelled-content').innerHTML = `<div class="glass erp-card text-center" style="color:var(--danger)">Failed to load: ${error.message}</div>`;
       }
     }
 
     function renderCancelled(response) {
       const container = document.getElementById('cancelled-content');
       if (!response || !response.success) {
-        container.innerHTML = `<div class="erp-card text-center" style="color:var(--danger)">Failed to load</div>`;
+        container.innerHTML = `<div class="glass erp-card text-center" style="color:var(--danger)">Failed to load</div>`;
         return;
       }
 
@@ -2098,7 +2247,7 @@
 
       if (cancelled.length === 0) {
         container.innerHTML = `
-          <div class="erp-card flex flex-col items-center justify-center p-10 md:p-16 text-center">
+          <div class="glass erp-card flex flex-col items-center justify-center p-10 md:p-16 text-center">
             <svg class="mb-4 text-[var(--muted)] opacity-50" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
             <div class="text-header mb-6">No Cancelled Invoices</div>
           </div>`;
@@ -2106,7 +2255,7 @@
       }
 
       let html = `
-        <div class="erp-card">
+        <div class="glass erp-card">
           <div class="mb-4 md:mb-6 flex flex-col md:flex-row gap-3 md:items-center">
             <div class="flex-1 relative">
               <input type="text" id="cancelled-search" placeholder="Search..." class="input-field" oninput="filterCancelled()" style="padding-left:44px">
@@ -2178,7 +2327,8 @@
         'create-export-modal': closeCreateExportModal,
         'revise-invoice-modal': closeReviseModal,
         'revise-export-modal': closeReviseExportModal,
-        'review-invoice-modal': closeReviewModal
+        'review-invoice-modal': closeReviewModal,
+        'remove-business-modal': closeRemoveBusinessModal
       };
       Object.keys(modals).forEach(id => {
         const modal = document.getElementById(id);
@@ -2194,6 +2344,7 @@
         closeReviseModal();
         closeReviseExportModal();
         closeReviewModal();
+        closeRemoveBusinessModal();
       }
     });
   </script>
