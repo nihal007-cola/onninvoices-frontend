@@ -84,7 +84,7 @@
       border: 1px solid var(--surface-border);
     }
 
-    h1, h2, h3, h4, h5, h6, .text-header {
+    .text-header {
       font-size: 18px !important;
       font-weight: 700 !important;
       line-height: 1.2 !important;
@@ -580,9 +580,7 @@
     </div>
   </main>
 
-  <!-- ===== MODALS ===== -->
-
-  <!-- Add Client Modal -->
+  <!-- MODALS -->
   <div id="add-client-modal" class="hidden fixed inset-0 modal-overlay z-50 flex items-center justify-center p-4 no-print">
     <div class="modal-card max-w-lg w-full p-6">
       <div class="text-header mb-6">New Client</div>
@@ -606,7 +604,6 @@
     </div>
   </div>
 
-  <!-- Add Business Modal -->
   <div id="add-business-modal" class="hidden fixed inset-0 modal-overlay z-50 flex items-center justify-center p-4 no-print">
     <div class="modal-card max-w-lg w-full p-6 max-h-[90vh] overflow-y-auto">
       <div class="text-header mb-6">New Business</div>
@@ -691,7 +688,6 @@
     </div>
   </div>
 
-  <!-- Review Invoice Modal -->
   <div id="review-invoice-modal" class="hidden fixed inset-0 modal-overlay z-50 flex items-center justify-center p-4 no-print">
     <div class="modal-card max-w-3xl w-full p-6 max-h-[90vh] overflow-y-auto flex flex-col">
       <div class="flex items-center justify-between mb-6 shrink-0">
@@ -708,7 +704,6 @@
     </div>
   </div>
 
-  <!-- Revise Invoice Modal -->
   <div id="revise-invoice-modal" class="hidden fixed inset-0 modal-overlay z-50 flex items-center justify-center p-4 no-print">
     <div class="modal-card max-w-4xl w-full p-6 max-h-[90vh] overflow-y-auto flex flex-col">
       <div class="flex items-center justify-between mb-6 shrink-0">
@@ -721,7 +716,6 @@
     </div>
   </div>
 
-  <!-- Revise Export Modal -->
   <div id="revise-export-modal" class="hidden fixed inset-0 modal-overlay z-50 flex items-center justify-center p-4 no-print">
     <div class="modal-card max-w-4xl w-full p-6 max-h-[90vh] overflow-y-auto flex flex-col">
       <div class="flex items-center justify-between mb-6 shrink-0">
@@ -758,7 +752,6 @@
     </div>
   </div>
 
-  <!-- Custom Dialog -->
   <div id="custom-dialog" class="hidden fixed inset-0 z-[99999] modal-overlay flex items-center justify-center p-4 no-print">
     <div id="custom-dialog-card" class="modal-card max-w-sm w-full p-6 transition-all duration-200 scale-95 opacity-0 flex flex-col">
       <h3 id="custom-dialog-title" class="text-lg font-bold mb-2">ONNinvoices</h3>
@@ -771,7 +764,6 @@
     </div>
   </div>
 
-  <!-- Toast Container -->
   <div id="toast-container" class="toast no-print"></div>
 
   <script>
@@ -790,7 +782,6 @@
     let clientsData = [];
     let businessesData = [];
     let lineItemCounter = 0;
-    let exportLineItemCounter = 0;
     let reviseLineItemCounter = 0;
     let currentReviseInvoiceNo = null;
     let currentReviseExportNo = null;
@@ -941,6 +932,9 @@
       else { drawer.classList.add('open'); document.body.style.overflow = 'hidden'; }
     }
 
+    // ========================================================================
+    // NAVIGATION
+    // ========================================================================
     function navigateTo(view) {
       currentView = view;
       document.querySelectorAll('.view').forEach(v => v.classList.add('hidden'));
