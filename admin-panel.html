@@ -81,7 +81,7 @@
       width: 100%;
     }
     input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); }
-    .form-grid { display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 12px; align-items: end; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr auto; gap: 12px; align-items: end; }
     .form-grid .form-group { margin-bottom: 0; }
     .form-group label { display: block; font-size: 12px; font-weight: 500; color: var(--muted); margin-bottom: 4px; }
     table { width: 100%; border-collapse: collapse; }
@@ -114,7 +114,6 @@
     .text-muted { color: var(--muted); }
     .text-sm { font-size: 13px; }
 
-    /* Navigation bar for admin */
     .admin-nav {
       display: flex;
       align-items: center;
@@ -159,7 +158,7 @@
     <div class="admin-nav">
       <a href="/onninvoices-frontend/index.html" class="nav-link">← Go to App</a>
       <span id="userRole" class="badge badge-owner">OWNER</span>
-      <span id="userPhone" class="text-muted text-sm"></span>
+      <span id="userEmail" class="text-muted text-sm"></span>
       <button onclick="logout()" class="btn btn-danger btn-sm">Logout</button>
     </div>
   </div>
@@ -169,12 +168,16 @@
     <h2 class="text-sm mb-4" style="font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;">Add New User</h2>
     <form id="addUserForm" class="form-grid">
       <div class="form-group">
-        <label>Phone Number *</label>
-        <input type="tel" id="phone" placeholder="+91XXXXXXXXXX" required>
-      </div>
-      <div class="form-group">
         <label>Email *</label>
         <input type="email" id="email" placeholder="user@example.com" required>
+      </div>
+      <div class="form-group">
+        <label>Phone</label>
+        <input type="tel" id="phone" placeholder="+91XXXXXXXXXX">
+      </div>
+      <div class="form-group">
+        <label>Password *</label>
+        <input type="text" id="password" placeholder="Temp@123" required>
       </div>
       <div class="form-group">
         <label>Role</label>
@@ -197,8 +200,8 @@
       <table>
         <thead>
           <tr>
-            <th>Phone</th>
             <th>Email</th>
+            <th>Phone</th>
             <th>Role</th>
             <th>Status</th>
             <th>Added</th>
@@ -239,7 +242,7 @@
       }
 
       document.getElementById('userRole').textContent = data.user.role;
-      document.getElementById('userPhone').textContent = data.user.phone;
+      document.getElementById('userEmail').textContent = data.user.email;
       loadUsers();
     } catch (error) {
       console.error('Auth error:', error);
@@ -261,8 +264,8 @@
       if (data.success && data.users.length > 0) {
         tbody.innerHTML = data.users.map(user => `
           <tr>
-            <td><strong>${user.phone_number}</strong></td>
-            <td>${user.email || '-'}</td>
+            <td><strong>${user.email}</strong></td>
+            <td>${user.phone_number || '-'}</td>
             <td><span class="badge badge-${user.role.toLowerCase()}">${user.role}</span></td>
             <td>${user.is_verified ? '✅ Verified' : '⏳ Pending'}</td>
             <td>${new Date(user.created_at).toLocaleDateString('en-IN')}</td>
@@ -284,12 +287,13 @@
   document.getElementById('addUserForm').addEventListener('submit', async function(e) {
     e.preventDefault();
 
-    const phone = document.getElementById('phone').value.trim();
     const email = document.getElementById('email').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const password = document.getElementById('password').value.trim();
     const role = document.getElementById('role').value;
 
-    if (!phone) {
-      showToast('Phone number required', 'error');
+    if (!email || !password) {
+      showToast('Email and password are required', 'error');
       return;
     }
 
@@ -304,7 +308,7 @@
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({ phone, email, role })
+        body: JSON.stringify({ email, phone, password, role })
       });
       const data = await response.json();
 
@@ -312,16 +316,16 @@
       btn.textContent = 'Add User';
 
       if (data.success) {
-        showToast(`User ${phone} added as ${role}`, 'success');
+        showToast(`✅ User ${email} added as ${role}`, 'success');
         document.getElementById('addUserForm').reset();
         loadUsers();
       } else {
-        showToast('Error: ' + (data.error || data.detail || 'Unknown error'), 'error');
+        showToast('❌ Error: ' + (data.error || data.detail || 'Unknown error'), 'error');
       }
     } catch (error) {
       btn.disabled = false;
       btn.textContent = 'Add User';
-      showToast('Network error: ' + error.message, 'error');
+      showToast('❌ Network error: ' + error.message, 'error');
     }
   });
 
@@ -337,13 +341,13 @@
       const data = await response.json();
 
       if (data.success) {
-        showToast('User deleted successfully', 'success');
+        showToast('✅ User deleted successfully', 'success');
         loadUsers();
       } else {
-        showToast('Error: ' + (data.error || data.detail), 'error');
+        showToast('❌ Error: ' + (data.error || data.detail), 'error');
       }
     } catch (error) {
-      showToast('Network error: ' + error.message, 'error');
+      showToast('❌ Network error: ' + error.message, 'error');
     }
   }
 
