@@ -70,7 +70,6 @@
       -webkit-backdrop-filter: var(--blur);
     }
 
-    /* Glassmorphism base */
     .glass {
       background: var(--card);
       backdrop-filter: var(--blur);
@@ -396,7 +395,6 @@
     }
     .mobile-drawer.open { transform: translateX(0); }
 
-    /* Scrollbar */
     ::-webkit-scrollbar { width: 4px; height: 4px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: var(--muted); border-radius: 10px; }
@@ -638,6 +636,7 @@
     </div>
   </div>
 
+  <!-- CREATE EXPORT MODAL WITH MULTIPLE LINE ITEMS -->
   <div id="create-export-modal" class="hidden fixed inset-0 modal-overlay z-50 flex items-center justify-center p-4 no-print">
     <div class="modal-card max-w-4xl w-full p-6 max-h-[90vh] overflow-y-auto">
       <div class="text-header mb-6">Create Export Invoice</div>
@@ -647,48 +646,36 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
             <div>
               <label>Client Name *</label>
-              <input type="text" name="clientName" required class="input-field">
+              <input type="text" id="export-client-name" required class="input-field">
             </div>
             <div>
               <label>Country *</label>
-              <input type="text" name="country" required placeholder="e.g. Turkey" class="input-field">
+              <input type="text" id="export-country" required placeholder="e.g. Turkey" class="input-field">
             </div>
             <div class="md:col-span-2">
               <label>Address *</label>
-              <textarea name="address" required class="input-field" style="min-height:80px;"></textarea>
+              <textarea id="export-address" required class="input-field" style="min-height:80px;"></textarea>
             </div>
             <div>
               <label>Invoice Date</label>
-              <input type="date" name="date" id="export-date" class="input-field">
+              <input type="date" id="export-date" class="input-field">
             </div>
           </div>
         </div>
 
         <div class="erp-card">
-          <div class="text-header mb-5">Service Details</div>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-            <div>
-              <label>Service Description *</label>
-              <input type="text" name="description" required class="input-field">
-            </div>
-            <div>
-              <label>SAC/HSN Code *</label>
-              <input type="text" name="sacCode" required class="input-field">
-            </div>
+          <div class="flex items-center justify-between mb-5">
+            <div class="text-header">Line Items</div>
+            <button type="button" onclick="addExportLineItem()" class="btn btn-secondary btn-sm h-8 px-3">Add Item</button>
           </div>
+          <div id="export-line-items-container" class="space-y-4"></div>
+          <div id="export-no-items-msg" class="text-center py-8 text-[var(--muted)]">No items added yet.</div>
         </div>
 
         <div class="erp-card">
-          <div class="text-header mb-5">Pricing</div>
-          <div class="grid grid-cols-2 gap-4">
-            <div>
-              <label>Quantity *</label>
-              <input type="number" name="quantity" required min="1" step="1" class="input-field">
-            </div>
-            <div>
-              <label>Rate (USD) *</label>
-              <input type="number" name="rate" required min="0" step="0.01" class="input-field">
-            </div>
+          <div class="text-header mb-5">Summary</div>
+          <div class="space-y-3 max-w-sm ml-auto">
+            <div class="flex justify-between"><span class="text-[var(--muted)]">Total (USD):</span><span id="export-summary-total" class="font-semibold">$0.00</span></div>
           </div>
         </div>
 
@@ -751,6 +738,17 @@
     </div>
   </div>
 
+  <div id="remove-client-modal" class="hidden fixed inset-0 modal-overlay z-50 flex items-center justify-center p-4 no-print">
+    <div class="modal-card max-w-md w-full p-6">
+      <div class="text-header mb-4">Confirm Remove</div>
+      <p id="remove-client-message" class="text-[var(--muted)] mb-6">Are you sure you want to remove this client?</p>
+      <div class="flex gap-3 justify-end">
+        <button onclick="closeRemoveClientModal()" class="btn btn-secondary flex-1">Cancel</button>
+        <button id="confirm-remove-client-btn" class="btn btn-danger flex-1">Remove</button>
+      </div>
+    </div>
+  </div>
+
   <div id="custom-dialog" class="hidden fixed inset-0 z-[99999] modal-overlay flex items-center justify-center p-4 no-print">
     <div id="custom-dialog-card" class="modal-card max-w-sm w-full p-6 transition-all duration-200 scale-95 opacity-0 flex flex-col">
       <h3 id="custom-dialog-title" class="text-lg font-bold mb-2">ONNinvoices</h3>
@@ -781,6 +779,7 @@
     let clientsData = [];
     let businessesData = [];
     let lineItemCounter = 0;
+    let exportLineItemCounter = 0;
     let reviseLineItemCounter = 0;
     let currentReviseInvoiceNo = null;
     let currentReviseExportNo = null;
@@ -1525,9 +1524,12 @@
             let found = false;
             data.clients.forEach(client => {
               const option = document.createElement('option');
-              option.value = client[1];
-              option.textContent = `${client[1]} (${client[4] || 'N/A'})`;
-              if (selectedValue && client[1] === selectedValue) { option.selected = true; found = true; }
+              // client is an array: [id, name, address, gstin, state, state_code, phone, email]
+              const clientName = client[1] || client.client_name || '';
+              const state = client[4] || client.state || '';
+              option.value = clientName;
+              option.textContent = `${clientName} (${state || 'N/A'})`;
+              if (selectedValue && clientName === selectedValue) { option.selected = true; found = true; }
               select.appendChild(option);
             });
             
@@ -1670,7 +1672,8 @@
       const isExport = data.country !== undefined && !data.placeOfSupply;
       
       if (isExport) {
-        const amountUSD = (data.quantity || 0) * (data.rate || 0);
+        const items = data.items || [];
+        const amountUSD = items.reduce((sum, item) => sum + (item.quantity * item.rate), 0);
         let html = `
           <div class="space-y-6">
             <div class="grid grid-cols-2 gap-4">
@@ -1679,9 +1682,23 @@
               <div class="bg-[var(--bg)] p-3 rounded-lg"><span class="text-helper text-[var(--muted)] block mb-1">Date</span><span class="font-semibold">${escapeHtml(data.date)}</span></div>
               <div class="bg-[var(--bg)] p-3 rounded-lg"><span class="text-helper text-[var(--muted)] block mb-1">Amount</span><span class="font-semibold">$${amountUSD.toFixed(2)}</span></div>
             </div>
-            <div class="bg-[var(--bg)] p-3 rounded-lg">
-              <span class="text-helper text-[var(--muted)] block mb-1">Description</span>
-              <span class="font-semibold">${escapeHtml(data.description)}</span>
+            <div class="table-container shadow-sm">
+              <table class="erp-table">
+                <thead><tr><th>#</th><th>Description</th><th class="hidden md:table-cell">SAC</th><th style="text-align:right">Qty</th><th style="text-align:right">Rate</th><th style="text-align:right">Amount</th></tr></thead>
+                <tbody>`;
+        items.forEach((item, idx) => {
+          html += `<tr>
+            <td data-label="#">${idx + 1}</td>
+            <td data-label="Description"><div class="max-w-[150px] md:max-w-none truncate">${escapeHtml(item.description)}</div></td>
+            <td data-label="SAC" class="hidden md:table-cell">${escapeHtml(item.sacCode || '-')}</td>
+            <td data-label="Qty" style="text-align:right">${item.quantity}</td>
+            <td data-label="Rate" style="text-align:right">$${Number(item.rate).toFixed(2)}</td>
+            <td data-label="Amount" style="text-align:right; font-weight:600;">$${Number(item.amount).toFixed(2)}</td>
+          </tr>`;
+        });
+        html += `
+                </tbody>
+              </table>
             </div>
             <div class="flex justify-between pt-3 mt-1 border-t border-[var(--border)]">
               <span class="text-header">Total (USD):</span>
@@ -1818,7 +1835,7 @@
           </div>
           <div class="table-container">
             <table class="erp-table">
-              <thead><tr><th>Client Name</th><th>GSTIN</th><th>State</th><th class="hidden md:table-cell">Code</th><th>Phone</th></tr></thead>
+              <thead><tr><th>Client Name</th><th>GSTIN</th><th>State</th><th class="hidden md:table-cell">Code</th><th>Phone</th><th style="text-align:center">Actions</th></tr></thead>
               <tbody id="clients-tbody"></tbody>
             </table>
           </div>
@@ -1842,17 +1859,21 @@
       const tbody = document.getElementById('clients-tbody');
       if (tbody) {
         if (filtered.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--muted)">No results found</td></tr>`;
+          tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--muted)">No results found</td></tr>`;
         } else {
-          tbody.innerHTML = filtered.map(row => `
-            <tr>
-              <td data-label="Client Name" style="font-weight:600"><div class="truncate w-full ml-4 max-w-[180px] md:max-w-none text-right md:text-left md:ml-0">${escapeHtml(row[1] || 'N/A')}</div></td>
-              <td data-label="GSTIN">${escapeHtml(row[3] || 'NONE')}</td>
-              <td data-label="State">${escapeHtml(row[4] || 'N/A')}</td>
-              <td data-label="Code" class="hidden md:table-cell">${escapeHtml(row[5] || 'N/A')}</td>
-              <td data-label="Phone">${escapeHtml(row[6] || '-')}</td>
-            </tr>
-          `).join('');
+          tbody.innerHTML = filtered.map(row => {
+            const clientId = row[0];
+            const clientName = row[1] || 'N/A';
+            return `
+              <tr>
+                <td data-label="Client Name" style="font-weight:600"><div class="truncate w-full ml-4 max-w-[180px] md:max-w-none text-right md:text-left md:ml-0">${escapeHtml(clientName)}</div></td>
+                <td data-label="GSTIN">${escapeHtml(row[3] || 'NONE')}</td>
+                <td data-label="State">${escapeHtml(row[4] || 'N/A')}</td>
+                <td data-label="Code" class="hidden md:table-cell">${escapeHtml(row[5] || 'N/A')}</td>
+                <td data-label="Phone">${escapeHtml(row[6] || '-')}</td>
+                <td data-label="Actions"><button onclick="showRemoveClient('${clientId}', '${escapeHtml(clientName)}')" class="btn btn-danger btn-sm w-full md:w-auto h-8">Remove</button></td>
+              </tr>`;
+          }).join('');
         }
       }
     }
@@ -1864,6 +1885,49 @@
 
     function showAddClientForm() { document.getElementById('add-client-modal').classList.remove('hidden'); }
     function closeAddClientModal() { document.getElementById('add-client-modal').classList.add('hidden'); document.getElementById('add-client-form').reset(); }
+
+    // ========================================================================
+    // REMOVE CLIENT
+    // ========================================================================
+    let pendingRemoveClientId = null;
+
+    function showRemoveClient(clientId, clientName) {
+      pendingRemoveClientId = clientId;
+      document.getElementById('remove-client-message').textContent = `Are you sure you want to remove "${clientName}"? This action cannot be undone.`;
+      document.getElementById('remove-client-modal').classList.remove('hidden');
+      document.getElementById('confirm-remove-client-btn').onclick = confirmRemoveClient;
+    }
+
+    function closeRemoveClientModal() {
+      document.getElementById('remove-client-modal').classList.add('hidden');
+      pendingRemoveClientId = null;
+    }
+
+    async function confirmRemoveClient() {
+      if (!pendingRemoveClientId) return;
+      const btn = document.getElementById('confirm-remove-client-btn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner" style="border-top-color:#fff;"></span>';
+
+      try {
+        const response = await apiFetch(`/api/clients/${pendingRemoveClientId}`, { method: 'DELETE' });
+        if (!response) { btn.disabled = false; btn.innerHTML = 'Remove'; return; }
+        const data = await response.json();
+        btn.disabled = false;
+        btn.innerHTML = 'Remove';
+        if (data.success) {
+          showToast('✅ Client removed successfully', 'success');
+          closeRemoveClientModal();
+          loadClients();
+        } else {
+          showToast(`❌ Failed: ${data.error || 'Unknown error'}`, 'error');
+        }
+      } catch (error) {
+        btn.disabled = false;
+        btn.innerHTML = 'Remove';
+        showToast(`❌ Error: ${error.message}`, 'error');
+      }
+    }
 
     async function handleAddClient(event) {
       event.preventDefault();
@@ -2179,45 +2243,123 @@
       filterExports();
     }
 
+    // ========================================================================
+    // CREATE EXPORT INVOICE WITH MULTIPLE LINE ITEMS
+    // ========================================================================
+    let exportLineItemCounter = 0;
+
     function showCreateExportForm() {
       document.getElementById('create-export-modal').classList.remove('hidden');
       document.getElementById('export-date').value = new Date().toISOString().split('T')[0];
+      document.getElementById('export-line-items-container').innerHTML = '';
+      document.getElementById('export-no-items-msg').classList.remove('hidden');
+      exportLineItemCounter = 0;
+      addExportLineItem();
+      updateExportSummary();
     }
-    function closeCreateExportModal() { document.getElementById('create-export-modal').classList.add('hidden'); document.getElementById('create-export-form').reset(); }
+
+    function closeCreateExportModal() { 
+      document.getElementById('create-export-modal').classList.add('hidden'); 
+      document.getElementById('create-export-form').reset();
+    }
+
+    function addExportLineItem() {
+      exportLineItemCounter++;
+      const container = document.getElementById('export-line-items-container');
+      document.getElementById('export-no-items-msg')?.classList.add('hidden');
+
+      const itemHtml = `
+        <div class="export-line-item grid grid-cols-12 gap-3 md:gap-4 items-end p-4 rounded-xl bg-[var(--surface)] border border-[var(--border)] relative" data-item-id="${exportLineItemCounter}">
+          <button type="button" onclick="removeExportLineItem(${exportLineItemCounter})" class="absolute top-2 right-2 p-2 text-[var(--muted)] hover:text-[var(--danger)] bg-transparent border-none">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+          <div class="col-span-12 md:col-span-5 pr-6 md:pr-0"><label>Description *</label><input type="text" placeholder="Service details" class="export-item-desc input-field" oninput="updateExportSummary()"></div>
+          <div class="col-span-6 md:col-span-2"><label>SAC/HSN</label><input type="text" placeholder="e.g. 996111" class="export-item-sac input-field"></div>
+          <div class="col-span-6 md:col-span-1"><label>Qty</label><input type="number" value="1" min="1" step="1" class="export-item-qty input-field px-2 text-center" oninput="updateExportSummary()"></div>
+          <div class="col-span-6 md:col-span-2"><label>Rate (USD)</label><input type="number" value="0" min="0" step="0.01" class="export-item-rate input-field" oninput="updateExportSummary()"></div>
+          <div class="col-span-6 md:col-span-2 text-right">
+            <label class="md:hidden">Amount</label>
+            <span class="export-item-amount block py-3 font-semibold text-[var(--primary)] md:text-[var(--text)]">$0.00</span>
+          </div>
+        </div>`;
+      container.insertAdjacentHTML('beforeend', itemHtml);
+      updateExportSummary();
+    }
+
+    function removeExportLineItem(itemId) {
+      const item = document.querySelector(`.export-line-item[data-item-id="${itemId}"]`);
+      if (item) item.remove();
+      const remaining = document.querySelectorAll('.export-line-item');
+      if (remaining.length === 0) document.getElementById('export-no-items-msg')?.classList.remove('hidden');
+      updateExportSummary();
+    }
+
+    function updateExportSummary() {
+      const items = document.querySelectorAll('.export-line-item');
+      let totalUSD = 0;
+      items.forEach(item => {
+        const qty = parseFloat(item.querySelector('.export-item-qty')?.value) || 0;
+        const rate = parseFloat(item.querySelector('.export-item-rate')?.value) || 0;
+        const amount = roundCurrency(qty * rate);
+        const amountEl = item.querySelector('.export-item-amount');
+        if (amountEl) amountEl.textContent = `$${amount.toFixed(2)}`;
+        totalUSD += amount;
+      });
+      document.getElementById('export-summary-total').textContent = `$${totalUSD.toFixed(2)}`;
+    }
 
     async function handleCreateExportInvoice(event) {
       event.preventDefault();
-      const form = event.target;
-      const formData = new FormData(form);
-      const invoiceData = {
-        clientName: formData.get('clientName'),
-        country: formData.get('country'),
-        address: formData.get('address'),
-        description: formData.get('description'),
-        sacCode: formData.get('sacCode'),
-        quantity: parseFloat(formData.get('quantity')) || 0,
-        rate: parseFloat(formData.get('rate')) || 0,
-        date: formData.get('date') || new Date().toISOString().split('T')[0]
-      };
+      
+      const clientName = document.getElementById('export-client-name').value.trim();
+      const country = document.getElementById('export-country').value.trim();
+      const address = document.getElementById('export-address').value.trim();
+      const date = document.getElementById('export-date').value || new Date().toISOString().split('T')[0];
 
-      if (invoiceData.quantity <= 0 || invoiceData.rate <= 0) {
-        showToast('Quantity and rate must be > 0', 'error');
+      if (!clientName || !country || !address) {
+        showToast('Please fill all required fields', 'error');
         return;
       }
 
-      const submitBtn = form.querySelector('button[type="submit"]');
+      const items = [];
+      const itemElements = document.querySelectorAll('.export-line-item');
+      let hasError = false;
+      itemElements.forEach(item => {
+        const desc = item.querySelector('.export-item-desc')?.value.trim();
+        const sac = item.querySelector('.export-item-sac')?.value.trim();
+        const qty = parseFloat(item.querySelector('.export-item-qty')?.value) || 0;
+        const rate = parseFloat(item.querySelector('.export-item-rate')?.value) || 0;
+        if (!desc) { showToast('Fill all descriptions', 'error'); hasError = true; return; }
+        if (qty <= 0 || rate <= 0) { showToast('Quantity and rate must be > 0', 'error'); hasError = true; return; }
+        items.push({ description: desc, sacCode: sac || '', quantity: qty, rate: rate, amount: roundCurrency(qty * rate) });
+      });
+      if (hasError) return;
+      if (items.length === 0) { showToast('Add at least one item', 'error'); return; }
+
+      const invoiceData = { clientName, country, address, date, items };
+
+      const submitBtn = event.target.querySelector('button[type="submit"]');
       submitBtn.disabled = true;
       submitBtn.innerHTML = '<span class="spinner" style="border-top-color:#fff;"></span>';
 
       try {
         const response = await apiFetch('/api/export-invoices', { method: 'POST', body: JSON.stringify(invoiceData) });
-        if (!response) { submitBtn.disabled = false; submitBtn.innerHTML = 'Create'; return; }
+        if (!response) { submitBtn.disabled = false; submitBtn.innerHTML = 'Create Export'; return; }
         const data = await response.json();
         submitBtn.disabled = false;
-        submitBtn.innerHTML = 'Create';
-        if (data.success) { showToast(`✅ Export ${data.invoiceNo} created!`, 'success'); closeCreateExportModal(); loadExportInvoices(); } 
-        else { showToast(`❌ Failed: ${data.error || 'Unknown error'}`, 'error'); }
-      } catch (error) { submitBtn.disabled = false; submitBtn.innerHTML = 'Create'; showToast(`❌ Error: ${error.message}`, 'error'); }
+        submitBtn.innerHTML = 'Create Export';
+        if (data.success) { 
+          showToast(`✅ Export ${data.invoiceNo} created!`, 'success'); 
+          closeCreateExportModal(); 
+          loadExportInvoices(); 
+        } else { 
+          showToast(`❌ Failed: ${data.error || 'Unknown error'}`, 'error'); 
+        }
+      } catch (error) { 
+        submitBtn.disabled = false; 
+        submitBtn.innerHTML = 'Create Export'; 
+        showToast(`❌ Error: ${error.message}`, 'error'); 
+      }
     }
 
     // ========================================================================
@@ -2328,7 +2470,8 @@
         'revise-invoice-modal': closeReviseModal,
         'revise-export-modal': closeReviseExportModal,
         'review-invoice-modal': closeReviewModal,
-        'remove-business-modal': closeRemoveBusinessModal
+        'remove-business-modal': closeRemoveBusinessModal,
+        'remove-client-modal': closeRemoveClientModal
       };
       Object.keys(modals).forEach(id => {
         const modal = document.getElementById(id);
@@ -2345,6 +2488,7 @@
         closeReviseExportModal();
         closeReviewModal();
         closeRemoveBusinessModal();
+        closeRemoveClientModal();
       }
     });
   </script>
