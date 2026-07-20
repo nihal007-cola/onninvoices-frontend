@@ -14,11 +14,11 @@
   <style>
     :root {
       --bg: #F2F4F8;
-      --surface: rgba(255, 255, 255, 0.65);
-      --surface-border: rgba(255, 255, 255, 0.3);
-      --card: rgba(255, 255, 255, 0.72);
-      --card-border: rgba(255, 255, 255, 0.25);
-      --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+      --surface: rgba(255, 255, 255, 0.55);
+      --surface-border: rgba(255, 255, 255, 0.25);
+      --card: rgba(255, 255, 255, 0.65);
+      --card-border: rgba(255, 255, 255, 0.2);
+      --glass-shadow: 0 8px 40px rgba(0, 0, 0, 0.06);
       --text: #111827;
       --muted: #6B7280;
       --primary: #2563EB;
@@ -29,18 +29,18 @@
       --success-hover: #15803D;
       --warning: #D97706;
       --warning-hover: #B45309;
-      --overlay: rgba(0, 0, 0, 0.35);
-      --blur: blur(20px);
+      --overlay: rgba(0, 0, 0, 0.25);
+      --blur: blur(24px) saturate(1.4);
       --card-rgb: 255, 255, 255;
     }
     
     [data-theme="dark"] {
-      --bg: #0F1117;
-      --surface: rgba(30, 33, 44, 0.65);
+      --bg: #0D0F14;
+      --surface: rgba(30, 33, 44, 0.5);
       --surface-border: rgba(255, 255, 255, 0.05);
-      --card: rgba(30, 33, 44, 0.72);
+      --card: rgba(30, 33, 44, 0.65);
       --card-border: rgba(255, 255, 255, 0.06);
-      --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      --glass-shadow: 0 8px 40px rgba(0, 0, 0, 0.3);
       --text: #F1F3F5;
       --muted: #9CA3AF;
       --primary: #3B82F6;
@@ -66,8 +66,8 @@
       font-weight: 500;
       transition: background 0.4s ease, color 0.4s ease;
       overscroll-behavior-y: none;
-      backdrop-filter: var(--blur);
-      -webkit-backdrop-filter: var(--blur);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
 
     .glass {
@@ -90,8 +90,9 @@
       line-height: 1.2 !important;
       margin: 0;
       color: var(--text);
+      letter-spacing: -0.02em;
     }
-    .text-helper { font-size: 12px !important; font-weight: 500 !important; color: var(--muted); }
+    .text-helper { font-size: 12px !important; font-weight: 500 !important; color: var(--muted); letter-spacing: -0.01em; }
 
     .sidebar {
       background: var(--surface);
@@ -187,7 +188,7 @@
       background-position: right 16px center;
       padding-right: 40px;
     }
-    label { display: block; color: var(--muted); margin-bottom: 8px; font-weight: 500; font-size: 13px; }
+    label { display: block; color: var(--muted); margin-bottom: 8px; font-weight: 500; font-size: 13px; letter-spacing: -0.01em; }
 
     .table-container {
       width: 100%;
@@ -273,8 +274,8 @@
 
     .modal-overlay {
       background: var(--overlay);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
+      backdrop-filter: blur(20px) saturate(1.4);
+      -webkit-backdrop-filter: blur(20px) saturate(1.4);
     }
     .modal-card {
       background: var(--card);
@@ -382,8 +383,8 @@
 
     #mobile-menu-backdrop {
       background: var(--overlay);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
+      backdrop-filter: blur(12px) saturate(1.4);
+      -webkit-backdrop-filter: blur(12px) saturate(1.4);
     }
     .mobile-drawer {
       transform: translateX(-100%);
@@ -459,7 +460,7 @@
   </aside>
 
   <!-- MOBILE HEADER -->
-  <div class="md:hidden fixed top-0 left-0 right-0 z-40 no-print border-b border-[var(--surface-border)] bg-[var(--surface)] backdrop-blur-[20px] bg-opacity-70 pt-[env(safe-area-inset-top)]">
+  <div class="md:hidden fixed top-0 left-0 right-0 z-40 no-print border-b border-[var(--surface-border)] bg-[var(--surface)] backdrop-blur-[24px] bg-opacity-70 pt-[env(safe-area-inset-top)]">
     <div class="flex items-center justify-between px-4 h-16">
       <div class="flex items-center gap-3">
         <img src="https://nihal007-cola.github.io/logo.png" alt="ONN" style="height: 24px; width: auto; object-fit: contain;">
@@ -579,7 +580,9 @@
     </div>
   </main>
 
-  <!-- MODALS -->
+  <!-- ===== MODALS ===== -->
+
+  <!-- Add Client Modal -->
   <div id="add-client-modal" class="hidden fixed inset-0 modal-overlay z-50 flex items-center justify-center p-4 no-print">
     <div class="modal-card max-w-lg w-full p-6">
       <div class="text-header mb-6">New Client</div>
@@ -603,6 +606,7 @@
     </div>
   </div>
 
+  <!-- Add Business Modal -->
   <div id="add-business-modal" class="hidden fixed inset-0 modal-overlay z-50 flex items-center justify-center p-4 no-print">
     <div class="modal-card max-w-lg w-full p-6 max-h-[90vh] overflow-y-auto">
       <div class="text-header mb-6">New Business</div>
@@ -636,7 +640,7 @@
     </div>
   </div>
 
-  <!-- CREATE EXPORT MODAL WITH MULTIPLE LINE ITEMS -->
+  <!-- Create Export Modal with Multiple Line Items -->
   <div id="create-export-modal" class="hidden fixed inset-0 modal-overlay z-50 flex items-center justify-center p-4 no-print">
     <div class="modal-card max-w-4xl w-full p-6 max-h-[90vh] overflow-y-auto">
       <div class="text-header mb-6">Create Export Invoice</div>
@@ -687,6 +691,7 @@
     </div>
   </div>
 
+  <!-- Review Invoice Modal -->
   <div id="review-invoice-modal" class="hidden fixed inset-0 modal-overlay z-50 flex items-center justify-center p-4 no-print">
     <div class="modal-card max-w-3xl w-full p-6 max-h-[90vh] overflow-y-auto flex flex-col">
       <div class="flex items-center justify-between mb-6 shrink-0">
@@ -703,6 +708,7 @@
     </div>
   </div>
 
+  <!-- Revise Invoice Modal -->
   <div id="revise-invoice-modal" class="hidden fixed inset-0 modal-overlay z-50 flex items-center justify-center p-4 no-print">
     <div class="modal-card max-w-4xl w-full p-6 max-h-[90vh] overflow-y-auto flex flex-col">
       <div class="flex items-center justify-between mb-6 shrink-0">
@@ -715,6 +721,7 @@
     </div>
   </div>
 
+  <!-- Revise Export Modal -->
   <div id="revise-export-modal" class="hidden fixed inset-0 modal-overlay z-50 flex items-center justify-center p-4 no-print">
     <div class="modal-card max-w-4xl w-full p-6 max-h-[90vh] overflow-y-auto flex flex-col">
       <div class="flex items-center justify-between mb-6 shrink-0">
@@ -727,6 +734,7 @@
     </div>
   </div>
 
+  <!-- Remove Business Modal -->
   <div id="remove-business-modal" class="hidden fixed inset-0 modal-overlay z-50 flex items-center justify-center p-4 no-print">
     <div class="modal-card max-w-md w-full p-6">
       <div class="text-header mb-4">Confirm Remove</div>
@@ -738,6 +746,7 @@
     </div>
   </div>
 
+  <!-- Remove Client Modal -->
   <div id="remove-client-modal" class="hidden fixed inset-0 modal-overlay z-50 flex items-center justify-center p-4 no-print">
     <div class="modal-card max-w-md w-full p-6">
       <div class="text-header mb-4">Confirm Remove</div>
@@ -749,6 +758,7 @@
     </div>
   </div>
 
+  <!-- Custom Dialog -->
   <div id="custom-dialog" class="hidden fixed inset-0 z-[99999] modal-overlay flex items-center justify-center p-4 no-print">
     <div id="custom-dialog-card" class="modal-card max-w-sm w-full p-6 transition-all duration-200 scale-95 opacity-0 flex flex-col">
       <h3 id="custom-dialog-title" class="text-lg font-bold mb-2">ONNinvoices</h3>
@@ -761,6 +771,7 @@
     </div>
   </div>
 
+  <!-- Toast Container -->
   <div id="toast-container" class="toast no-print"></div>
 
   <script>
@@ -921,7 +932,7 @@
       if(mobToggle) mobToggle.classList.toggle('active');
       document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
       const metaThemeColor = document.querySelector('meta[name="theme-color"]');
-      if (metaThemeColor) metaThemeColor.setAttribute('content', isDark ? '#0F1117' : '#F2F4F8');
+      if (metaThemeColor) metaThemeColor.setAttribute('content', isDark ? '#0D0F14' : '#F2F4F8');
     }
 
     function toggleMobileMenu() {
@@ -1524,7 +1535,6 @@
             let found = false;
             data.clients.forEach(client => {
               const option = document.createElement('option');
-              // client is an array: [id, name, address, gstin, state, state_code, phone, email]
               const clientName = client[1] || client.client_name || '';
               const state = client[4] || client.state || '';
               option.value = clientName;
