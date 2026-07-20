@@ -1191,8 +1191,8 @@
       }
       showToast('⏳ Generating PDF...', 'info');
 
-      const encodedInvoiceNo = encodeURIComponent(invoiceNo);
-      const url = type === 'export' ? `${API_URL}/api/export-invoices/${encodedInvoiceNo}/pdf` : `${API_URL}/api/invoices/${encodedInvoiceNo}/pdf`;
+      // Send raw invoiceNo so the backend :path parameter captures it cleanly without encoding confusion
+      const url = type === 'export' ? `${API_URL}/api/export-invoices/${invoiceNo}/pdf` : `${API_URL}/api/invoices/${invoiceNo}/pdf`;
       
       fetch(url, { headers: { 'Authorization': `Bearer ${getToken()}` } })
         .then(response => { 
@@ -1201,9 +1201,23 @@
         })
         .then(blob => { 
           const pdfUrl = URL.createObjectURL(blob); 
-          const win = window.open(pdfUrl, '_blank'); 
-          if (!win) showToast('Please allow popups to view PDF', 'error'); 
-          else showToast('✅ PDF generated!', 'success'); 
+          
+          // BYPASS POPUP BLOCKER: Force a direct file download using a hidden anchor tag
+          const a = document.createElement('a');
+          a.style.display = 'none';
+          a.href = pdfUrl;
+          const safeName = invoiceNo.replace(/\//g, '_');
+          a.download = `Invoice_${safeName}.pdf`;
+          
+          document.body.appendChild(a);
+          a.click();
+          
+          setTimeout(() => {
+            document.body.removeChild(a);
+            URL.revokeObjectURL(pdfUrl);
+          }, 100);
+
+          showToast('✅ PDF downloaded successfully!', 'success'); 
         })
         .catch(error => { 
           console.error('PDF error:', error); 
