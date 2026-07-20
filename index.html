@@ -62,13 +62,7 @@
       --overlay: rgba(0, 0, 0, 0.6);
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      -webkit-tap-highlight-color: transparent;
-    }
-    
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     body {
       font-family: 'Inter', system-ui, sans-serif;
       background: var(--bg);
@@ -131,7 +125,6 @@
     .sidebar-link svg { width: 20px; height: 20px; opacity: 0.8; }
     .sidebar-link:active { transform: scale(0.98); }
     .sidebar-link:hover { background: var(--bg); color: var(--text); }
-    
     .sidebar-link.active {
       background: rgba(37, 99, 235, 0.1);
       color: var(--primary);
@@ -147,17 +140,11 @@
       transition: all 0.3s ease;
       box-shadow: 0 1px 3px rgba(0,0,0,0.02);
     }
-    
     @media (max-width: 768px) {
       .erp-card { padding: 16px; border-radius: 12px; }
     }
 
-    .stat-card {
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
+    .stat-card { padding: 20px; display: flex; flex-direction: column; gap: 8px; }
 
     .btn {
       display: inline-flex;
@@ -174,10 +161,8 @@
       user-select: none;
       font-weight: 600;
     }
-    
     .btn:active { transform: scale(0.97); }
     .btn-sm { height: 36px; padding: 0 14px; border-radius: 6px; }
-    
     .btn-primary { background: var(--primary); color: #FFFFFF; }
     .btn-primary:hover { background: var(--primary-hover); color: #FFFFFF; }
     .btn-secondary { background: var(--surface); border-color: var(--border); color: var(--text); }
@@ -201,12 +186,10 @@
       transition: all 0.2s ease;
       appearance: none;
     }
-    
     .input-field:focus {
       border-color: var(--primary);
       box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
     }
-    
     .input-field::placeholder { color: var(--muted); }
     textarea.input-field { min-height: 100px; padding: 16px; resize: vertical; }
     select.input-field {
@@ -215,7 +198,6 @@
       background-position: right 16px center;
       padding-right: 40px;
     }
-    
     label { display: block; color: var(--muted); margin-bottom: 8px; font-weight: 500; font-size: 13px; }
 
     .table-container {
@@ -225,7 +207,6 @@
       border-radius: 8px;
       -webkit-overflow-scrolling: touch;
     }
-    
     .erp-table { width: 100%; border-collapse: collapse; white-space: nowrap; }
     .erp-table th {
       padding: 16px;
@@ -244,17 +225,8 @@
     .erp-table tr:hover td { background: rgba(128, 128, 128, 0.04); }
 
     @media (max-width: 768px) {
-      .table-container {
-        border: none;
-        border-radius: 0;
-        background: transparent;
-        overflow-x: visible;
-      }
-      .erp-table, .erp-table tbody, .erp-table tr, .erp-table td {
-        display: block;
-        width: 100%;
-        white-space: normal;
-      }
+      .table-container { border: none; border-radius: 0; background: transparent; overflow-x: visible; }
+      .erp-table, .erp-table tbody, .erp-table tr, .erp-table td { display: block; width: 100%; white-space: normal; }
       .erp-table thead { display: none; }
       .erp-table tr {
         margin-bottom: 16px;
@@ -271,9 +243,7 @@
         border-bottom: 1px solid var(--border);
         text-align: right;
       }
-      .erp-table td:last-child {
-        border-bottom: none;
-      }
+      .erp-table td:last-child { border-bottom: none; }
       .erp-table td::before {
         content: attr(data-label);
         font-weight: 600;
@@ -289,9 +259,7 @@
         border-bottom-left-radius: 12px;
         border-bottom-right-radius: 12px;
       }
-      .erp-table td[data-label="Actions"]::before, .erp-table td[data-label="Action"]::before {
-        display: none;
-      }
+      .erp-table td[data-label="Actions"]::before, .erp-table td[data-label="Action"]::before { display: none; }
     }
 
     .badge {
@@ -313,7 +281,6 @@
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
     }
-    
     .modal-card {
       transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
@@ -339,7 +306,6 @@
         z-index: 20;
       }
     }
-    
     @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 
     .spinner {
@@ -430,6 +396,7 @@
 </head>
 <body class="pb-[env(safe-area-inset-bottom)]">
 
+  <!-- SIDEBAR -->
   <aside class="sidebar hidden md:flex fixed left-0 top-0 h-full w-64 flex-col z-40 no-print">
     <div class="p-6 border-b border-[var(--border)]">
       <div class="flex items-center gap-3">
@@ -440,7 +407,6 @@
         </div>
       </div>
     </div>
-    
     <nav class="flex-1 py-4 px-4 space-y-2 overflow-y-auto">
       <a href="#" onclick="navigateTo('dashboard')" id="nav-dashboard" class="sidebar-link active">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
@@ -467,7 +433,6 @@
         Cancelled
       </a>
     </nav>
-    
     <div class="p-6 border-t border-[var(--border)] space-y-4">
       <div class="flex items-center justify-between">
         <span class="text-helper text-[var(--muted)] font-semibold">Dark Mode</span>
@@ -478,6 +443,7 @@
     </div>
   </aside>
 
+  <!-- MOBILE HEADER -->
   <div class="md:hidden fixed top-0 left-0 right-0 z-40 no-print border-b border-[var(--border)] bg-[var(--surface)] backdrop-blur-md bg-opacity-90 pt-[env(safe-area-inset-top)]">
     <div class="flex items-center justify-between px-4 h-16">
       <div class="flex items-center gap-3">
@@ -489,7 +455,8 @@
       </button>
     </div>
   </div>
-  
+
+  <!-- MOBILE DRAWER -->
   <div id="mobile-menu-backdrop" class="hidden fixed inset-0 z-50 md:hidden no-print" onclick="toggleMobileMenu()"></div>
   <div id="mobile-drawer" class="mobile-drawer fixed top-0 left-0 bottom-0 w-[280px] bg-[var(--surface)] z-50 flex flex-col md:hidden no-print border-r border-[var(--border)] pt-[env(safe-area-inset-top)]">
     <div class="p-5 flex items-center justify-between border-b border-[var(--border)]">
@@ -516,9 +483,11 @@
     </div>
   </div>
 
+  <!-- MAIN CONTENT -->
   <main class="md:ml-64 min-h-screen pt-16 md:pt-0">
     <div class="p-4 md:p-8 max-w-7xl mx-auto">
 
+      <!-- VIEW: DASHBOARD -->
       <div id="view-dashboard" class="view">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6 md:mb-8 gap-4">
           <div>
@@ -534,7 +503,7 @@
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
               New
             </button>
-            <button onclick="logout()" class="btn btn-danger flex-1 md:flex-none" style="background:var(--danger);color:white;">
+            <button onclick="logout()" class="btn btn-danger flex-1 md:flex-none">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
               Logout
             </button>
@@ -543,6 +512,7 @@
         <div id="dashboard-content"></div>
       </div>
 
+      <!-- VIEW: CREATE INVOICE -->
       <div id="view-create-invoice" class="view hidden">
         <div class="mb-6 md:mb-8">
           <div class="text-header text-xl md:text-2xl">Create Invoice</div>
@@ -551,6 +521,7 @@
         <div id="create-invoice-content"></div>
       </div>
 
+      <!-- VIEW: CLIENTS -->
       <div id="view-clients" class="view hidden">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6 md:mb-8 gap-4">
           <div>
@@ -565,6 +536,7 @@
         <div id="clients-content"></div>
       </div>
 
+      <!-- VIEW: BUSINESSES -->
       <div id="view-businesses" class="view hidden">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6 md:mb-8 gap-4">
           <div>
@@ -579,6 +551,7 @@
         <div id="businesses-content"></div>
       </div>
 
+      <!-- VIEW: EXPORT INVOICES -->
       <div id="view-export-invoices" class="view hidden">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6 md:mb-8 gap-4">
           <div>
@@ -593,6 +566,7 @@
         <div id="export-invoices-content"></div>
       </div>
 
+      <!-- VIEW: CANCELLED -->
       <div id="view-cancelled" class="view hidden">
         <div class="mb-6 md:mb-8">
           <div class="text-header text-xl md:text-2xl">Cancelled Invoices</div>
@@ -604,6 +578,9 @@
     </div>
   </main>
 
+  <!-- ===== MODALS ===== -->
+
+  <!-- Add Client Modal -->
   <div id="add-client-modal" class="hidden fixed inset-0 modal-overlay z-50 flex items-center justify-center p-0 md:p-4 no-print">
     <div class="erp-card modal-card max-w-lg w-full">
       <div class="text-header mb-6">New Client</div>
@@ -648,6 +625,7 @@
     </div>
   </div>
 
+  <!-- Add Business Modal -->
   <div id="add-business-modal" class="hidden fixed inset-0 modal-overlay z-50 flex items-center justify-center p-0 md:p-4 no-print">
     <div class="erp-card modal-card max-w-lg w-full overflow-y-auto">
       <div class="text-header mb-6">New Business</div>
@@ -714,6 +692,7 @@
     </div>
   </div>
 
+  <!-- Create Export Modal -->
   <div id="create-export-modal" class="hidden fixed inset-0 modal-overlay z-50 flex items-center justify-center p-0 md:p-4 no-print">
     <div class="erp-card modal-card max-w-lg w-full overflow-y-auto">
       <div class="text-header mb-6">Create Export Invoice</div>
@@ -760,6 +739,7 @@
     </div>
   </div>
 
+  <!-- Review Invoice Modal -->
   <div id="review-invoice-modal" class="hidden fixed inset-0 modal-overlay z-50 flex items-center justify-center p-0 md:p-4 no-print">
     <div class="erp-card modal-card max-w-3xl w-full overflow-y-auto flex flex-col">
       <div class="flex items-center justify-between mb-6 shrink-0">
@@ -771,13 +751,12 @@
       <div id="review-content" class="overflow-y-auto pb-4"></div>
       <div class="mobile-sticky-btn flex gap-3 justify-end md:pt-4 md:mt-2 md:border-t-0 md:bg-transparent shrink-0">
         <button onclick="closeReviewModal()" class="btn btn-secondary flex-1 md:flex-none">Cancel</button>
-        <button id="confirm-invoice-btn" onclick="confirmInvoice()" class="btn btn-success flex-1 md:flex-none">
-          Confirm & Create
-        </button>
+        <button id="confirm-invoice-btn" onclick="confirmInvoice()" class="btn btn-success flex-1 md:flex-none">Confirm & Create</button>
       </div>
     </div>
   </div>
 
+  <!-- Revise Invoice Modal -->
   <div id="revise-invoice-modal" class="hidden fixed inset-0 modal-overlay z-50 flex items-center justify-center p-0 md:p-4 no-print">
     <div class="erp-card modal-card max-w-4xl w-full overflow-y-auto flex flex-col">
       <div class="flex items-center justify-between mb-6 shrink-0">
@@ -790,6 +769,7 @@
     </div>
   </div>
 
+  <!-- Custom Dialog -->
   <div id="custom-dialog" class="hidden fixed inset-0 z-[99999] modal-overlay flex items-center justify-center p-4 no-print">
     <div id="custom-dialog-card" class="erp-card w-full max-w-sm transition-all duration-200 scale-95 opacity-0 flex flex-col">
       <h3 id="custom-dialog-title" class="text-lg font-bold mb-2">ONNinvoices</h3>
@@ -802,61 +782,19 @@
     </div>
   </div>
 
+  <!-- Toast Container -->
   <div id="toast-container" class="toast no-print"></div>
 
   <script>
-    // ==================== CONFIGURATION ====================
+    // ========================================================================
+    // CONFIGURATION
+    // ========================================================================
     const API_URL = 'https://api.jamesmoriarty.in';
+    const FRONTEND_BASE = '/onninvoices-frontend';
 
-    // ==================== API HELPER ====================
-    async function apiFetch(endpoint, options = {}) {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        showToast('Please login first', 'error');
-        setTimeout(() => window.location.href = '/onninvoices-frontend/login.html', 1500);
-        return null;
-      }
-      
-      const headers = {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-        ...options.headers
-      };
-      
-      try {
-        const response = await fetch(`${API_URL}${endpoint}`, {
-          ...options,
-          headers
-        });
-        
-        if (response.status === 401) {
-          localStorage.clear();
-          showToast('Session expired. Please login again.', 'error');
-          setTimeout(() => window.location.href = '/onninvoices-frontend/login.html', 1500);
-          return null;
-        }
-        
-        return response;
-      } catch (error) {
-        console.error('API Error:', error);
-        showToast('Network error: ' + error.message, 'error');
-        return null;
-      }
-    }
-
-    // ==================== HELPER FUNCTIONS ====================
-    function roundCurrency(value) {
-      return Math.round((value + Number.EPSILON) * 100) / 100;
-    }
-
-    function escapeHtml(text) {
-      if (!text) return '';
-      const div = document.createElement('div');
-      div.textContent = text;
-      return div.innerHTML;
-    }
-
-    // ==================== STATE ====================
+    // ========================================================================
+    // STATE
+    // ========================================================================
     let currentView = 'dashboard';
     let invoicesData = [];
     let clientsData = [];
@@ -870,14 +808,55 @@
     let pendingReviseNo = null;
     let isDark = true;
 
-    // ==================== LOGOUT ====================
-    function logout() {
-        localStorage.clear();
-        showToast('Logged out successfully', 'info');
-        setTimeout(() => window.location.href = '/onninvoices-frontend/login.html', 500);
+    // ========================================================================
+    // API HELPER WITH JWT
+    // ========================================================================
+    function getToken() {
+      return localStorage.getItem('token');
     }
 
-    // ==================== CUSTOM DIALOG SYSTEM ====================
+    function isLoggedIn() {
+      return !!getToken();
+    }
+
+    async function apiFetch(endpoint, options = {}) {
+      const token = getToken();
+      if (!token) {
+        showToast('Please login first', 'error');
+        setTimeout(() => window.location.href = FRONTEND_BASE + '/login.html', 1500);
+        return null;
+      }
+
+      const headers = {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+        ...options.headers
+      };
+
+      try {
+        const response = await fetch(`${API_URL}${endpoint}`, {
+          ...options,
+          headers
+        });
+
+        if (response.status === 401) {
+          localStorage.clear();
+          showToast('Session expired. Please login again.', 'error');
+          setTimeout(() => window.location.href = FRONTEND_BASE + '/login.html', 1500);
+          return null;
+        }
+
+        return response;
+      } catch (error) {
+        console.error('API Error:', error);
+        showToast('Network error: ' + error.message, 'error');
+        return null;
+      }
+    }
+
+    // ========================================================================
+    // CUSTOM DIALOG SYSTEM
+    // ========================================================================
     function showCustomDialog(options) {
       return new Promise((resolve) => {
         const dialog = document.getElementById('custom-dialog');
@@ -944,12 +923,14 @@
       return await showCustomDialog({ type: 'prompt', message: message, defaultValue });
     }
 
-    // ==================== THEME & UI ====================
+    // ========================================================================
+    // THEME & NAVIGATION
+    // ========================================================================
     function toggleTheme() {
       isDark = !isDark;
       document.getElementById('theme-toggle').classList.toggle('active');
       const mobToggle = document.getElementById('theme-toggle-mob');
-      if(mobToggle) mobToggle.classList.toggle('active');
+      if (mobToggle) mobToggle.classList.toggle('active');
       
       const themeColor = isDark ? 'dark' : 'light';
       document.documentElement.setAttribute('data-theme', themeColor);
@@ -975,7 +956,6 @@
       }
     }
 
-    // ==================== NAVIGATION ====================
     function navigateTo(view) {
       currentView = view;
       document.querySelectorAll('.view').forEach(v => v.classList.add('hidden'));
@@ -996,15 +976,14 @@
       else if (view === 'cancelled') loadCancelledInvoices();
     }
 
-    // ==================== TOAST ====================
+    // ========================================================================
+    // TOAST & LOADING
+    // ========================================================================
     function showToast(message, type = 'success') {
       const container = document.getElementById('toast-container');
       const toast = document.createElement('div');
       toast.className = `toast-content toast-${type} fade-in`;
-      const span = document.createElement('span');
-      span.className = 'text-helper font-medium';
-      span.textContent = message;
-      toast.appendChild(span);
+      toast.innerHTML = `<span class="text-helper font-medium">${message}</span>`;
       container.appendChild(toast);
       setTimeout(() => { if (toast.parentElement) toast.remove(); }, 3500);
     }
@@ -1016,18 +995,37 @@
       }
     }
 
-    // ==================== DASHBOARD ====================
+    function roundCurrency(value) {
+      return Math.round((value + Number.EPSILON) * 100) / 100;
+    }
+
+    function escapeHtml(text) {
+      if (!text) return '';
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // ========================================================================
+    // LOGOUT
+    // ========================================================================
+    function logout() {
+      localStorage.clear();
+      showToast('Logged out successfully', 'info');
+      setTimeout(() => window.location.href = FRONTEND_BASE + '/login.html', 500);
+    }
+
+    // ========================================================================
+    // DASHBOARD
+    // ========================================================================
     async function loadDashboard() {
       setLoading('dashboard-content');
       
-      const token = localStorage.getItem('token');
-      if (!token) {
+      if (!isLoggedIn()) {
         document.getElementById('dashboard-content').innerHTML = `
           <div class="erp-card text-center" style="color:var(--warning)">
             <p>Please login first</p>
-            <button onclick="window.location.href='/onninvoices-frontend/login.html'" class="btn btn-primary mt-4">
-              Go to Login
-            </button>
+            <button onclick="window.location.href='${FRONTEND_BASE}/login.html'" class="btn btn-primary mt-4">Go to Login</button>
           </div>
         `;
         return;
@@ -1168,6 +1166,7 @@
                 <div class="flex gap-2 justify-center w-full">
                   <button onclick="handleReviseInvoice('${escapeHtml(row.inv.invoice_no)}')" class="btn btn-warning btn-sm flex-1 md:flex-none">Revise</button>
                   <button onclick="handleCancelInvoice('${escapeHtml(row.inv.invoice_no)}')" class="btn btn-danger btn-sm flex-1 md:flex-none">Cancel</button>
+                  <button onclick="handleGeneratePDF('${escapeHtml(row.inv.invoice_no)}')" class="btn btn-primary btn-sm flex-1 md:flex-none">PDF</button>
                 </div>
               `;
             } else {
@@ -1203,61 +1202,195 @@
       filterDashboardTable();
     }
 
-    // ==================== INVOICE ACTIONS ====================
-    async function handleCancelInvoice(invoiceNo) {
-  const token = localStorage.getItem('token');
-  if (!token) {
-    showToast('Please login first', 'error');
-    window.location.href = '/onninvoices-frontend/login.html';
-    return;
-  }
-  
-  // Confirm cancellation
-  const confirmed = await appConfirm(`⚠️ Are you sure you want to cancel invoice ${invoiceNo}?`);
-  if (!confirmed) return;
-  
-  // Get reason
-  const reason = await appPrompt('📝 Enter cancellation reason:');
-  if (!reason || reason.trim() === '') {
-    showToast('Cancellation cancelled - no reason provided', 'info');
-    return;
-  }
-  
-  try {
-    showToast('⏳ Cancelling invoice...', 'info');
-    
-    const response = await apiFetch('/api/invoices/cancel', {
-      method: 'POST',
-      body: JSON.stringify({ 
-        invoiceNo: invoiceNo, 
-        reason: reason.trim() 
-      })
-    });
-    
-    if (!response) return;
-    
-    const data = await response.json();
-    
-    if (data.success) {
-      showToast(`✅ Invoice ${invoiceNo} cancelled successfully!`, 'success');
-      // Reload dashboard
-      loadDashboard();
-    } else {
-      showToast(`❌ Failed to cancel: ${data.error || 'Unknown error'}`, 'error');
-    }
-  } catch (error) {
-    console.error('Cancel invoice error:', error);
-    showToast(`❌ Error: ${error.message}`, 'error');
-  }
-}
+    // ========================================================================
+    // INVOICE ACTIONS
+    // ========================================================================
 
-    async function handleReviseInvoice(invoiceNo) {
-      currentReviseInvoiceNo = invoiceNo;
-      const invoice = invoicesData.find(inv => inv.invoice_no === invoiceNo && inv.status === 'ACTIVE');
-      if (!invoice) { 
-        showToast('Active invoice not found', 'error'); 
-        return; 
+    // --- CANCEL INVOICE ---
+    async function handleCancelInvoice(invoiceNo) {
+      if (!isLoggedIn()) {
+        showToast('Please login first', 'error');
+        window.location.href = FRONTEND_BASE + '/login.html';
+        return;
       }
+
+      const confirmed = await appConfirm(`⚠️ Are you sure you want to cancel invoice ${invoiceNo}?`);
+      if (!confirmed) return;
+
+      const reason = await appPrompt('📝 Enter cancellation reason:');
+      if (reason === null || reason.trim() === '') {
+        showToast('Cancellation cancelled - no reason provided', 'info');
+        return;
+      }
+
+      try {
+        showToast('⏳ Cancelling invoice...', 'info');
+        
+        const response = await apiFetch('/api/invoices/cancel', {
+          method: 'POST',
+          body: JSON.stringify({ 
+            invoiceNo: invoiceNo, 
+            reason: reason.trim() 
+          })
+        });
+        
+        if (!response) return;
+        const data = await response.json();
+        
+        if (data.success) {
+          showToast(`✅ Invoice ${invoiceNo} cancelled successfully!`, 'success');
+          loadDashboard();
+        } else {
+          showToast(`❌ Failed to cancel: ${data.error || 'Unknown error'}`, 'error');
+        }
+      } catch (error) {
+        console.error('Cancel invoice error:', error);
+        showToast(`❌ Error: ${error.message}`, 'error');
+      }
+    }
+
+    // --- GENERATE PDF ---
+    async function handleGeneratePDF(invoiceNo) {
+      if (!isLoggedIn()) {
+        showToast('Please login first', 'error');
+        window.location.href = FRONTEND_BASE + '/login.html';
+        return;
+      }
+
+      showToast('⏳ Generating PDF...', 'info');
+      
+      try {
+        // Since we don't have a PDF generation endpoint yet, we'll open a print-friendly view
+        // For now, show a toast with the invoice number
+        // In the future, you can implement a proper PDF generation endpoint
+        
+        // Find the invoice
+        const invoice = invoicesData.find(inv => inv.invoice_no === invoiceNo);
+        if (!invoice) {
+          showToast('Invoice not found', 'error');
+          return;
+        }
+
+        // Open a new window with the invoice data for printing
+        const printWindow = window.open('', '_blank', 'width=800,height=600');
+        if (printWindow) {
+          printWindow.document.write(`
+            <!DOCTYPE html>
+            <html>
+            <head>
+              <title>Invoice ${invoiceNo}</title>
+              <style>
+                body { font-family: Arial, sans-serif; padding: 40px; max-width: 800px; margin: auto; }
+                .header { text-align: center; border-bottom: 2px solid #1a237e; padding-bottom: 20px; margin-bottom: 20px; }
+                .header h1 { color: #1a237e; margin: 0; }
+                .details { display: flex; justify-content: space-between; margin-bottom: 20px; }
+                .details-box { border: 1px solid #ccc; padding: 15px; flex: 1; margin: 0 5px; }
+                .details-box h3 { margin-top: 0; color: #1a237e; }
+                table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+                th { background: #1a237e; color: white; padding: 10px; text-align: left; }
+                td { padding: 10px; border-bottom: 1px solid #ddd; }
+                .total-row { font-weight: bold; font-size: 1.2em; }
+                .footer { margin-top: 30px; text-align: center; font-size: 12px; color: #666; border-top: 1px solid #eee; padding-top: 10px; }
+                .status { display: inline-block; padding: 4px 12px; border-radius: 4px; }
+                .status-active { background: #4CAF50; color: white; }
+                .status-cancelled { background: #f44336; color: white; }
+                .status-revised { background: #ff9800; color: white; }
+                .actions { margin: 20px 0; display: flex; gap: 10px; justify-content: center; }
+                .btn { padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; }
+                .btn-primary { background: #1a237e; color: white; }
+                .btn-secondary { background: #666; color: white; }
+                @media print { .no-print { display: none !important; } }
+              </style>
+            </head>
+            <body>
+              <div class="no-print" style="text-align:center;margin-bottom:20px;">
+                <button onclick="window.print()" class="btn btn-primary">🖨️ Print / Save as PDF</button>
+                <button onclick="window.close()" class="btn btn-secondary">Close</button>
+              </div>
+              <div class="header">
+                <h1>TAX INVOICE</h1>
+                <p><strong>${invoiceNo}</strong> | ${invoice.date || 'No Date'}</p>
+                <p>Status: <span class="status status-${(invoice.status || 'ACTIVE').toLowerCase()}">${invoice.status || 'ACTIVE'}</span></p>
+              </div>
+              <div class="details">
+                <div class="details-box">
+                  <h3>Bill To</h3>
+                  <p><strong>${invoice.client_name || 'N/A'}</strong></p>
+                  <p>${invoice.place_of_supply || ''}</p>
+                </div>
+                <div class="details-box">
+                  <h3>Invoice Details</h3>
+                  <p><strong>Date:</strong> ${invoice.date || 'N/A'}</p>
+                  <p><strong>Due Date:</strong> ${invoice.due_date || 'N/A'}</p>
+                  <p><strong>Version:</strong> v${invoice.version || 1}</p>
+                </div>
+              </div>
+              <table>
+                <thead><tr><th>#</th><th>Description</th><th style="text-align:right">Qty</th><th style="text-align:right">Rate</th><th style="text-align:right">Amount</th></tr></thead>
+                <tbody>
+          `);
+          
+          const items = typeof invoice.items === 'string' ? JSON.parse(invoice.items) : (invoice.items || []);
+          items.forEach((item, idx) => {
+            printWindow.document.write(`
+              <tr>
+                <td>${idx + 1}</td>
+                <td>${item.description || ''}</td>
+                <td style="text-align:right">${item.quantity || 0}</td>
+                <td style="text-align:right">₹${Number(item.rate || 0).toFixed(2)}</td>
+                <td style="text-align:right">₹${Number(item.amount || 0).toFixed(2)}</td>
+              </tr>
+            `);
+          });
+
+          const taxable = Number(invoice.taxable_amount || 0);
+          const cgst = Number(invoice.cgst || 0);
+          const sgst = Number(invoice.sgst || 0);
+          const igst = Number(invoice.igst || 0);
+          const total = Number(invoice.total_amount || 0);
+
+          printWindow.document.write(`
+                </tbody>
+              </table>
+              <div style="text-align:right;max-width:300px;margin-left:auto;">
+                <p><strong>Taxable:</strong> ₹${taxable.toFixed(2)}</p>
+                ${igst > 0 ? `<p><strong>IGST:</strong> ₹${igst.toFixed(2)}</p>` : ''}
+                ${cgst > 0 ? `<p><strong>CGST:</strong> ₹${cgst.toFixed(2)}</p>` : ''}
+                ${sgst > 0 ? `<p><strong>SGST:</strong> ₹${sgst.toFixed(2)}</p>` : ''}
+                <hr>
+                <p style="font-size:1.4em;font-weight:bold;color:#1a237e;"><strong>Total:</strong> ₹${total.toFixed(2)}</p>
+              </div>
+              ${invoice.cancelled_reason ? `<p style="color:red;margin-top:20px;"><strong>Cancelled:</strong> ${invoice.cancelled_reason}</p>` : ''}
+              <div class="footer">
+                <p>This is a computer-generated invoice. | Generated on: ${new Date().toLocaleDateString('en-IN')}</p>
+                <p>Subject to West Bengal Jurisdiction | E. & O.E.</p>
+              </div>
+              <div class="no-print" style="text-align:center;margin-top:20px;">
+                <button onclick="window.print()" class="btn btn-primary">🖨️ Print / Save as PDF</button>
+                <button onclick="window.close()" class="btn btn-secondary">Close</button>
+              </div>
+            </body>
+            </html>
+          `);
+          printWindow.document.close();
+          showToast('📄 PDF preview opened! Use Print to save as PDF.', 'success');
+        } else {
+          showToast('Please allow popups to view PDF', 'error');
+        }
+      } catch (error) {
+        console.error('PDF generation error:', error);
+        showToast(`❌ Error: ${error.message}`, 'error');
+      }
+    }
+
+    // --- REVISE INVOICE ---
+    function handleReviseInvoice(invoiceNo) {
+      const invoice = invoicesData.find(inv => inv.invoice_no === invoiceNo && inv.status === 'ACTIVE');
+      if (!invoice) {
+        showToast('Active invoice not found', 'error');
+        return;
+      }
+      currentReviseInvoiceNo = invoiceNo;
       document.getElementById('revise-invoice-modal').classList.remove('hidden');
       document.getElementById('revise-invoice-content').innerHTML = `
         <div class="flex items-center justify-center py-20"><div class="spinner"></div></div>
@@ -1271,445 +1404,9 @@
       reviseLineItemCounter = 0;
     }
 
-    // ==================== CREATE INVOICE ====================
-    function renderCreateInvoiceForm() {
-      const container = document.getElementById('create-invoice-content');
-      lineItemCounter = 0;
-      const today = new Date().toISOString().split('T')[0];
-      const nextWeek = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-
-      container.innerHTML = `
-        <form id="invoice-form" onsubmit="handleCreateInvoice(event)" class="space-y-4 md:space-y-6 pb-24 md:pb-0">
-          <div class="erp-card">
-            <div class="text-header mb-5">Details</div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-              <div>
-                <label>Client Name *</label>
-                <select id="client-select" class="input-field">
-                  <option value="">Select a client...</option>
-                </select>
-                <input type="text" id="client-name-manual" placeholder="Or type custom name..." class="input-field mt-2 hidden">
-                <button type="button" onclick="toggleClientInput()" class="text-helper mt-2 text-[var(--primary)] bg-transparent border-none p-0 cursor-pointer text-left">Enter custom name instead</button>
-              </div>
-              <div>
-                <label>Place of Supply *</label>
-                <input type="text" id="place-of-supply" required value="West Bengal" class="input-field">
-              </div>
-              <div class="grid grid-cols-2 gap-4 md:col-span-2 md:grid-cols-2">
-                <div>
-                  <label>Invoice Date *</label>
-                  <input type="date" id="invoice-date" required value="${today}" class="input-field">
-                </div>
-                <div>
-                  <label>Due Date</label>
-                  <input type="date" id="due-date" value="${nextWeek}" class="input-field">
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="erp-card">
-            <div class="text-header mb-5">Tax Config</div>
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
-              <div>
-                <label>Interstate</label>
-                <select id="tax-type" onchange="updateTaxFields()" class="input-field">
-                  <option value="intra">Intra-State</option>
-                  <option value="inter">Inter-State</option>
-                </select>
-              </div>
-              <div id="cgst-field">
-                <label>CGST (%)</label>
-                <input type="number" id="cgst-rate" value="9" step="0.1" min="0" max="100" onchange="recalculateTotals()" class="input-field">
-              </div>
-              <div id="sgst-field">
-                <label>SGST (%)</label>
-                <input type="number" id="sgst-rate" value="9" step="0.1" min="0" max="100" onchange="recalculateTotals()" class="input-field">
-              </div>
-              <div id="igst-field" class="hidden">
-                <label>IGST (%)</label>
-                <input type="number" id="igst-rate" value="18" step="0.1" min="0" max="100" onchange="recalculateTotals()" class="input-field">
-              </div>
-            </div>
-          </div>
-
-          <div class="erp-card">
-            <div class="flex items-center justify-between mb-5">
-              <div class="text-header">Line Items</div>
-              <button type="button" onclick="addLineItem()" class="btn btn-secondary btn-sm h-8 px-3">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                Add Item
-              </button>
-            </div>
-            <div id="line-items-container" class="space-y-4"></div>
-            <div id="no-items-msg" class="text-center py-8 text-[var(--muted)]">No items added yet.</div>
-          </div>
-
-          <div class="erp-card relative">
-            <div class="text-header mb-5">Summary</div>
-            <div class="space-y-3 max-w-sm ml-auto">
-              <div class="flex justify-between"><span class="text-[var(--muted)]">Taxable:</span><span id="summary-taxable" class="font-semibold">₹0.00</span></div>
-              <div class="flex justify-between"><span class="text-[var(--muted)]" id="summary-tax-label">CGST:</span><span id="summary-tax1" class="font-semibold">₹0.00</span></div>
-              <div class="flex justify-between" id="summary-tax2-row"><span class="text-[var(--muted)]">SGST:</span><span id="summary-tax2" class="font-semibold">₹0.00</span></div>
-              <div class="flex justify-between pt-4 mt-2 border-t border-[var(--border)]">
-                <span class="text-header">Total:</span>
-                <span id="summary-total" class="text-header text-[var(--primary)]">₹0.00</span>
-              </div>
-            </div>
-            
-            <div class="md:mt-8 md:pt-6 md:border-t md:border-[var(--border)] md:flex md:justify-end mobile-sticky-btn md:static md:bg-transparent md:p-0">
-              <button type="submit" class="btn btn-success w-full md:w-auto md:min-w-[240px]">Generate Invoice</button>
-            </div>
-          </div>
-        </form>
-      `;
-
-      loadClientsForSelect();
-      addLineItem();
-      recalculateTotals();
-    }
-
-    async function loadClientsForSelect() {
-      try {
-        const response = await apiFetch('/api/clients');
-        if (!response) return;
-        const data = await response.json();
-        if (data.success && data.clients) {
-          clientsData = data.clients;
-          const select = document.getElementById('client-select');
-          data.clients.forEach(client => {
-            const option = document.createElement('option');
-            option.value = client[1];
-            option.textContent = `${client[1]} (${client[4] || 'N/A'})`;
-            select.appendChild(option);
-          });
-        }
-      } catch (error) {
-        console.error('Failed to load clients:', error);
-      }
-    }
-
-    function toggleClientInput() {
-      const select = document.getElementById('client-select');
-      const manual = document.getElementById('client-name-manual');
-      if (manual.classList.contains('hidden')) {
-        manual.classList.remove('hidden');
-        select.classList.add('hidden');
-        select.value = '';
-      } else {
-        manual.classList.add('hidden');
-        select.classList.remove('hidden');
-        manual.value = '';
-      }
-    }
-
-    function updateTaxFields() {
-      const type = document.getElementById('tax-type').value;
-      document.getElementById('cgst-field').classList.toggle('hidden', type === 'inter');
-      document.getElementById('sgst-field').classList.toggle('hidden', type === 'inter');
-      document.getElementById('igst-field').classList.toggle('hidden', type !== 'inter');
-      recalculateTotals();
-    }
-
-    function addLineItem() {
-      lineItemCounter++;
-      const container = document.getElementById('line-items-container');
-      document.getElementById('no-items-msg')?.classList.add('hidden');
-
-      const itemHtml = `
-        <div class="line-item grid grid-cols-12 gap-3 md:gap-4 items-end p-4 rounded-xl bg-[var(--surface)] border border-[var(--border)] relative" data-item-id="${lineItemCounter}">
-          <button type="button" onclick="removeLineItem(${lineItemCounter})" class="absolute top-2 right-2 p-2 text-[var(--muted)] hover:text-[var(--danger)] bg-transparent border-none">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-          </button>
-          
-          <div class="col-span-12 md:col-span-5 pr-6 md:pr-0">
-            <label>Description *</label>
-            <input type="text" placeholder="Service details" class="item-desc input-field" oninput="recalculateTotals()">
-          </div>
-          <div class="col-span-6 md:col-span-2">
-            <label>SAC/HSN</label>
-            <input type="text" placeholder="e.g. 996111" class="item-sac input-field">
-          </div>
-          <div class="col-span-6 md:col-span-1">
-            <label>Qty</label>
-            <input type="number" value="1" min="1" step="1" class="item-qty input-field px-2 text-center" oninput="recalculateTotals()">
-          </div>
-          <div class="col-span-6 md:col-span-2">
-            <label>Rate</label>
-            <input type="number" value="0" min="0" step="0.01" class="item-rate input-field" oninput="recalculateTotals()">
-          </div>
-          <div class="col-span-6 md:col-span-2 text-right">
-            <label class="md:hidden">Amount</label>
-            <span class="item-amount block py-3 font-semibold text-[var(--primary)] md:text-[var(--text)]">₹0.00</span>
-          </div>
-        </div>
-      `;
-      container.insertAdjacentHTML('beforeend', itemHtml);
-      recalculateTotals();
-    }
-
-    function removeLineItem(itemId) {
-      const item = document.querySelector(`.line-item[data-item-id="${itemId}"]`);
-      if (item) item.remove();
-      const remaining = document.querySelectorAll('.line-item');
-      if (remaining.length === 0) document.getElementById('no-items-msg')?.classList.remove('hidden');
-      recalculateTotals();
-    }
-
-    function recalculateTotals() {
-      const items = document.querySelectorAll('.line-item');
-      let totalTaxable = 0;
-      items.forEach(item => {
-        const qty = parseFloat(item.querySelector('.item-qty')?.value) || 0;
-        const rate = parseFloat(item.querySelector('.item-rate')?.value) || 0;
-        const amount = roundCurrency(qty * rate);
-        const amountEl = item.querySelector('.item-amount');
-        if (amountEl) amountEl.textContent = `₹${amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
-        totalTaxable += amount;
-      });
-      updateSummaryTotals(totalTaxable);
-    }
-
-    function updateSummaryTotals(totalTaxable) {
-      const taxType = document.getElementById('tax-type').value;
-      let cgst = 0, sgst = 0, igst = 0;
-      if (taxType === 'inter') {
-        const rate = parseFloat(document.getElementById('igst-rate').value) || 0;
-        igst = roundCurrency(totalTaxable * (rate / 100));
-      } else {
-        const cgstRate = parseFloat(document.getElementById('cgst-rate').value) || 0;
-        const sgstRate = parseFloat(document.getElementById('sgst-rate').value) || 0;
-        cgst = roundCurrency(totalTaxable * (cgstRate / 100));
-        sgst = roundCurrency(totalTaxable * (sgstRate / 100));
-      }
-      const grandTotal = roundCurrency(totalTaxable + cgst + sgst + igst);
-
-      document.getElementById('summary-taxable').textContent = `₹${totalTaxable.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
-      if (taxType === 'inter') {
-        document.getElementById('summary-tax-label').textContent = 'IGST:';
-        document.getElementById('summary-tax1').textContent = `₹${igst.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
-        document.getElementById('summary-tax2-row').classList.add('hidden');
-      } else {
-        document.getElementById('summary-tax-label').textContent = 'CGST:';
-        document.getElementById('summary-tax1').textContent = `₹${cgst.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
-        document.getElementById('summary-tax2-row').classList.remove('hidden');
-        document.getElementById('summary-tax2').textContent = `₹${sgst.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
-      }
-      document.getElementById('summary-total').textContent = `₹${grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
-    }
-
-   async function handleCreateInvoice(event) {
-  event.preventDefault();
-  
-  // Get client name
-  let clientName = document.getElementById('client-select').value;
-  const manualName = document.getElementById('client-name-manual').value.trim();
-  if (manualName) clientName = manualName;
-  if (!clientName) {
-    showToast('Select or enter a client', 'error');
-    return;
-  }
-
-  // Get place of supply
-  const placeOfSupply = document.getElementById('place-of-supply').value.trim();
-  if (!placeOfSupply) {
-    showToast('Enter place of supply', 'error');
-    return;
-  }
-
-  // Get dates
-  const date = document.getElementById('invoice-date').value;
-  const dueDate = document.getElementById('due-date').value;
-  
-  // Get tax config
-  const taxType = document.getElementById('tax-type').value;
-  const isInterstate = taxType === 'inter';
-  const cgstRate = parseFloat(document.getElementById('cgst-rate').value) || 0;
-  const sgstRate = parseFloat(document.getElementById('sgst-rate').value) || 0;
-  const igstRate = parseFloat(document.getElementById('igst-rate').value) || 0;
-
-  // Get line items
-  const lineItems = [];
-  const itemElements = document.querySelectorAll('.line-item');
-  let hasError = false;
-  
-  itemElements.forEach(item => {
-    const desc = item.querySelector('.item-desc')?.value.trim();
-    const sac = item.querySelector('.item-sac')?.value.trim();
-    const qty = parseFloat(item.querySelector('.item-qty')?.value) || 0;
-    const rate = parseFloat(item.querySelector('.item-rate')?.value) || 0;
-    
-    if (!desc) {
-      showToast('Fill all descriptions', 'error');
-      hasError = true;
-      return;
-    }
-    if (qty <= 0 || rate <= 0) {
-      showToast('Quantity and rate must be greater than 0', 'error');
-      hasError = true;
-      return;
-    }
-    lineItems.push({ 
-      description: desc, 
-      sacCode: sac || '', 
-      quantity: qty, 
-      rate: rate, 
-      amount: roundCurrency(qty * rate) 
-    });
-  });
-  
-  if (hasError) return;
-  if (lineItems.length === 0) {
-    showToast('Add at least one item', 'error');
-    return;
-  }
-
-  // Prepare data
-  const invoiceData = { 
-    clientName, 
-    placeOfSupply, 
-    date, 
-    dueDate, 
-    isInterstate, 
-    cgstRate, 
-    sgstRate, 
-    igstRate, 
-    items: lineItems 
-  };
-
-  // Show loading
-  const btn = event.target.querySelector('button[type="submit"]');
-  btn.disabled = true;
-  btn.textContent = 'Creating...';
-
-  try {
-    const response = await apiFetch('/api/invoices', {
-  method: 'POST',
-  body: JSON.stringify(invoiceData)
-});
-    
-    if (!response) {
-      btn.disabled = false;
-      btn.textContent = 'Generate Invoice';
-      return;
-    }
-    
-    const data = await response.json();
-    
-    btn.disabled = false;
-    btn.textContent = 'Generate Invoice';
-    
-    if (data.success) {
-      showToast(`✅ Invoice ${data.invoiceNo} created successfully!`, 'success');
-      // Reset form
-      document.getElementById('invoice-form').reset();
-      document.getElementById('line-items-container').innerHTML = '';
-      document.getElementById('no-items-msg').classList.remove('hidden');
-      lineItemCounter = 0;
-      recalculateTotals();
-      // Navigate to dashboard
-      setTimeout(() => navigateTo('dashboard'), 1500);
-    } else {
-      showToast(`❌ Failed to create: ${data.error || 'Unknown error'}`, 'error');
-    }
-  } catch (error) {
-    btn.disabled = false;
-    btn.textContent = 'Generate Invoice';
-    showToast(`❌ Error: ${error.message}`, 'error');
-  }
-}
-
-    // ==================== REVIEW MODAL ====================
-    function showReviewModal(data) {
-      const modal = document.getElementById('review-invoice-modal');
-      const content = document.getElementById('review-content');
-      const items = data.items || [];
-      const totalTaxable = items.reduce((sum, item) => sum + (item.quantity * item.rate), 0);
-      let cgst = 0, sgst = 0, igst = 0;
-      if (data.isInterstate) { igst = roundCurrency(totalTaxable * (data.igstRate / 100)); } 
-      else { cgst = roundCurrency(totalTaxable * (data.cgstRate / 100)); sgst = roundCurrency(totalTaxable * (data.sgstRate / 100)); }
-      const grandTotal = roundCurrency(totalTaxable + cgst + sgst + igst);
-
-      let html = `
-        <div class="space-y-6">
-          <div class="grid grid-cols-2 gap-4 text-[13px] md:text-[14px]">
-            <div class="bg-[var(--bg)] p-3 rounded-lg"><span class="text-helper text-[var(--muted)] block mb-1">Client</span><span class="font-semibold">${escapeHtml(data.clientName)}</span></div>
-            <div class="bg-[var(--bg)] p-3 rounded-lg"><span class="text-helper text-[var(--muted)] block mb-1">Place of Supply</span><span class="font-semibold">${escapeHtml(data.placeOfSupply)}</span></div>
-            <div class="bg-[var(--bg)] p-3 rounded-lg"><span class="text-helper text-[var(--muted)] block mb-1">Date</span><span class="font-semibold">${escapeHtml(data.date)}</span></div>
-            <div class="bg-[var(--bg)] p-3 rounded-lg"><span class="text-helper text-[var(--muted)] block mb-1">Due</span><span class="font-semibold">${escapeHtml(data.dueDate || '-')}</span></div>
-          </div>
-          
-          <div class="table-container shadow-sm">
-            <table class="erp-table text-[13px] md:text-[14px]">
-              <thead><tr>
-                <th>#</th><th>Description</th><th class="hidden md:table-cell">SAC</th><th style="text-align:right">Qty</th><th style="text-align:right">Rate</th><th style="text-align:right">Amount</th>
-              </tr></thead>
-              <tbody>
-      `;
-      items.forEach((item, idx) => {
-        html += `<tr>
-          <td data-label="#">${idx + 1}</td>
-          <td data-label="Description"><div class="max-w-[150px] md:max-w-none truncate">${escapeHtml(item.description)}</div></td>
-          <td data-label="SAC" class="hidden md:table-cell">${escapeHtml(item.sacCode || '-')}</td>
-          <td data-label="Qty" style="text-align:right">${item.quantity}</td>
-          <td data-label="Rate" style="text-align:right">₹${Number(item.rate).toFixed(2)}</td>
-          <td data-label="Amount" style="text-align:right; font-weight:600;">₹${Number(item.amount).toFixed(2)}</td>
-        </tr>`;
-      });
-      html += `
-              </tbody>
-            </table>
-          </div>
-          
-          <div class="space-y-2 max-w-xs ml-auto">
-            <div class="flex justify-between"><span class="text-[var(--muted)]">Taxable:</span><span class="font-semibold">₹${totalTaxable.toFixed(2)}</span></div>
-            ${data.isInterstate ? 
-              `<div class="flex justify-between"><span class="text-[var(--muted)]">IGST (${data.igstRate}%):</span><span class="font-semibold">₹${igst.toFixed(2)}</span></div>` :
-              `<div class="flex justify-between"><span class="text-[var(--muted)]">CGST (${data.cgstRate}%):</span><span class="font-semibold">₹${cgst.toFixed(2)}</span></div>
-               <div class="flex justify-between"><span class="text-[var(--muted)]">SGST (${data.sgstRate}%):</span><span class="font-semibold">₹${sgst.toFixed(2)}</span></div>`
-            }
-            <div class="flex justify-between pt-3 mt-1 border-t border-[var(--border)]"><span class="text-header">Total:</span><span class="text-header text-[var(--primary)]">₹${grandTotal.toFixed(2)}</span></div>
-          </div>
-        </div>
-      `;
-      content.innerHTML = html;
-      modal.classList.remove('hidden');
-    }
-
-    function closeReviewModal() {
-      document.getElementById('review-invoice-modal').classList.add('hidden');
-      pendingInvoiceData = null;
-    }
-
-    async function confirmInvoice() {
-      if (!pendingInvoiceData) return;
-      const btn = document.getElementById('confirm-invoice-btn');
-      btn.disabled = true;
-      btn.innerHTML = '<span class="spinner" style="border-top-color:#fff;"></span>';
-
-      try {
-        const url = pendingIsRevise ? '/api/invoices/revise' : '/api/invoices';
-        const body = pendingIsRevise ? { invoiceNo: pendingReviseNo, invoiceData: pendingInvoiceData } : { invoiceData: pendingInvoiceData };
-        const response = await apiFetch(url, { method: 'POST', body: JSON.stringify(body) });
-        if (!response) return;
-        const data = await response.json();
-        btn.disabled = false;
-        btn.innerHTML = 'Confirm & Create';
-        if (data.success) {
-          showToast(`Invoice ${data.invoiceNo || 'created'}!`, 'success');
-          closeReviewModal();
-          navigateTo('dashboard');
-        } else {
-          showToast(data.error || 'Failed to create', 'error');
-        }
-      } catch (error) {
-        btn.disabled = false;
-        btn.innerHTML = 'Confirm & Create';
-        showToast(error.message || 'Failed to create', 'error');
-      }
-    }
-
-    // ==================== REVISE INVOICE ====================
+    // ========================================================================
+    // REVISE INVOICE FORM
+    // ========================================================================
     function renderReviseForm(invoice) {
       const container = document.getElementById('revise-invoice-content');
       reviseLineItemCounter = 0;
@@ -1719,6 +1416,9 @@
       const cgstRate = Number(invoice.cgst || 0) > 0 ? Math.round((invoice.cgst / invoice.taxable_amount) * 100) : 9;
       const sgstRate = Number(invoice.sgst || 0) > 0 ? Math.round((invoice.sgst / invoice.taxable_amount) * 100) : 9;
       const igstRate = Number(invoice.igst || 0) > 0 ? Math.round((invoice.igst / invoice.taxable_amount) * 100) : 18;
+
+      // Load clients for the revise form
+      loadClientsForSelect('revise-client-select', invoice.client_name);
 
       let html = `
         <form id="revise-invoice-form" onsubmit="handleSubmitReviseInvoice(event)" class="space-y-5 pb-24 md:pb-0">
@@ -1807,32 +1507,7 @@
 
       container.innerHTML = html;
 
-      (async () => {
-        try {
-          const response = await apiFetch('/api/clients');
-          if (!response) return;
-          const data = await response.json();
-          if (data.success && data.clients) {
-            const select = document.getElementById('revise-client-select');
-            let found = false;
-            data.clients.forEach(client => {
-              const option = document.createElement('option');
-              option.value = client[1];
-              option.textContent = `${client[1]} (${client[4] || 'N/A'})`;
-              if (client[1] === invoice.client_name) { option.selected = true; found = true; }
-              select.appendChild(option);
-            });
-            if (!found && invoice.client_name) {
-              document.getElementById('revise-client-name-manual').classList.remove('hidden');
-              document.getElementById('revise-client-name-manual').value = invoice.client_name;
-              select.classList.add('hidden');
-            }
-          }
-        } catch (error) {
-          console.error('Failed to load clients:', error);
-        }
-      })();
-
+      // Populate line items
       const lineItemsContainer = document.getElementById('revise-line-items-container');
       if (items.length > 0) {
         items.forEach(item => {
@@ -1951,15 +1626,24 @@
 
     function handleSubmitReviseInvoice(event) {
       event.preventDefault();
-      if (!currentReviseInvoiceNo) { showToast('No invoice selected', 'error'); return; }
+      if (!currentReviseInvoiceNo) {
+        showToast('No invoice selected', 'error');
+        return;
+      }
 
       let clientName = document.getElementById('revise-client-select').value;
       const manualName = document.getElementById('revise-client-name-manual').value.trim();
       if (manualName) clientName = manualName;
-      if (!clientName) { showToast('Select or enter a client', 'error'); return; }
+      if (!clientName) {
+        showToast('Select or enter a client', 'error');
+        return;
+      }
 
       const placeOfSupply = document.getElementById('revise-place-of-supply').value.trim();
-      if (!placeOfSupply) { showToast('Enter place of supply', 'error'); return; }
+      if (!placeOfSupply) {
+        showToast('Enter place of supply', 'error');
+        return;
+      }
 
       const date = document.getElementById('revise-invoice-date').value;
       const dueDate = document.getElementById('revise-due-date').value;
@@ -1977,11 +1661,18 @@
         const sac = item.querySelector('.revise-item-sac')?.value.trim();
         const qty = parseFloat(item.querySelector('.revise-item-qty')?.value) || 0;
         const rate = parseFloat(item.querySelector('.revise-item-rate')?.value) || 0;
-        if (!desc) { showToast('Fill all descriptions', 'error'); hasError = true; return; }
+        if (!desc) {
+          showToast('Fill all descriptions', 'error');
+          hasError = true;
+          return;
+        }
         lineItems.push({ description: desc, sacCode: sac || '', quantity: qty, rate: rate, amount: roundCurrency(qty * rate) });
       });
       if (hasError) return;
-      if (lineItems.length === 0) { showToast('Add at least one item', 'error'); return; }
+      if (lineItems.length === 0) {
+        showToast('Add at least one item', 'error');
+        return;
+      }
 
       const invoiceData = { clientName, placeOfSupply, date, dueDate, isInterstate, cgstRate, sgstRate, igstRate, items: lineItems };
       pendingInvoiceData = invoiceData;
@@ -1990,7 +1681,416 @@
       showReviewModal(invoiceData);
     }
 
-    // ==================== CLIENTS ====================
+    // ========================================================================
+    // CREATE INVOICE
+    // ========================================================================
+    function renderCreateInvoiceForm() {
+      const container = document.getElementById('create-invoice-content');
+      lineItemCounter = 0;
+      const today = new Date().toISOString().split('T')[0];
+      const nextWeek = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+
+      container.innerHTML = `
+        <form id="invoice-form" onsubmit="handleCreateInvoice(event)" class="space-y-4 md:space-y-6 pb-24 md:pb-0">
+          <div class="erp-card">
+            <div class="text-header mb-5">Details</div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+              <div>
+                <label>Client Name *</label>
+                <select id="client-select" class="input-field">
+                  <option value="">Select a client...</option>
+                </select>
+                <input type="text" id="client-name-manual" placeholder="Or type custom name..." class="input-field mt-2 hidden">
+                <button type="button" onclick="toggleClientInput()" class="text-helper mt-2 text-[var(--primary)] bg-transparent border-none p-0 cursor-pointer text-left">Enter custom name instead</button>
+              </div>
+              <div>
+                <label>Place of Supply *</label>
+                <input type="text" id="place-of-supply" required value="West Bengal" class="input-field">
+              </div>
+              <div class="grid grid-cols-2 gap-4 md:col-span-2 md:grid-cols-2">
+                <div>
+                  <label>Invoice Date *</label>
+                  <input type="date" id="invoice-date" required value="${today}" class="input-field">
+                </div>
+                <div>
+                  <label>Due Date</label>
+                  <input type="date" id="due-date" value="${nextWeek}" class="input-field">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="erp-card">
+            <div class="text-header mb-5">Tax Config</div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
+              <div>
+                <label>Interstate</label>
+                <select id="tax-type" onchange="updateTaxFields()" class="input-field">
+                  <option value="intra">Intra-State</option>
+                  <option value="inter">Inter-State</option>
+                </select>
+              </div>
+              <div id="cgst-field">
+                <label>CGST (%)</label>
+                <input type="number" id="cgst-rate" value="9" step="0.1" min="0" max="100" onchange="recalculateTotals()" class="input-field">
+              </div>
+              <div id="sgst-field">
+                <label>SGST (%)</label>
+                <input type="number" id="sgst-rate" value="9" step="0.1" min="0" max="100" onchange="recalculateTotals()" class="input-field">
+              </div>
+              <div id="igst-field" class="hidden">
+                <label>IGST (%)</label>
+                <input type="number" id="igst-rate" value="18" step="0.1" min="0" max="100" onchange="recalculateTotals()" class="input-field">
+              </div>
+            </div>
+          </div>
+
+          <div class="erp-card">
+            <div class="flex items-center justify-between mb-5">
+              <div class="text-header">Line Items</div>
+              <button type="button" onclick="addLineItem()" class="btn btn-secondary btn-sm h-8 px-3">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Add Item
+              </button>
+            </div>
+            <div id="line-items-container" class="space-y-4"></div>
+            <div id="no-items-msg" class="text-center py-8 text-[var(--muted)]">No items added yet.</div>
+          </div>
+
+          <div class="erp-card relative">
+            <div class="text-header mb-5">Summary</div>
+            <div class="space-y-3 max-w-sm ml-auto">
+              <div class="flex justify-between"><span class="text-[var(--muted)]">Taxable:</span><span id="summary-taxable" class="font-semibold">₹0.00</span></div>
+              <div class="flex justify-between"><span class="text-[var(--muted)]" id="summary-tax-label">CGST:</span><span id="summary-tax1" class="font-semibold">₹0.00</span></div>
+              <div class="flex justify-between" id="summary-tax2-row"><span class="text-[var(--muted)]">SGST:</span><span id="summary-tax2" class="font-semibold">₹0.00</span></div>
+              <div class="flex justify-between pt-4 mt-2 border-t border-[var(--border)]">
+                <span class="text-header">Total:</span>
+                <span id="summary-total" class="text-header text-[var(--primary)]">₹0.00</span>
+              </div>
+            </div>
+            
+            <div class="md:mt-8 md:pt-6 md:border-t md:border-[var(--border)] md:flex md:justify-end mobile-sticky-btn md:static md:bg-transparent md:p-0">
+              <button type="submit" class="btn btn-success w-full md:w-auto md:min-w-[240px]">Generate Invoice</button>
+            </div>
+          </div>
+        </form>
+      `;
+
+      loadClientsForSelect('client-select');
+      addLineItem();
+      recalculateTotals();
+    }
+
+    async function loadClientsForSelect(selectId, selectedValue = null) {
+      try {
+        const response = await apiFetch('/api/clients');
+        if (!response) return;
+        const data = await response.json();
+        if (data.success && data.clients) {
+          clientsData = data.clients;
+          const select = document.getElementById(selectId);
+          if (select) {
+            // Clear existing options except first
+            while (select.options.length > 0) select.remove(0);
+            const defaultOption = document.createElement('option');
+            defaultOption.value = '';
+            defaultOption.textContent = 'Select a client...';
+            select.appendChild(defaultOption);
+            
+            let found = false;
+            data.clients.forEach(client => {
+              const option = document.createElement('option');
+              option.value = client[1];
+              option.textContent = `${client[1]} (${client[4] || 'N/A'})`;
+              if (selectedValue && client[1] === selectedValue) {
+                option.selected = true;
+                found = true;
+              }
+              select.appendChild(option);
+            });
+            
+            // If selected value not found in list, show manual input
+            if (selectedValue && !found && selectId === 'revise-client-select') {
+              const manual = document.getElementById('revise-client-name-manual');
+              if (manual) {
+                manual.classList.remove('hidden');
+                manual.value = selectedValue;
+                select.classList.add('hidden');
+              }
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Failed to load clients:', error);
+      }
+    }
+
+    function toggleClientInput() {
+      const select = document.getElementById('client-select');
+      const manual = document.getElementById('client-name-manual');
+      if (manual.classList.contains('hidden')) {
+        manual.classList.remove('hidden');
+        select.classList.add('hidden');
+        select.value = '';
+      } else {
+        manual.classList.add('hidden');
+        select.classList.remove('hidden');
+        manual.value = '';
+      }
+    }
+
+    function updateTaxFields() {
+      const type = document.getElementById('tax-type').value;
+      document.getElementById('cgst-field').classList.toggle('hidden', type === 'inter');
+      document.getElementById('sgst-field').classList.toggle('hidden', type === 'inter');
+      document.getElementById('igst-field').classList.toggle('hidden', type !== 'inter');
+      recalculateTotals();
+    }
+
+    function addLineItem() {
+      lineItemCounter++;
+      const container = document.getElementById('line-items-container');
+      document.getElementById('no-items-msg')?.classList.add('hidden');
+
+      const itemHtml = `
+        <div class="line-item grid grid-cols-12 gap-3 md:gap-4 items-end p-4 rounded-xl bg-[var(--surface)] border border-[var(--border)] relative" data-item-id="${lineItemCounter}">
+          <button type="button" onclick="removeLineItem(${lineItemCounter})" class="absolute top-2 right-2 p-2 text-[var(--muted)] hover:text-[var(--danger)] bg-transparent border-none">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+          
+          <div class="col-span-12 md:col-span-5 pr-6 md:pr-0">
+            <label>Description *</label>
+            <input type="text" placeholder="Service details" class="item-desc input-field" oninput="recalculateTotals()">
+          </div>
+          <div class="col-span-6 md:col-span-2">
+            <label>SAC/HSN</label>
+            <input type="text" placeholder="e.g. 996111" class="item-sac input-field">
+          </div>
+          <div class="col-span-6 md:col-span-1">
+            <label>Qty</label>
+            <input type="number" value="1" min="1" step="1" class="item-qty input-field px-2 text-center" oninput="recalculateTotals()">
+          </div>
+          <div class="col-span-6 md:col-span-2">
+            <label>Rate</label>
+            <input type="number" value="0" min="0" step="0.01" class="item-rate input-field" oninput="recalculateTotals()">
+          </div>
+          <div class="col-span-6 md:col-span-2 text-right">
+            <label class="md:hidden">Amount</label>
+            <span class="item-amount block py-3 font-semibold text-[var(--primary)] md:text-[var(--text)]">₹0.00</span>
+          </div>
+        </div>
+      `;
+      container.insertAdjacentHTML('beforeend', itemHtml);
+      recalculateTotals();
+    }
+
+    function removeLineItem(itemId) {
+      const item = document.querySelector(`.line-item[data-item-id="${itemId}"]`);
+      if (item) item.remove();
+      const remaining = document.querySelectorAll('.line-item');
+      if (remaining.length === 0) document.getElementById('no-items-msg')?.classList.remove('hidden');
+      recalculateTotals();
+    }
+
+    function recalculateTotals() {
+      const items = document.querySelectorAll('.line-item');
+      let totalTaxable = 0;
+      items.forEach(item => {
+        const qty = parseFloat(item.querySelector('.item-qty')?.value) || 0;
+        const rate = parseFloat(item.querySelector('.item-rate')?.value) || 0;
+        const amount = roundCurrency(qty * rate);
+        const amountEl = item.querySelector('.item-amount');
+        if (amountEl) amountEl.textContent = `₹${amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+        totalTaxable += amount;
+      });
+      updateSummaryTotals(totalTaxable);
+    }
+
+    function updateSummaryTotals(totalTaxable) {
+      const taxType = document.getElementById('tax-type').value;
+      let cgst = 0, sgst = 0, igst = 0;
+      if (taxType === 'inter') {
+        const rate = parseFloat(document.getElementById('igst-rate').value) || 0;
+        igst = roundCurrency(totalTaxable * (rate / 100));
+      } else {
+        const cgstRate = parseFloat(document.getElementById('cgst-rate').value) || 0;
+        const sgstRate = parseFloat(document.getElementById('sgst-rate').value) || 0;
+        cgst = roundCurrency(totalTaxable * (cgstRate / 100));
+        sgst = roundCurrency(totalTaxable * (sgstRate / 100));
+      }
+      const grandTotal = roundCurrency(totalTaxable + cgst + sgst + igst);
+
+      document.getElementById('summary-taxable').textContent = `₹${totalTaxable.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+      if (taxType === 'inter') {
+        document.getElementById('summary-tax-label').textContent = 'IGST:';
+        document.getElementById('summary-tax1').textContent = `₹${igst.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+        document.getElementById('summary-tax2-row').classList.add('hidden');
+      } else {
+        document.getElementById('summary-tax-label').textContent = 'CGST:';
+        document.getElementById('summary-tax1').textContent = `₹${cgst.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+        document.getElementById('summary-tax2-row').classList.remove('hidden');
+        document.getElementById('summary-tax2').textContent = `₹${sgst.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+      }
+      document.getElementById('summary-total').textContent = `₹${grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+    }
+
+    function handleCreateInvoice(event) {
+      event.preventDefault();
+      let clientName = document.getElementById('client-select').value;
+      const manualName = document.getElementById('client-name-manual').value.trim();
+      if (manualName) clientName = manualName;
+      if (!clientName) {
+        showToast('Select or enter a client', 'error');
+        return;
+      }
+
+      const placeOfSupply = document.getElementById('place-of-supply').value.trim();
+      if (!placeOfSupply) {
+        showToast('Enter place of supply', 'error');
+        return;
+      }
+
+      const date = document.getElementById('invoice-date').value;
+      const dueDate = document.getElementById('due-date').value;
+      const taxType = document.getElementById('tax-type').value;
+      const isInterstate = taxType === 'inter';
+      const cgstRate = parseFloat(document.getElementById('cgst-rate').value) || 0;
+      const sgstRate = parseFloat(document.getElementById('sgst-rate').value) || 0;
+      const igstRate = parseFloat(document.getElementById('igst-rate').value) || 0;
+
+      const lineItems = [];
+      const itemElements = document.querySelectorAll('.line-item');
+      let hasError = false;
+      itemElements.forEach(item => {
+        const desc = item.querySelector('.item-desc')?.value.trim();
+        const sac = item.querySelector('.item-sac')?.value.trim();
+        const qty = parseFloat(item.querySelector('.item-qty')?.value) || 0;
+        const rate = parseFloat(item.querySelector('.item-rate')?.value) || 0;
+        if (!desc) {
+          showToast('Fill all descriptions', 'error');
+          hasError = true;
+          return;
+        }
+        lineItems.push({ description: desc, sacCode: sac || '', quantity: qty, rate: rate, amount: roundCurrency(qty * rate) });
+      });
+      if (hasError) return;
+      if (lineItems.length === 0) {
+        showToast('Add at least one item', 'error');
+        return;
+      }
+
+      const invoiceData = { clientName, placeOfSupply, date, dueDate, isInterstate, cgstRate, sgstRate, igstRate, items: lineItems };
+      pendingInvoiceData = invoiceData;
+      pendingIsRevise = false;
+      showReviewModal(invoiceData);
+    }
+
+    // ========================================================================
+    // REVIEW MODAL
+    // ========================================================================
+    function showReviewModal(data) {
+      const modal = document.getElementById('review-invoice-modal');
+      const content = document.getElementById('review-content');
+      const items = data.items || [];
+      const totalTaxable = items.reduce((sum, item) => sum + (item.quantity * item.rate), 0);
+      let cgst = 0, sgst = 0, igst = 0;
+      if (data.isInterstate) {
+        igst = roundCurrency(totalTaxable * (data.igstRate / 100));
+      } else {
+        cgst = roundCurrency(totalTaxable * (data.cgstRate / 100));
+        sgst = roundCurrency(totalTaxable * (data.sgstRate / 100));
+      }
+      const grandTotal = roundCurrency(totalTaxable + cgst + sgst + igst);
+
+      let html = `
+        <div class="space-y-6">
+          <div class="grid grid-cols-2 gap-4 text-[13px] md:text-[14px]">
+            <div class="bg-[var(--bg)] p-3 rounded-lg"><span class="text-helper text-[var(--muted)] block mb-1">Client</span><span class="font-semibold">${escapeHtml(data.clientName)}</span></div>
+            <div class="bg-[var(--bg)] p-3 rounded-lg"><span class="text-helper text-[var(--muted)] block mb-1">Place of Supply</span><span class="font-semibold">${escapeHtml(data.placeOfSupply)}</span></div>
+            <div class="bg-[var(--bg)] p-3 rounded-lg"><span class="text-helper text-[var(--muted)] block mb-1">Date</span><span class="font-semibold">${escapeHtml(data.date)}</span></div>
+            <div class="bg-[var(--bg)] p-3 rounded-lg"><span class="text-helper text-[var(--muted)] block mb-1">Due</span><span class="font-semibold">${escapeHtml(data.dueDate || '-')}</span></div>
+          </div>
+          
+          <div class="table-container shadow-sm">
+            <table class="erp-table text-[13px] md:text-[14px]">
+              <thead><tr>
+                <th>#</th><th>Description</th><th class="hidden md:table-cell">SAC</th><th style="text-align:right">Qty</th><th style="text-align:right">Rate</th><th style="text-align:right">Amount</th>
+              </tr></thead>
+              <tbody>
+      `;
+      items.forEach((item, idx) => {
+        html += `<tr>
+          <td data-label="#">${idx + 1}</td>
+          <td data-label="Description"><div class="max-w-[150px] md:max-w-none truncate">${escapeHtml(item.description)}</div></td>
+          <td data-label="SAC" class="hidden md:table-cell">${escapeHtml(item.sacCode || '-')}</td>
+          <td data-label="Qty" style="text-align:right">${item.quantity}</td>
+          <td data-label="Rate" style="text-align:right">₹${Number(item.rate).toFixed(2)}</td>
+          <td data-label="Amount" style="text-align:right; font-weight:600;">₹${Number(item.amount).toFixed(2)}</td>
+        </tr>`;
+      });
+      html += `
+              </tbody>
+            </table>
+          </div>
+          
+          <div class="space-y-2 max-w-xs ml-auto">
+            <div class="flex justify-between"><span class="text-[var(--muted)]">Taxable:</span><span class="font-semibold">₹${totalTaxable.toFixed(2)}</span></div>
+            ${data.isInterstate ? 
+              `<div class="flex justify-between"><span class="text-[var(--muted)]">IGST (${data.igstRate}%):</span><span class="font-semibold">₹${igst.toFixed(2)}</span></div>` :
+              `<div class="flex justify-between"><span class="text-[var(--muted)]">CGST (${data.cgstRate}%):</span><span class="font-semibold">₹${cgst.toFixed(2)}</span></div>
+               <div class="flex justify-between"><span class="text-[var(--muted)]">SGST (${data.sgstRate}%):</span><span class="font-semibold">₹${sgst.toFixed(2)}</span></div>`
+            }
+            <div class="flex justify-between pt-3 mt-1 border-t border-[var(--border)]"><span class="text-header">Total:</span><span class="text-header text-[var(--primary)]">₹${grandTotal.toFixed(2)}</span></div>
+          </div>
+        </div>
+      `;
+      content.innerHTML = html;
+      modal.classList.remove('hidden');
+    }
+
+    function closeReviewModal() {
+      document.getElementById('review-invoice-modal').classList.add('hidden');
+      pendingInvoiceData = null;
+    }
+
+    async function confirmInvoice() {
+      if (!pendingInvoiceData) return;
+      const btn = document.getElementById('confirm-invoice-btn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner" style="border-top-color:#fff;"></span>';
+
+      try {
+        const url = pendingIsRevise ? '/api/invoices/revise' : '/api/invoices';
+        const body = pendingIsRevise 
+          ? { invoiceNo: pendingReviseNo, ...pendingInvoiceData }
+          : pendingInvoiceData;
+        
+        const response = await apiFetch(url, { method: 'POST', body: JSON.stringify(body) });
+        if (!response) {
+          btn.disabled = false;
+          btn.innerHTML = 'Confirm & Create';
+          return;
+        }
+        const data = await response.json();
+        btn.disabled = false;
+        btn.innerHTML = 'Confirm & Create';
+        if (data.success) {
+          showToast(`Invoice ${data.invoiceNo || 'created'}!`, 'success');
+          closeReviewModal();
+          navigateTo('dashboard');
+        } else {
+          showToast(data.error || 'Failed to create', 'error');
+        }
+      } catch (error) {
+        btn.disabled = false;
+        btn.innerHTML = 'Confirm & Create';
+        showToast(error.message || 'Failed to create', 'error');
+      }
+    }
+
+    // ========================================================================
+    // CLIENTS
+    // ========================================================================
     async function loadClients() {
       setLoading('clients-content');
       try {
@@ -2117,8 +2217,15 @@
       submitBtn.innerHTML = '<span class="spinner" style="border-top-color:#fff;"></span>';
 
       try {
-        const response = await apiFetch('/api/clients', { method: 'POST', body: JSON.stringify({ clientData }) });
-        if (!response) return;
+        const response = await apiFetch('/api/clients', {
+          method: 'POST',
+          body: JSON.stringify(clientData)
+        });
+        if (!response) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = 'Save';
+          return;
+        }
         const data = await response.json();
         submitBtn.disabled = false;
         submitBtn.innerHTML = 'Save';
@@ -2127,16 +2234,18 @@
           closeAddClientModal();
           loadClients();
         } else {
-          showToast(data.error || 'Failed', 'error');
+          showToast(data.error || 'Failed to add client', 'error');
         }
       } catch (error) {
         submitBtn.disabled = false;
         submitBtn.innerHTML = 'Save';
-        showToast(error.message || 'Failed', 'error');
+        showToast('Error: ' + error.message, 'error');
       }
     }
 
-    // ==================== BUSINESSES ====================
+    // ========================================================================
+    // BUSINESSES
+    // ========================================================================
     async function loadBusinesses() {
       setLoading('businesses-content');
       try {
@@ -2268,8 +2377,15 @@
       submitBtn.innerHTML = '<span class="spinner" style="border-top-color:#fff;"></span>';
 
       try {
-        const response = await apiFetch('/api/businesses', { method: 'POST', body: JSON.stringify({ businessData }) });
-        if (!response) return;
+        const response = await apiFetch('/api/businesses', {
+          method: 'POST',
+          body: JSON.stringify(businessData)
+        });
+        if (!response) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = 'Save';
+          return;
+        }
         const data = await response.json();
         submitBtn.disabled = false;
         submitBtn.innerHTML = 'Save';
@@ -2278,34 +2394,40 @@
           closeAddBusinessModal();
           loadBusinesses();
         } else {
-          showToast(data.error || 'Failed', 'error');
+          showToast(data.error || 'Failed to add business', 'error');
         }
       } catch (error) {
         submitBtn.disabled = false;
         submitBtn.innerHTML = 'Save';
-        showToast(error.message || 'Failed', 'error');
+        showToast('Error: ' + error.message, 'error');
       }
     }
 
     async function setDefaultBusiness(businessId) {
       const confirmed = await appConfirm('Set as default business?');
       if (!confirmed) return;
+      
       try {
-        const response = await apiFetch('/api/businesses/default', { method: 'POST', body: JSON.stringify({ businessId }) });
+        const response = await apiFetch('/api/businesses/default', {
+          method: 'POST',
+          body: JSON.stringify({ businessId })
+        });
         if (!response) return;
         const data = await response.json();
         if (data.success) {
           showToast('Default business updated!', 'success');
           loadBusinesses();
         } else {
-          showToast(data.error || 'Failed', 'error');
+          showToast(data.error || 'Failed to set default', 'error');
         }
       } catch (error) {
-        showToast(error.message || 'Failed', 'error');
+        showToast('Error: ' + error.message, 'error');
       }
     }
 
-    // ==================== EXPORT INVOICES ====================
+    // ========================================================================
+    // EXPORT INVOICES
+    // ========================================================================
     async function loadExportInvoices() {
       setLoading('export-invoices-content');
       try {
@@ -2392,10 +2514,11 @@
               actions = `
                 <div class="flex gap-2 justify-center w-full">
                   <button onclick="handleCancelInvoice('${inv.invoice_no}')" class="btn btn-danger btn-sm flex-1 md:flex-none h-8 px-2" title="Cancel">✕ Cancel</button>
+                  <button onclick="handleGeneratePDF('${inv.invoice_no}')" class="btn btn-primary btn-sm flex-1 md:flex-none">PDF</button>
                 </div>
               `;
             } else {
-              actions = `<div style="text-align:right md:text-center;color:var(--muted);width:100%;">—</div>`;
+              actions = `<div style="text-align:center;color:var(--muted);width:100%;">—</div>`;
             }
             return `
               <tr>
@@ -2451,8 +2574,15 @@
       submitBtn.innerHTML = '<span class="spinner" style="border-top-color:#fff;"></span>';
 
       try {
-        const response = await apiFetch('/api/export-invoices', { method: 'POST', body: JSON.stringify(invoiceData) });
-        if (!response) return;
+        const response = await apiFetch('/api/export-invoices', {
+          method: 'POST',
+          body: JSON.stringify(invoiceData)
+        });
+        if (!response) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = 'Create';
+          return;
+        }
         const data = await response.json();
         submitBtn.disabled = false;
         submitBtn.innerHTML = 'Create';
@@ -2461,16 +2591,18 @@
           closeCreateExportModal();
           loadExportInvoices();
         } else {
-          showToast(data.error || 'Failed', 'error');
+          showToast(data.error || 'Failed to create', 'error');
         }
       } catch (error) {
         submitBtn.disabled = false;
         submitBtn.innerHTML = 'Create';
-        showToast(error.message || 'Failed', 'error');
+        showToast('Error: ' + error.message, 'error');
       }
     }
 
-    // ==================== CANCELLED INVOICES ====================
+    // ========================================================================
+    // CANCELLED INVOICES
+    // ========================================================================
     async function loadCancelledInvoices() {
       setLoading('cancelled-content');
       try {
@@ -2565,7 +2697,9 @@
       filterCancelled();
     }
 
-    // ==================== UTILITY ====================
+    // ========================================================================
+    // UTILITY
+    // ========================================================================
     function formatDateForInput(dateStr) {
       if (!dateStr) return '';
       const parts = dateStr.split('-');
@@ -2576,16 +2710,13 @@
       return dateStr;
     }
 
-    function handleError(error) {
-      console.error('Error:', error);
-      showToast(`Error: ${error.message || 'Something went wrong'}`, 'error');
-    }
-
-    // ==================== INITIALIZATION ====================
+    // ========================================================================
+    // INITIALIZATION
+    // ========================================================================
     document.addEventListener('DOMContentLoaded', function() {
       const token = localStorage.getItem('token');
       if (!token) {
-        window.location.href = '/onninvoices-frontend/login.html';
+        window.location.href = FRONTEND_BASE + '/login.html';
         return;
       }
       navigateTo('dashboard');
