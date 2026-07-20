@@ -86,6 +86,13 @@
     .hidden { display: none !important; }
     .error { color: var(--danger); font-size: 14px; margin-top: 8px; }
     .success { color: var(--success); font-size: 14px; margin-top: 8px; }
+    .divider { border-top: 1px solid var(--border); margin: 20px 0; }
+    .footer-text { text-align: center; font-size: 12px; color: var(--muted); margin-top: 16px; }
+    .text-center { text-align: center; }
+    .mt-4 { margin-top: 16px; }
+    .text-sm { font-size: 13px; }
+    .link { color: var(--primary); cursor: pointer; text-decoration: none; }
+    .link:hover { text-decoration: underline; }
     .otp-input-container { display: flex; gap: 8px; justify-content: center; margin: 16px 0; }
     .otp-input {
       width: 48px;
@@ -105,48 +112,6 @@
     .resend a { color: var(--primary); cursor: pointer; text-decoration: none; }
     .resend a:hover { text-decoration: underline; }
     .resend a.disabled { color: var(--muted); cursor: default; pointer-events: none; }
-    .divider { border-top: 1px solid var(--border); margin: 24px 0; }
-    .footer-text { text-align: center; font-size: 12px; color: var(--muted); margin-top: 16px; }
-    .text-center { text-align: center; }
-    .mt-4 { margin-top: 16px; }
-
-    .onn-modal-overlay {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0, 0, 0, 0.7);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
-      padding: 20px;
-      animation: fadeIn 0.3s ease-out;
-    }
-    .onn-modal {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 32px;
-      max-width: 400px;
-      width: 100%;
-      animation: slideUp 0.3s ease-out;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-    }
-    .onn-modal .modal-icon { text-align: center; font-size: 48px; margin-bottom: 12px; }
-    .onn-modal .modal-title { font-size: 20px; font-weight: 700; text-align: center; color: var(--text); margin-bottom: 8px; }
-    .onn-modal .modal-message { text-align: center; color: var(--muted); font-size: 14px; line-height: 1.6; margin-bottom: 24px; }
-    .onn-modal .modal-actions { display: flex; gap: 12px; justify-content: center; }
-    .onn-modal .modal-actions .btn { flex: 1; text-align: center; justify-content: center; display: flex; align-items: center; gap: 8px; }
-    .onn-modal .modal-actions .btn-primary { background: var(--primary); color: white; }
-    .onn-modal .modal-actions .btn-primary:hover { background: var(--primary-hover); }
-    .onn-modal .modal-actions .btn-secondary { background: var(--border); color: var(--text); }
-    .onn-modal .modal-actions .btn-secondary:hover { background: #4B5563; }
-    .onn-modal .modal-actions .btn-success { background: var(--success); color: white; }
-    .onn-modal .modal-actions .btn-success:hover { opacity: 0.9; }
-
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
   </style>
 </head>
 <body>
@@ -155,135 +120,114 @@
   <div class="logo">
     <img src="https://nihal007-cola.github.io/logo.png" alt="ONNinvoices">
     <h1>ONNinvoices</h1>
-    <p>Sign in to your account</p>
+    <p id="pageTitle">Sign in to your account</p>
   </div>
 
-  <!-- Step 1: Phone Number -->
-  <div id="phoneStep">
-    <form id="phoneForm">
+  <!-- ===== LOGIN FORM ===== -->
+  <div id="loginForm">
+    <form id="loginFormElement" onsubmit="handleLogin(event)">
       <div class="form-group">
-        <label>Phone Number</label>
-        <input type="tel" id="phoneInput" placeholder="+91XXXXXXXXXX" required autofocus>
+        <label>Email</label>
+        <input type="email" id="loginEmail" placeholder="you@example.com" required autofocus>
       </div>
-      <button type="submit" class="btn btn-primary btn-block" id="sendOtpBtn">Send OTP</button>
-      <div id="phoneError" class="error hidden"></div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="loginPassword" placeholder="Enter your password" required>
+      </div>
+      <div id="loginError" class="error hidden"></div>
+      <button type="submit" class="btn btn-primary btn-block" id="loginBtn">Sign In</button>
+      <div class="text-center mt-4" style="font-size:14px;">
+        <a class="link" onclick="showForgotPassword()">Forgot Password?</a>
+        <span style="color:var(--muted);margin:0 8px;">|</span>
+        <a class="link" onclick="showChangePassword()">Change Password</a>
+      </div>
     </form>
   </div>
 
-  <!-- Step 2: OTP Verification -->
-  <div id="otpStep" class="hidden">
-    <p style="text-align:center;color:var(--muted);font-size:14px;margin-bottom:16px;">
-      Enter the 6-digit OTP sent to <strong id="otpPhoneDisplay"></strong>
-    </p>
-    <div class="otp-input-container" id="otpContainer">
-      <input type="text" class="otp-input" maxlength="1" data-index="0" inputmode="numeric">
-      <input type="text" class="otp-input" maxlength="1" data-index="1" inputmode="numeric">
-      <input type="text" class="otp-input" maxlength="1" data-index="2" inputmode="numeric">
-      <input type="text" class="otp-input" maxlength="1" data-index="3" inputmode="numeric">
-      <input type="text" class="otp-input" maxlength="1" data-index="4" inputmode="numeric">
-      <input type="text" class="otp-input" maxlength="1" data-index="5" inputmode="numeric">
-    </div>
-    <button type="button" class="btn btn-success btn-block" id="verifyOtpBtn">Verify OTP</button>
-    <div id="otpError" class="error hidden"></div>
-    <div class="resend">
-      Didn't receive the OTP? <a id="resendOtp">Resend</a>
-    </div>
+  <!-- ===== FORGOT PASSWORD ===== -->
+  <div id="forgotPasswordForm" class="hidden">
+    <p style="color:var(--muted);font-size:14px;margin-bottom:16px;">Enter your email to receive an OTP for password reset.</p>
+    <form onsubmit="handleForgotPassword(event)">
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="forgotEmail" placeholder="you@example.com" required>
+      </div>
+      <div id="forgotError" class="error hidden"></div>
+      <button type="submit" class="btn btn-primary btn-block" id="forgotBtn">Send OTP</button>
+      <div class="text-center mt-4"><a class="link" onclick="showLogin()">← Back to Login</a></div>
+    </form>
+  </div>
+
+  <!-- ===== RESET PASSWORD (OTP) ===== -->
+  <div id="resetPasswordForm" class="hidden">
+    <p style="color:var(--muted);font-size:14px;margin-bottom:16px;">Enter the OTP sent to your email and set a new password.</p>
+    <form onsubmit="handleResetPassword(event)">
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="resetEmail" required readonly style="opacity:0.7;">
+      </div>
+      <div class="form-group">
+        <label>OTP</label>
+        <div class="otp-input-container">
+          <input type="text" class="otp-input" maxlength="1" data-index="0" inputmode="numeric" required>
+          <input type="text" class="otp-input" maxlength="1" data-index="1" inputmode="numeric" required>
+          <input type="text" class="otp-input" maxlength="1" data-index="2" inputmode="numeric" required>
+          <input type="text" class="otp-input" maxlength="1" data-index="3" inputmode="numeric" required>
+          <input type="text" class="otp-input" maxlength="1" data-index="4" inputmode="numeric" required>
+          <input type="text" class="otp-input" maxlength="1" data-index="5" inputmode="numeric" required>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>New Password</label>
+        <input type="password" id="resetNewPassword" placeholder="Min 8 characters" required minlength="8">
+      </div>
+      <div id="resetError" class="error hidden"></div>
+      <button type="submit" class="btn btn-success btn-block" id="resetBtn">Reset Password</button>
+      <div class="text-center mt-4"><a class="link" onclick="showLogin()">← Back to Login</a></div>
+    </form>
+  </div>
+
+  <!-- ===== CHANGE PASSWORD ===== -->
+  <div id="changePasswordForm" class="hidden">
+    <p style="color:var(--muted);font-size:14px;margin-bottom:16px;">Change your password. An OTP will be sent to your email for verification.</p>
+    <form onsubmit="handleChangePassword(event)">
+      <div class="form-group">
+        <label>Current Password</label>
+        <input type="password" id="changeCurrentPassword" required>
+      </div>
+      <div class="form-group">
+        <label>New Password</label>
+        <input type="password" id="changeNewPassword" placeholder="Min 8 characters" required minlength="8">
+      </div>
+      <div class="form-group">
+        <label>OTP (sent to your email)</label>
+        <div class="otp-input-container">
+          <input type="text" class="otp-input" maxlength="1" data-index="0" inputmode="numeric" required>
+          <input type="text" class="otp-input" maxlength="1" data-index="1" inputmode="numeric" required>
+          <input type="text" class="otp-input" maxlength="1" data-index="2" inputmode="numeric" required>
+          <input type="text" class="otp-input" maxlength="1" data-index="3" inputmode="numeric" required>
+          <input type="text" class="otp-input" maxlength="1" data-index="4" inputmode="numeric" required>
+          <input type="text" class="otp-input" maxlength="1" data-index="5" inputmode="numeric" required>
+        </div>
+      </div>
+      <div id="changeError" class="error hidden"></div>
+      <button type="submit" class="btn btn-success btn-block" id="changeBtn">Change Password</button>
+      <div class="text-center mt-4"><a class="link" onclick="showLogin()">← Back to Login</a></div>
+    </form>
   </div>
 
   <div id="message" class="text-center mt-4"></div>
   <div class="divider"></div>
-  <div class="footer-text">Secure authentication • OTP verified via Email</div>
-</div>
-
-<!-- ==================== ONN CUSTOM MODAL ==================== -->
-<div id="onnModal" class="onn-modal-overlay hidden">
-  <div class="onn-modal">
-    <div class="modal-icon" id="modalIcon">👑</div>
-    <div class="modal-title" id="modalTitle">Welcome Owner!</div>
-    <div class="modal-message" id="modalMessage">Where would you like to go?</div>
-    <div class="modal-actions" id="modalActions">
-      <button class="btn btn-secondary" id="modalCancelBtn">Go to App</button>
-      <button class="btn btn-primary" id="modalConfirmBtn">Go to Admin Panel</button>
-    </div>
-  </div>
+  <div class="footer-text">Secure authentication • Password + OTP verification</div>
 </div>
 
 <script>
   const API_URL = 'https://api.jamesmoriarty.in';
   const FRONTEND_BASE = '/onninvoices-frontend';
-  let currentPhone = '';
-  let otpTimer = null;
-  let secondsLeft = 30;
-  let pendingRedirect = null;
 
-  // ==================== ONN CUSTOM MODAL ====================
-  function showOnnModal(options) {
-    return new Promise((resolve) => {
-      const modal = document.getElementById('onnModal');
-      const icon = document.getElementById('modalIcon');
-      const title = document.getElementById('modalTitle');
-      const message = document.getElementById('modalMessage');
-      const cancelBtn = document.getElementById('modalCancelBtn');
-      const confirmBtn = document.getElementById('modalConfirmBtn');
-
-      icon.textContent = options.icon || '👑';
-      title.textContent = options.title || 'ONNinvoices';
-      message.textContent = options.message || 'Choose an option';
-      
-      if (options.type === 'choice') {
-        cancelBtn.textContent = options.cancelText || 'Go to App';
-        confirmBtn.textContent = options.confirmText || 'Go to Admin Panel';
-        cancelBtn.classList.remove('hidden');
-        confirmBtn.classList.remove('hidden');
-        confirmBtn.className = 'btn ' + (options.confirmClass || 'btn-primary');
-        
-        pendingRedirect = options.redirect || null;
-        
-        const newCancelBtn = cancelBtn.cloneNode(true);
-        const newConfirmBtn = confirmBtn.cloneNode(true);
-        cancelBtn.parentNode.replaceChild(newCancelBtn, cancelBtn);
-        confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
-        
-        newCancelBtn.addEventListener('click', function() {
-          modal.classList.add('hidden');
-          window.location.href = FRONTEND_BASE + '/index.html';
-          resolve(false);
-        });
-        
-        newConfirmBtn.addEventListener('click', function() {
-          modal.classList.add('hidden');
-          if (pendingRedirect) {
-            window.location.href = pendingRedirect;
-          }
-          resolve(true);
-        });
-        
-        document.getElementById('modalCancelBtn').textContent = options.cancelText || 'Go to App';
-        document.getElementById('modalConfirmBtn').textContent = options.confirmText || 'Go to Admin Panel';
-      } else if (options.type === 'alert') {
-        cancelBtn.classList.add('hidden');
-        confirmBtn.textContent = options.confirmText || 'OK';
-        confirmBtn.className = 'btn ' + (options.confirmClass || 'btn-primary');
-        
-        const newConfirmBtn = confirmBtn.cloneNode(true);
-        confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
-        
-        newConfirmBtn.addEventListener('click', function() {
-          modal.classList.add('hidden');
-          if (options.redirect) {
-            window.location.href = options.redirect;
-          }
-          resolve(true);
-        });
-        
-        document.getElementById('modalConfirmBtn').textContent = options.confirmText || 'OK';
-      }
-      
-      modal.classList.remove('hidden');
-    });
-  }
-
-  // ==================== OTP INPUT HANDLING ====================
+  // ========================================================================
+  // OTP INPUT HANDLING
+  // ========================================================================
   document.querySelectorAll('.otp-input').forEach((input, index) => {
     input.addEventListener('input', function(e) {
       this.value = this.value.replace(/\D/g, '');
@@ -294,224 +238,303 @@
         }
       }
     });
-
     input.addEventListener('keydown', function(e) {
       if (e.key === 'Backspace' && this.value === '' && index > 0) {
         document.querySelector(`.otp-input[data-index="${index - 1}"]`).focus();
       }
     });
-
     input.addEventListener('paste', function(e) {
       e.preventDefault();
       const paste = (e.clipboardData || window.clipboardData).getData('text');
       const digits = paste.replace(/\D/g, '').slice(0, 6);
       document.querySelectorAll('.otp-input').forEach((el, i) => {
-        if (i < digits.length) {
-          el.value = digits[i];
-          el.classList.add('otp-input-filled');
-        }
+        if (i < digits.length) { el.value = digits[i]; el.classList.add('otp-input-filled'); }
       });
-      if (digits.length === 6) {
-        document.getElementById('verifyOtpBtn').focus();
-      }
+      if (digits.length === 6) { document.activeElement?.blur(); }
     });
   });
 
-  // ==================== GET OTP VALUE ====================
   function getOtp() {
     let otp = '';
     document.querySelectorAll('.otp-input').forEach(el => otp += el.value);
     return otp;
   }
 
-  // ==================== SHOW/HIDE ERROR ====================
+  function clearOtp() {
+    document.querySelectorAll('.otp-input').forEach(el => { el.value = ''; el.classList.remove('otp-input-filled'); });
+  }
+
+  // ========================================================================
+  // UI HELPERS
+  // ========================================================================
+  function showLogin() {
+    document.getElementById('loginForm').classList.remove('hidden');
+    document.getElementById('forgotPasswordForm').classList.add('hidden');
+    document.getElementById('resetPasswordForm').classList.add('hidden');
+    document.getElementById('changePasswordForm').classList.add('hidden');
+    document.getElementById('pageTitle').textContent = 'Sign in to your account';
+    clearOtp();
+    hideError('loginError');
+    hideError('forgotError');
+    hideError('resetError');
+    hideError('changeError');
+    showMessage('', '');
+  }
+
+  function showForgotPassword() {
+    document.getElementById('loginForm').classList.add('hidden');
+    document.getElementById('forgotPasswordForm').classList.remove('hidden');
+    document.getElementById('resetPasswordForm').classList.add('hidden');
+    document.getElementById('changePasswordForm').classList.add('hidden');
+    document.getElementById('pageTitle').textContent = 'Reset Password';
+    hideError('forgotError');
+    showMessage('', '');
+  }
+
+  function showResetPassword(email) {
+    document.getElementById('loginForm').classList.add('hidden');
+    document.getElementById('forgotPasswordForm').classList.add('hidden');
+    document.getElementById('resetPasswordForm').classList.remove('hidden');
+    document.getElementById('changePasswordForm').classList.add('hidden');
+    document.getElementById('resetEmail').value = email;
+    document.getElementById('pageTitle').textContent = 'Reset Password - OTP Verification';
+    clearOtp();
+    hideError('resetError');
+    showMessage('', '');
+  }
+
+  function showChangePassword() {
+    document.getElementById('loginForm').classList.add('hidden');
+    document.getElementById('forgotPasswordForm').classList.add('hidden');
+    document.getElementById('resetPasswordForm').classList.add('hidden');
+    document.getElementById('changePasswordForm').classList.remove('hidden');
+    document.getElementById('pageTitle').textContent = 'Change Password';
+    clearOtp();
+    hideError('changeError');
+    showMessage('', '');
+  }
+
+  function showMessage(text, type = 'success') {
+    const el = document.getElementById('message');
+    el.textContent = text;
+    el.className = type === 'success' ? 'success' : 'error';
+    if (!text) el.className = '';
+    setTimeout(() => { if (el.textContent === text) { el.textContent = ''; el.className = ''; } }, 5000);
+  }
+
   function showError(id, message) {
     const el = document.getElementById(id);
     el.textContent = message;
     el.classList.remove('hidden');
-    setTimeout(() => el.classList.add('hidden'), 5000);
+    setTimeout(() => { el.textContent = ''; el.classList.add('hidden'); }, 5000);
   }
 
   function hideError(id) {
-    document.getElementById(id).classList.add('hidden');
+    const el = document.getElementById(id);
+    el.textContent = '';
+    el.classList.add('hidden');
   }
 
-  function showMessage(message, type) {
-    const el = document.getElementById('message');
-    el.textContent = message;
-    el.className = type === 'success' ? 'success' : 'error';
-    setTimeout(() => { el.textContent = ''; }, 4000);
-  }
+  // ========================================================================
+  // LOGIN
+  // ========================================================================
+  async function handleLogin(event) {
+    event.preventDefault();
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    const btn = document.getElementById('loginBtn');
+    hideError('loginError');
 
-  // ==================== PHONE SUBMISSION ====================
-  document.getElementById('phoneForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-
-    const phone = document.getElementById('phoneInput').value.trim();
-    if (!phone) {
-      showError('phoneError', 'Please enter your phone number');
-      return;
-    }
-
-    hideError('phoneError');
-    const btn = document.getElementById('sendOtpBtn');
     btn.disabled = true;
-    btn.textContent = 'Sending...';
+    btn.textContent = 'Signing in...';
 
     try {
-      const response = await fetch(`${API_URL}/api/auth/send-otp`, {
+      const response = await fetch(`${API_URL}/api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone })
+        body: JSON.stringify({ email, password })
       });
       const data = await response.json();
 
       btn.disabled = false;
-      btn.textContent = 'Send OTP';
-
-      if (response.ok && data.success) {
-        currentPhone = phone;
-        document.getElementById('otpPhoneDisplay').textContent = phone;
-        document.getElementById('phoneStep').classList.add('hidden');
-        document.getElementById('otpStep').classList.remove('hidden');
-        showMessage('OTP sent to your registered email!', 'success');
-        startTimer();
-        document.querySelector('.otp-input').focus();
-      } else {
-        showError('phoneError', data.detail || 'Failed to send OTP. Please contact admin.');
-      }
-    } catch (error) {
-      btn.disabled = false;
-      btn.textContent = 'Send OTP';
-      showError('phoneError', 'Network error. Please try again.');
-    }
-  });
-
-  // ==================== VERIFY OTP ====================
-  document.getElementById('verifyOtpBtn').addEventListener('click', async function() {
-    const otp = getOtp();
-    if (otp.length < 6) {
-      showError('otpError', 'Please enter the complete 6-digit OTP');
-      return;
-    }
-
-    hideError('otpError');
-    this.disabled = true;
-    this.textContent = 'Verifying...';
-
-    try {
-      const response = await fetch(`${API_URL}/api/auth/verify-otp`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone: currentPhone, otp })
-      });
-      const data = await response.json();
-
-      this.disabled = false;
-      this.textContent = 'Verify OTP';
+      btn.textContent = 'Sign In';
 
       if (response.ok && data.success) {
         localStorage.setItem('token', data.token);
         localStorage.setItem('userRole', data.user.role);
-        localStorage.setItem('userPhone', data.user.phone);
-        localStorage.setItem('userEmail', data.user.email || '');
+        localStorage.setItem('userEmail', data.user.email);
+        localStorage.setItem('userPhone', data.user.phone || '');
         showMessage('✅ Login successful!', 'success');
-
-        setTimeout(async () => {
+        setTimeout(() => {
           if (data.user.role === 'OWNER') {
-            await showOnnModal({
-              type: 'choice',
-              icon: '👑',
-              title: 'Welcome Owner!',
-              message: 'Where would you like to go?',
-              cancelText: 'Go to App',
-              confirmText: 'Go to Admin Panel',
-              confirmClass: 'btn-primary',
-              redirect: FRONTEND_BASE + '/admin-panel.html'
-            });
+            window.location.href = FRONTEND_BASE + '/admin-panel.html';
           } else {
             window.location.href = FRONTEND_BASE + '/index.html';
           }
-        }, 1000);
+        }, 500);
       } else {
-        showError('otpError', data.detail || 'Invalid OTP. Please try again.');
-        document.querySelectorAll('.otp-input').forEach(el => {
-          el.value = '';
-          el.classList.remove('otp-input-filled');
-        });
-        document.querySelector('.otp-input').focus();
+        showError('loginError', data.detail || 'Invalid email or password');
       }
     } catch (error) {
-      this.disabled = false;
-      this.textContent = 'Verify OTP';
-      showError('otpError', 'Network error. Please try again.');
+      btn.disabled = false;
+      btn.textContent = 'Sign In';
+      showError('loginError', 'Network error. Please try again.');
     }
-  });
+  }
 
-  // ==================== RESEND OTP ====================
-  document.getElementById('resendOtp').addEventListener('click', async function() {
-    if (this.classList.contains('disabled')) return;
+  // ========================================================================
+  // FORGOT PASSWORD
+  // ========================================================================
+  async function handleForgotPassword(event) {
+    event.preventDefault();
+    const email = document.getElementById('forgotEmail').value.trim();
+    const btn = document.getElementById('forgotBtn');
+    hideError('forgotError');
+
+    btn.disabled = true;
+    btn.textContent = 'Sending...';
 
     try {
-      const response = await fetch(`${API_URL}/api/auth/send-otp`, {
+      const response = await fetch(`${API_URL}/api/auth/forgot-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone: currentPhone })
+        body: JSON.stringify({ email })
       });
       const data = await response.json();
 
+      btn.disabled = false;
+      btn.textContent = 'Send OTP';
+
       if (response.ok && data.success) {
-        showMessage('OTP resent successfully!', 'success');
-        startTimer();
-        document.querySelector('.otp-input').focus();
+        showMessage(`✅ OTP sent to ${email}`, 'success');
+        showResetPassword(email);
       } else {
-        showError('otpError', data.detail || 'Failed to resend OTP');
+        showError('forgotError', data.detail || 'Email not found');
       }
     } catch (error) {
-      showError('otpError', 'Network error. Please try again.');
+      btn.disabled = false;
+      btn.textContent = 'Send OTP';
+      showError('forgotError', 'Network error. Please try again.');
     }
-  });
-
-  // ==================== TIMER ====================
-  function startTimer() {
-    const resendLink = document.getElementById('resendOtp');
-    secondsLeft = 30;
-    resendLink.classList.add('disabled');
-    resendLink.style.color = 'var(--muted)';
-    resendLink.style.cursor = 'default';
-    resendLink.textContent = `Resend (${secondsLeft}s)`;
-
-    clearInterval(otpTimer);
-    otpTimer = setInterval(() => {
-      secondsLeft--;
-      if (secondsLeft <= 0) {
-        clearInterval(otpTimer);
-        resendLink.textContent = 'Resend';
-        resendLink.style.color = 'var(--primary)';
-        resendLink.style.cursor = 'pointer';
-        resendLink.classList.remove('disabled');
-      } else {
-        resendLink.textContent = `Resend (${secondsLeft}s)`;
-      }
-    }, 1000);
   }
 
-  // ==================== ENTER KEY ON OTP ====================
-  document.addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') {
-      const otpStep = document.getElementById('otpStep');
-      if (!otpStep.classList.contains('hidden')) {
-        const otp = getOtp();
-        if (otp.length === 6) {
-          document.getElementById('verifyOtpBtn').click();
-        }
-      }
-    }
-  });
+  // ========================================================================
+  // RESET PASSWORD
+  // ========================================================================
+  async function handleResetPassword(event) {
+    event.preventDefault();
+    const email = document.getElementById('resetEmail').value;
+    const otp = getOtp();
+    const newPassword = document.getElementById('resetNewPassword').value;
+    const btn = document.getElementById('resetBtn');
+    hideError('resetError');
 
-  // ==================== LOGOUT ====================
+    if (otp.length < 6) { showError('resetError', 'Please enter the complete OTP'); return; }
+    if (newPassword.length < 8) { showError('resetError', 'Password must be at least 8 characters'); return; }
+
+    btn.disabled = true;
+    btn.textContent = 'Resetting...';
+
+    try {
+      const response = await fetch(`${API_URL}/api/auth/reset-password`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, otp, new_password: newPassword })
+      });
+      const data = await response.json();
+
+      btn.disabled = false;
+      btn.textContent = 'Reset Password';
+
+      if (response.ok && data.success) {
+        showMessage('✅ Password reset successfully! Please login.', 'success');
+        setTimeout(showLogin, 1500);
+      } else {
+        showError('resetError', data.detail || 'Invalid OTP or email');
+      }
+    } catch (error) {
+      btn.disabled = false;
+      btn.textContent = 'Reset Password';
+      showError('resetError', 'Network error. Please try again.');
+    }
+  }
+
+  // ========================================================================
+  // CHANGE PASSWORD (Logged in users)
+  // ========================================================================
+  async function handleChangePassword(event) {
+    event.preventDefault();
+    const token = localStorage.getItem('token');
+    if (!token) { showMessage('Please login first', 'error'); setTimeout(showLogin, 1500); return; }
+
+    const currentPassword = document.getElementById('changeCurrentPassword').value;
+    const newPassword = document.getElementById('changeNewPassword').value;
+    const otp = getOtp();
+    const btn = document.getElementById('changeBtn');
+    hideError('changeError');
+
+    if (otp.length < 6) { showError('changeError', 'Please enter the complete OTP'); return; }
+    if (newPassword.length < 8) { showError('changeError', 'Password must be at least 8 characters'); return; }
+
+    btn.disabled = true;
+    btn.textContent = 'Changing...';
+
+    try {
+      // First, send the current password + request OTP
+      const changeResponse = await fetch(`${API_URL}/api/auth/change-password`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ current_password: currentPassword, new_password: newPassword })
+      });
+      const changeData = await changeResponse.json();
+
+      if (!changeResponse.ok || !changeData.success) {
+        btn.disabled = false;
+        btn.textContent = 'Change Password';
+        showError('changeError', changeData.detail || 'Failed to send OTP');
+        return;
+      }
+
+      // Then verify the OTP
+      const verifyResponse = await fetch(`${API_URL}/api/auth/verify-change-password`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ otp, new_password: newPassword })
+      });
+      const verifyData = await verifyResponse.json();
+
+      btn.disabled = false;
+      btn.textContent = 'Change Password';
+
+      if (verifyResponse.ok && verifyData.success) {
+        showMessage('✅ Password changed successfully!', 'success');
+        setTimeout(showLogin, 1500);
+      } else {
+        showError('changeError', verifyData.detail || 'Invalid OTP');
+      }
+    } catch (error) {
+      btn.disabled = false;
+      btn.textContent = 'Change Password';
+      showError('changeError', 'Network error. Please try again.');
+    }
+  }
+
+  // ========================================================================
+  // INIT - Check if already logged in
+  // ========================================================================
   if (localStorage.getItem('token')) {
-    localStorage.clear();
+    const role = localStorage.getItem('userRole');
+    if (role === 'OWNER') {
+      window.location.href = FRONTEND_BASE + '/admin-panel.html';
+    } else {
+      window.location.href = FRONTEND_BASE + '/index.html';
+    }
   }
 </script>
 </body>
