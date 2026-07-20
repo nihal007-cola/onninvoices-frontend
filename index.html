@@ -1097,7 +1097,7 @@
               actions = `
                 <div class="flex gap-2 justify-center w-full">
                   <button onclick="handleReviseInvoice('${escapeHtml(row.inv.invoice_no)}')" class="btn btn-warning btn-sm flex-1 md:flex-none">Revise</button>
-                  <button onclick="handleCancelInvoice('${escapeHtml(row.inv.invoice_no)}', 'regular')" class="btn btn-danger btn-sm flex-1 md:flex-none">Cancel</button>
+                  <button onclick="handleCancelInvoice('${escapeHtml(row.inv.invoice_no)}')" class="btn btn-danger btn-sm flex-1 md:flex-none">Cancel</button>
                   <button onclick="handleGeneratePDF('${escapeHtml(row.inv.invoice_no)}', 'invoice')" class="btn btn-primary btn-sm flex-1 md:flex-none">PDF</button>
                 </div>`;
             } else {
@@ -1129,49 +1129,60 @@
     }
 
     // ========================================================================
-    // CANCEL INVOICE - FIXED FOR BOTH REGULAR AND EXPORT
+    // INVOICE ACTIONS
     // ========================================================================
-    async function handleCancelInvoice(invoiceNo, type = 'regular') {
-      if (!isLoggedIn()) { 
-        showToast('Please login first', 'error'); 
-        window.location.href = FRONTEND_BASE + '/login.html'; 
-        return; 
-      }
-      const confirmed = await appConfirm(`⚠️ Are you sure you want to cancel ${type === 'export' ? 'export ' : ''}invoice ${invoiceNo}?`);
+
+    async function handleCancelInvoice(invoiceNo) {
+      if (!isLoggedIn()) { showToast('Please login first', 'error'); window.location.href = FRONTEND_BASE + '/login.html'; return; }
+      const confirmed = await appConfirm(`⚠️ Are you sure you want to cancel invoice ${invoiceNo}?`);
       if (!confirmed) return;
       const reason = await appPrompt('📝 Enter cancellation reason:');
-      if (reason === null || reason.trim() === '') { 
-        showToast('Cancellation cancelled - no reason provided', 'info'); 
-        return; 
-      }
+      if (reason === null || reason.trim() === '') { showToast('Cancellation cancelled - no reason provided', 'info'); return; }
 
       try {
         showToast('⏳ Cancelling invoice...', 'info');
-        const endpoint = type === 'export' ? '/api/export-invoices/cancel' : '/api/invoices/cancel';
-        const response = await apiFetch(endpoint, { 
+        const response = await apiFetch('/api/invoices/cancel', { 
           method: 'POST', 
           body: JSON.stringify({ invoiceNo: invoiceNo, reason: reason.trim() }) 
         });
         if (!response) return;
         const data = await response.json();
         if (data.success) { 
-          showToast(`✅ ${type === 'export' ? 'Export ' : ''}Invoice ${invoiceNo} cancelled!`, 'success'); 
-          if (type === 'export') {
-            loadExportInvoices();
-          } else {
-            loadDashboard();
-          }
+          showToast(`✅ Invoice ${invoiceNo} cancelled successfully!`, 'success'); 
+          loadDashboard(); 
         } else { 
-          showToast(`❌ Failed: ${data.error || 'Unknown error'}`, 'error'); 
+          showToast(`❌ Failed to cancel: ${data.error || 'Unknown error'}`, 'error'); 
         }
       } catch (error) { 
         showToast(`❌ Error: ${error.message}`, 'error'); 
       }
     }
 
-    // ========================================================================
-    // PDF GENERATION - FIXED
-    // ========================================================================
+    async function handleCancelExportInvoice(invoiceNo) {
+      if (!isLoggedIn()) { showToast('Please login first', 'error'); window.location.href = FRONTEND_BASE + '/login.html'; return; }
+      const confirmed = await appConfirm(`⚠️ Are you sure you want to cancel export invoice ${invoiceNo}?`);
+      if (!confirmed) return;
+      
+      // Export table doesn't have cancelled_reason, so we don't ask for it
+      try {
+        showToast('⏳ Cancelling export invoice...', 'info');
+        const response = await apiFetch('/api/export-invoices/cancel', { 
+          method: 'POST', 
+          body: JSON.stringify({ invoiceNo: invoiceNo }) 
+        });
+        if (!response) return;
+        const data = await response.json();
+        if (data.success) { 
+          showToast(`✅ Export Invoice ${invoiceNo} cancelled successfully!`, 'success'); 
+          loadExportInvoices(); 
+        } else { 
+          showToast(`❌ Failed to cancel: ${data.error || 'Unknown error'}`, 'error'); 
+        }
+      } catch (error) { 
+        showToast(`❌ Error: ${error.message}`, 'error'); 
+      }
+    }
+
     function handleGeneratePDF(invoiceNo, type = 'invoice') {
       if (!isLoggedIn()) { 
         showToast('Please login first', 'error'); 
@@ -1181,41 +1192,23 @@
       showToast('⏳ Generating PDF...', 'info');
 
       const encodedInvoiceNo = encodeURIComponent(invoiceNo);
-      const url = type === 'export' 
-        ? `${API_URL}/api/export-invoices/${encodedInvoiceNo}/pdf` 
-        : `${API_URL}/api/invoices/${encodedInvoiceNo}/pdf`;
+      const url = type === 'export' ? `${API_URL}/api/export-invoices/${encodedInvoiceNo}/pdf` : `${API_URL}/api/invoices/${encodedInvoiceNo}/pdf`;
       
-      fetch(url, { 
-        headers: { 'Authorization': `Bearer ${getToken()}` } 
-      })
-      .then(response => { 
-        if (!response.ok) {
-          if (response.status === 404) {
-            throw new Error('Invoice not found. Please check the invoice number.');
-          }
-          throw new Error(`HTTP ${response.status}`); 
-        }
-        return response.blob(); 
-      })
-      .then(blob => { 
-        const pdfUrl = URL.createObjectURL(blob); 
-        const win = window.open(pdfUrl, '_blank'); 
-        if (!win) {
-          const link = document.createElement('a');
-          link.href = pdfUrl;
-          link.download = `Invoice_${invoiceNo.replace('/', '_')}.pdf`;
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-          showToast('✅ PDF downloaded!', 'success');
-        } else {
-          showToast('✅ PDF generated!', 'success');
-        }
-      })
-      .catch(error => { 
-        console.error('PDF error:', error); 
-        showToast(`❌ ${error.message}`, 'error'); 
-      });
+      fetch(url, { headers: { 'Authorization': `Bearer ${getToken()}` } })
+        .then(response => { 
+          if (!response.ok) throw new Error(`HTTP ${response.status}`); 
+          return response.blob(); 
+        })
+        .then(blob => { 
+          const pdfUrl = URL.createObjectURL(blob); 
+          const win = window.open(pdfUrl, '_blank'); 
+          if (!win) showToast('Please allow popups to view PDF', 'error'); 
+          else showToast('✅ PDF generated!', 'success'); 
+        })
+        .catch(error => { 
+          console.error('PDF error:', error); 
+          showToast('❌ Failed to generate PDF: ' + error.message, 'error'); 
+        });
     }
 
     function handleReviseInvoice(invoiceNo) {
@@ -2172,6 +2165,19 @@
       } catch (error) { submitBtn.disabled = false; submitBtn.innerHTML = 'Save'; showToast(`❌ Error: ${error.message}`, 'error'); }
     }
 
+    async function setDefaultBusiness(businessId) {
+      const confirmed = await appConfirm('Set as default business?');
+      if (!confirmed) return;
+      
+      try {
+        const response = await apiFetch('/api/businesses/default', { method: 'POST', body: JSON.stringify({ businessId }) });
+        if (!response) return;
+        const data = await response.json();
+        if (data.success) { showToast('✅ Default business updated!', 'success'); loadBusinesses(); } 
+        else { showToast(`❌ Failed: ${data.error || 'Unknown error'}`, 'error'); }
+      } catch (error) { showToast(`❌ Error: ${error.message}`, 'error'); }
+    }
+
     // ========================================================================
     // EXPORT INVOICES
     // ========================================================================
@@ -2250,7 +2256,7 @@
               actions = `
                 <div class="flex gap-2 justify-center w-full">
                   <button onclick="handleReviseExportInvoice('${escapeHtml(inv.invoice_no)}')" class="btn btn-warning btn-sm flex-1 md:flex-none">Revise</button>
-                  <button onclick="handleCancelInvoice('${escapeHtml(inv.invoice_no)}', 'export')" class="btn btn-danger btn-sm flex-1 md:flex-none">Cancel</button>
+                  <button onclick="handleCancelExportInvoice('${escapeHtml(inv.invoice_no)}')" class="btn btn-danger btn-sm flex-1 md:flex-none">Cancel</button>
                   <button onclick="handleGeneratePDF('${escapeHtml(inv.invoice_no)}', 'export')" class="btn btn-primary btn-sm flex-1 md:flex-none">PDF</button>
                 </div>`;
             } else {
