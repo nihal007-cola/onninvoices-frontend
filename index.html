@@ -2765,86 +2765,100 @@
     }
 
     function renderExportInvoices(response) {
-      const container = document.getElementById('export-invoices-content');
-      if (!response || !response.success) {
-        container.innerHTML = `<div class="glass erp-card text-center" style="color:var(--danger)">Failed to load</div>`;
-        return;
-      }
-      const invoices = response.invoices || [];
-      invoices.sort((a, b) => { return parseDate(b.date) - parseDate(a.date); });
-      exportInvoicesData = invoices;
+  const container = document.getElementById('export-invoices-content');
+  if (!response || !response.success) {
+    container.innerHTML = `<div class="glass erp-card text-center" style="color:var(--danger)">Failed to load</div>`;
+    return;
+  }
+  const invoices = response.invoices || [];
+  invoices.sort((a, b) => { return parseDate(b.date) - parseDate(a.date); });
+  exportInvoicesData = invoices;
 
-      if (invoices.length === 0) {
-        container.innerHTML = `
-          <div class="glass erp-card flex flex-col items-center justify-center p-10 md:p-16 text-center">
-            <svg class="mb-4 text-[var(--muted)] opacity-50" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-            <div class="text-header mb-6">No Export Invoices</div>
-            <button onclick="showCreateExportForm()" class="btn btn-primary w-full md:w-auto">Create Export</button>
-          </div>`;
-        return;
-      }
+  if (invoices.length === 0) {
+    container.innerHTML = `
+      <div class="glass erp-card flex flex-col items-center justify-center p-10 md:p-16 text-center">
+        <svg class="mb-4 text-[var(--muted)] opacity-50" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        <div class="text-header mb-6">No Export Invoices</div>
+        <button onclick="showCreateExportForm()" class="btn btn-primary w-full md:w-auto">Create Export</button>
+      </div>`;
+    return;
+  }
 
-      let html = `
-        <div class="glass erp-card">
-          <div class="mb-4 md:mb-6 flex flex-col md:flex-row gap-3 md:items-center">
-            <div class="flex-1 relative">
-              <input type="text" id="export-search" placeholder="Search..." class="input-field" oninput="filterExports()" style="padding-left:44px">
-              <svg style="position:absolute;left:14px;top:16px;color:var(--muted)" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            </div>
-            <button onclick="resetExportsFilters()" class="btn btn-secondary hidden md:inline-flex">Reset</button>
-          </div>
-          <div class="table-container">
-            <table class="erp-table">
-              <thead><tr><th>No</th><th>Date</th><th>Client</th><th style="text-align:right">USD</th><th style="text-align:center">Actions</th></tr></thead>
-              <tbody id="export-tbody"></tbody>
-            </table>
-          </div>
-        </div>`;
+  let html = `
+    <div class="glass erp-card">
+      <div class="mb-4 md:mb-6 flex flex-col md:flex-row gap-3 md:items-center">
+        <div class="flex-1 relative">
+          <input type="text" id="export-search" placeholder="Search..." class="input-field" oninput="filterExports()" style="padding-left:44px">
+          <svg style="position:absolute;left:14px;top:16px;color:var(--muted)" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </div>
+        <button onclick="resetExportsFilters()" class="btn btn-secondary hidden md:inline-flex">Reset</button>
+      </div>
+      <div class="table-container">
+        <table class="erp-table">
+          <thead><tr>
+            <th>No</th>
+            <th>Date</th>
+            <th>Client</th>
+            <th style="text-align:right">USD</th>
+            <th>Status</th>
+            <th style="text-align:center">Actions</th>
+          </tr></thead>
+          <tbody id="export-tbody"></tbody>
+        </table>
+      </div>
+    </div>`;
 
-      container.innerHTML = html;
-      window.exportDataStore = invoices;
-      filterExports();
-    }
+  container.innerHTML = html;
+  window.exportDataStore = invoices;
+  filterExports();
+}
 
     function filterExports() {
-      const search = (document.getElementById('export-search')?.value || '').toLowerCase();
-      const data = window.exportDataStore || [];
-      const filtered = data.filter(row => {
-        const invNo = (row.invoice_no || '').toLowerCase();
-        const client = (row.client_name || '').toLowerCase();
-        const country = (row.country || '').toLowerCase();
-        return invNo.includes(search) || client.includes(search) || country.includes(search);
-      });
+  const search = (document.getElementById('export-search')?.value || '').toLowerCase();
+  const data = window.exportDataStore || [];
+  const filtered = data.filter(row => {
+    const invNo = (row.invoice_no || '').toLowerCase();
+    const client = (row.client_name || '').toLowerCase();
+    const country = (row.country || '').toLowerCase();
+    return invNo.includes(search) || client.includes(search) || country.includes(search);
+  });
 
-      const tbody = document.getElementById('export-tbody');
-      if (tbody) {
-        if (filtered.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--muted)">No results found</td></tr>`;
+  const tbody = document.getElementById('export-tbody');
+  if (tbody) {
+    if (filtered.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--muted)">No results found</td></tr>`;
+    } else {
+      tbody.innerHTML = filtered.map(inv => {
+        const statusClass = inv.status === 'ACTIVE' ? 'badge-active' : 
+                           inv.status === 'CANCELLED' ? 'badge-cancelled' : 
+                           'badge-revised';
+        let actions = '';
+        if (inv.status === 'ACTIVE') {
+          actions = `
+            <div class="flex gap-2 justify-center w-full">
+              <button onclick="handleReviseExportInvoice('${escapeHtml(inv.invoice_no)}')" class="btn btn-warning btn-sm flex-1 md:flex-none">Revise</button>
+              <button onclick="handleCancelExportInvoice('${escapeHtml(inv.invoice_no)}')" class="btn btn-danger btn-sm flex-1 md:flex-none">Cancel</button>
+              <button onclick="showInvoicePreview('${escapeHtml(inv.invoice_no)}', 'export')" class="btn btn-primary btn-sm flex-1 md:flex-none">Print</button>
+            </div>`;
         } else {
-          tbody.innerHTML = filtered.map(inv => {
-            let actions = '';
-            if (inv.status === 'ACTIVE') {
-              actions = `
-                <div class="flex gap-2 justify-center w-full">
-                  <button onclick="handleReviseExportInvoice('${escapeHtml(inv.invoice_no)}')" class="btn btn-warning btn-sm flex-1 md:flex-none">Revise</button>
-                  <button onclick="handleCancelExportInvoice('${escapeHtml(inv.invoice_no)}')" class="btn btn-danger btn-sm flex-1 md:flex-none">Cancel</button>
-                  <button onclick="showInvoicePreview('${escapeHtml(inv.invoice_no)}', 'export')" class="btn btn-primary btn-sm flex-1 md:flex-none">Print</button>
-                </div>`;
-            } else {
-              actions = `<div style="text-align:center;color:var(--muted);width:100%;">—</div>`;
-            }
-            return `
-              <tr>
-                <td data-label="No"><span style="font-weight:600">${escapeHtml(inv.invoice_no || 'N/A')}</span></td>
-                <td data-label="Date">${escapeHtml(inv.date || 'N/A')}</td>
-                <td data-label="Client"><div class="truncate w-full ml-4 max-w-[180px] md:max-w-none text-right md:text-left md:ml-0">${escapeHtml(inv.client_name || 'N/A')}</div></td>
-                <td data-label="USD" style="text-align:right;font-weight:600">$${Number(inv.amount_usd || 0).toFixed(2)}</td>
-                <td data-label="Actions">${actions}</td>
-              </tr>`;
-          }).join('');
+          actions = `<div style="text-align:center;color:var(--muted);width:100%;">—</div>`;
         }
-      }
+        return `
+          <tr>
+            <td data-label="No">
+              <span style="font-weight:600">${escapeHtml(inv.invoice_no || 'N/A')}</span>
+              <span class="text-helper text-[var(--muted)] ml-1">v${inv.version || 1}</span>
+            </td>
+            <td data-label="Date">${escapeHtml(inv.date || 'N/A')}</td>
+            <td data-label="Client"><div class="truncate w-full ml-4 max-w-[180px] md:max-w-none text-right md:text-left md:ml-0">${escapeHtml(inv.client_name || 'N/A')}</div></td>
+            <td data-label="USD" style="text-align:right;font-weight:600">$${Number(inv.amount_usd || 0).toFixed(2)}</td>
+            <td data-label="Status"><span class="badge ${statusClass}">${inv.status || 'ACTIVE'}</span></td>
+            <td data-label="Actions">${actions}</td>
+          </tr>`;
+      }).join('');
     }
+  }
+}
 
     function resetExportsFilters() {
       document.getElementById('export-search').value = '';
