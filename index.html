@@ -874,7 +874,7 @@
     </div>
   </div>
 
-  <div id="review-invoice-modal" class="hidden fixed inset-0 modal-overlay z-50 flex items-center justify-center p-4 no-print">
+  <div id="review-invoice-modal" class="hidden fixed inset-0 modal-overlay z-[100] flex items-center justify-center p-4 no-print">
     <div class="modal-card max-w-3xl w-full p-6 max-h-[90vh] overflow-y-auto flex flex-col">
       <div class="flex items-center justify-between mb-6 shrink-0">
         <div class="text-header">Review Invoice</div>
@@ -1194,7 +1194,12 @@
       }
 
       const invoices = response.invoices || [];
-      invoices.sort((a, b) => { return new Date(b.date || '1970-01-01') - new Date(a.date || '1970-01-01'); });
+      // Sort by date descending (newest first)
+      invoices.sort((a, b) => { 
+        const dateA = new Date(a.date || '1970-01-01');
+        const dateB = new Date(b.date || '1970-01-01');
+        return dateB - dateA;
+      });
       invoicesData = invoices;
 
       if (invoices.length === 0) {
@@ -1689,7 +1694,7 @@
     }
 
     // ========================================================================
-    // REVISE INVOICE
+    // REVISE INVOICE - FIXED: Close revise modal before showing review
     // ========================================================================
 
     function handleReviseInvoice(invoiceNo) {
@@ -1861,6 +1866,7 @@
       document.getElementById('revise-summary-total').textContent = `${grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
     }
 
+    // FIXED: Close revise modal before showing review modal
     function handleSubmitReviseInvoice(event) {
       event.preventDefault();
       if (!currentReviseInvoiceNo) { showToast('No invoice selected', 'error'); return; }
@@ -1899,11 +1905,16 @@
       pendingInvoiceData = invoiceData;
       pendingIsRevise = true;
       pendingReviseNo = currentReviseInvoiceNo;
+      
+      // CLOSE REVISE MODAL FIRST
+      closeReviseModal();
+      
+      // THEN SHOW REVIEW MODAL
       showReviewModal(invoiceData);
     }
 
     // ========================================================================
-    // REVISE EXPORT FORM
+    // REVISE EXPORT FORM - FIXED: Close revise modal before showing review
     // ========================================================================
     function renderReviseExportForm(invoice) {
       const container = document.getElementById('revise-export-content');
@@ -1933,6 +1944,7 @@
       container.innerHTML = html;
     }
 
+    // FIXED: Close revise export modal before showing review, fix data structure
     function handleSubmitReviseExport(event) {
       event.preventDefault();
       if (!currentReviseExportNo) { showToast('No export invoice selected', 'error'); return; }
@@ -1949,10 +1961,31 @@
       if (!clientName || !country || !address || !description || !sacCode || !date) { showToast('Please fill all required fields', 'error'); return; }
       if (qty <= 0 || rate <= 0) { showToast('Quantity and rate must be > 0', 'error'); return; }
 
-      const invoiceData = { clientName, country, address, description, sacCode, date, quantity: qty, rate: rate };
+      // Build proper items array for export
+      const items = [{
+        description: description,
+        sacCode: sacCode,
+        quantity: qty,
+        rate: rate,
+        amount: roundCurrency(qty * rate)
+      }];
+
+      const invoiceData = { 
+        clientName: clientName, 
+        country: country, 
+        address: address, 
+        date: date, 
+        items: items 
+      };
+      
       pendingInvoiceData = invoiceData;
       pendingIsReviseExport = true;
       pendingReviseNo = currentReviseExportNo;
+      
+      // CLOSE REVISE EXPORT MODAL FIRST
+      closeReviseExportModal();
+      
+      // THEN SHOW REVIEW MODAL
       showReviewModal(invoiceData);
     }
 
@@ -2181,12 +2214,13 @@
     }
 
     // ========================================================================
-    // REVIEW MODAL
+    // REVIEW MODAL - FIXED: Shows correct data for export revisions
     // ========================================================================
     function showReviewModal(data) {
       const modal = document.getElementById('review-invoice-modal');
       const content = document.getElementById('review-content');
       
+      // Check if this is an export invoice (has country, no placeOfSupply)
       const isExport = data.country !== undefined && !data.placeOfSupply;
       
       if (isExport) {
@@ -2221,6 +2255,9 @@
             <div class="flex justify-between pt-3 mt-1 border-t border-[var(--border)]">
               <span class="text-header">Total (USD):</span>
               <span class="text-header text-[var(--primary)]">$${amountUSD.toFixed(2)}</span>
+            </div>
+            <div style="font-size:13px; color:var(--muted); text-align:center; padding:8px; background:rgba(245,158,11,0.1); border-radius:8px; border:1px solid var(--warning);">
+              ⚠️ This is a ZERO GST export invoice under LUT.
             </div>
           </div>`;
         content.innerHTML = html;
@@ -2278,6 +2315,7 @@
       pendingInvoiceData = null;
     }
 
+    // FIXED: Confirm invoice - handles both regular and export revision correctly
     async function confirmInvoice() {
       if (!pendingInvoiceData) return;
       const btn = document.getElementById('confirm-invoice-btn');
@@ -2286,10 +2324,29 @@
 
       try {
         let url, body;
-        if (pendingIsReviseExport) { url = '/api/export-invoices/revise'; body = { invoiceNo: pendingReviseNo, ...pendingInvoiceData }; }
-        else if (pendingIsRevise) { url = '/api/invoices/revise'; body = { invoiceNo: pendingReviseNo, ...pendingInvoiceData }; }
-        else if (pendingInvoiceData.country !== undefined && !pendingInvoiceData.placeOfSupply) { url = '/api/export-invoices'; body = pendingInvoiceData; }
-        else { url = '/api/invoices'; body = pendingInvoiceData; }
+        if (pendingIsReviseExport) { 
+          url = '/api/export-invoices/revise'; 
+          body = { 
+            invoiceNo: pendingReviseNo, 
+            clientName: pendingInvoiceData.clientName,
+            country: pendingInvoiceData.country,
+            address: pendingInvoiceData.address,
+            date: pendingInvoiceData.date,
+            items: pendingInvoiceData.items
+          }; 
+        }
+        else if (pendingIsRevise) { 
+          url = '/api/invoices/revise'; 
+          body = { invoiceNo: pendingReviseNo, invoiceData: pendingInvoiceData }; 
+        }
+        else if (pendingInvoiceData.country !== undefined && !pendingInvoiceData.placeOfSupply) { 
+          url = '/api/export-invoices'; 
+          body = pendingInvoiceData; 
+        }
+        else { 
+          url = '/api/invoices'; 
+          body = pendingInvoiceData; 
+        }
         
         const response = await apiFetch(url, { method: 'POST', body: JSON.stringify(body) });
         if (!response) { btn.disabled = false; btn.innerHTML = 'Confirm & Create'; return; }
@@ -2300,7 +2357,9 @@
           showToast(`✅ ${data.invoiceNo || 'Invoice'} ${pendingIsRevise || pendingIsReviseExport ? 'revised' : 'created'}!`, 'success');
           closeReviewModal();
           navigateTo('dashboard');
-        } else { showToast(`❌ Failed: ${data.error || 'Unknown error'}`, 'error'); }
+        } else { 
+          showToast(`❌ Failed: ${data.error || 'Unknown error'}`, 'error'); 
+        }
       } catch (error) {
         btn.disabled = false;
         btn.innerHTML = 'Confirm & Create';
