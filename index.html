@@ -1120,6 +1120,18 @@
       return dateStr;
     }
 
+    // Helper: Parse date string to Date object
+    function parseDate(dateStr) {
+      if (!dateStr) return new Date(0);
+      var parts = dateStr.split('-');
+      if (parts.length === 3 && parts[0].length === 2) {
+        return new Date(parts[2], parts[1] - 1, parts[0]);
+      }
+      var d = new Date(dateStr);
+      if (!isNaN(d.getTime())) return d;
+      return new Date(0);
+    }
+
     // ========================================================================
     // THEME & NAVIGATION
     // ========================================================================
@@ -1195,11 +1207,9 @@
 
       const invoices = response.invoices || [];
       
-      // FIXED: Sort by date descending (newest first) - parse date properly
+      // Sort by date descending (newest first)
       invoices.sort((a, b) => { 
-        const dateA = parseDate(a.date);
-        const dateB = parseDate(b.date);
-        return dateB - dateA;
+        return parseDate(b.date) - parseDate(a.date);
       });
       invoicesData = invoices;
 
@@ -1277,20 +1287,6 @@
       window.dashboardSortCol = 0;
       window.dashboardSortDir = 1;
       filterDashboardTable();
-    }
-
-    // Helper: Parse date string to Date object
-    function parseDate(dateStr) {
-      if (!dateStr) return new Date(0);
-      // Try dd-MM-yyyy format
-      var parts = dateStr.split('-');
-      if (parts.length === 3 && parts[0].length === 2) {
-        return new Date(parts[2], parts[1] - 1, parts[0]);
-      }
-      // Try yyyy-MM-dd format
-      var d = new Date(dateStr);
-      if (!isNaN(d.getTime())) return d;
-      return new Date(0);
     }
 
     function filterDashboardTable() {
@@ -1715,7 +1711,7 @@
     }
 
     // ========================================================================
-    // REVISE INVOICE
+    // REVISE INVOICE - FIXED: Properly preserve flags
     // ========================================================================
 
     function handleReviseInvoice(invoiceNo) {
@@ -1887,7 +1883,7 @@
       document.getElementById('revise-summary-total').textContent = `${grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
     }
 
-    // FIXED: Close revise modal before showing review modal
+    // FIXED: Close revise modal before showing review modal - preserve flags
     function handleSubmitReviseInvoice(event) {
       event.preventDefault();
       if (!currentReviseInvoiceNo) { showToast('No invoice selected', 'error'); return; }
@@ -1923,8 +1919,11 @@
       if (lineItems.length === 0) { showToast('Add at least one item', 'error'); return; }
 
       const invoiceData = { clientName, placeOfSupply, date, dueDate, isInterstate, cgstRate, sgstRate, igstRate, items: lineItems };
+      
+      // PRESERVE FLAGS - Set before closing modal
       pendingInvoiceData = invoiceData;
-      pendingIsRevise = true;
+      pendingIsRevise = true;  // Make sure this is true
+      pendingIsReviseExport = false;  // Make sure this is false
       pendingReviseNo = currentReviseInvoiceNo;
       
       // CLOSE REVISE MODAL FIRST
@@ -1965,7 +1964,7 @@
       container.innerHTML = html;
     }
 
-    // FIXED: Close revise export modal before showing review, fix data structure
+    // FIXED: Close revise export modal before showing review, preserve flags
     function handleSubmitReviseExport(event) {
       event.preventDefault();
       if (!currentReviseExportNo) { showToast('No export invoice selected', 'error'); return; }
@@ -1999,8 +1998,10 @@
         items: items 
       };
       
+      // PRESERVE FLAGS - Set before closing modal
       pendingInvoiceData = invoiceData;
-      pendingIsReviseExport = true;
+      pendingIsReviseExport = true;  // Make sure this is true
+      pendingIsRevise = false;  // Make sure this is false
       pendingReviseNo = currentReviseExportNo;
       
       // CLOSE REVISE EXPORT MODAL FIRST
@@ -2235,7 +2236,7 @@
     }
 
     // ========================================================================
-    // REVIEW MODAL - FIXED: Shows correct data for export revisions
+    // REVIEW MODAL
     // ========================================================================
     function showReviewModal(data) {
       const modal = document.getElementById('review-invoice-modal');
@@ -2336,7 +2337,9 @@
       pendingInvoiceData = null;
     }
 
-    // FIXED: Confirm invoice - handles both regular and export revision correctly
+    // ========================================================================
+    // CONFIRM INVOICE - FIXED: Correct endpoint routing
+    // ========================================================================
     async function confirmInvoice() {
       if (!pendingInvoiceData) return;
       const btn = document.getElementById('confirm-invoice-btn');
@@ -2345,7 +2348,14 @@
 
       try {
         let url, body;
-        if (pendingIsReviseExport) { 
+        
+        // FIXED: Check regular revision FIRST, then export revision
+        if (pendingIsRevise) { 
+          // Regular invoice revision
+          url = '/api/invoices/revise'; 
+          body = { invoiceNo: pendingReviseNo, invoiceData: pendingInvoiceData };
+        } else if (pendingIsReviseExport) { 
+          // Export invoice revision
           url = '/api/export-invoices/revise'; 
           body = { 
             invoiceNo: pendingReviseNo, 
@@ -2354,23 +2364,23 @@
             address: pendingInvoiceData.address,
             date: pendingInvoiceData.date,
             items: pendingInvoiceData.items
-          }; 
-        }
-        else if (pendingIsRevise) { 
-          url = '/api/invoices/revise'; 
-          body = { invoiceNo: pendingReviseNo, invoiceData: pendingInvoiceData }; 
-        }
-        else if (pendingInvoiceData.country !== undefined && !pendingInvoiceData.placeOfSupply) { 
+          };
+        } else if (pendingInvoiceData.country !== undefined && !pendingInvoiceData.placeOfSupply) { 
+          // New export invoice
           url = '/api/export-invoices'; 
-          body = pendingInvoiceData; 
-        }
-        else { 
+          body = pendingInvoiceData;
+        } else { 
+          // New regular invoice
           url = '/api/invoices'; 
-          body = pendingInvoiceData; 
+          body = pendingInvoiceData;
         }
         
         const response = await apiFetch(url, { method: 'POST', body: JSON.stringify(body) });
-        if (!response) { btn.disabled = false; btn.innerHTML = 'Confirm & Create'; return; }
+        if (!response) { 
+          btn.disabled = false; 
+          btn.innerHTML = 'Confirm & Create'; 
+          return; 
+        }
         const data = await response.json();
         btn.disabled = false;
         btn.innerHTML = 'Confirm & Create';
