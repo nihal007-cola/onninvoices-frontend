@@ -1194,10 +1194,11 @@
       }
 
       const invoices = response.invoices || [];
-      // Sort by date descending (newest first)
+      
+      // FIXED: Sort by date descending (newest first) - parse date properly
       invoices.sort((a, b) => { 
-        const dateA = new Date(a.date || '1970-01-01');
-        const dateB = new Date(b.date || '1970-01-01');
+        const dateA = parseDate(a.date);
+        const dateB = parseDate(b.date);
         return dateB - dateA;
       });
       invoicesData = invoices;
@@ -1262,6 +1263,7 @@
         return {
           invoiceNo: inv.invoice_no || 'N/A',
           date: inv.date || 'N/A',
+          dateObj: parseDate(inv.date),
           clientName: inv.client_name || 'N/A',
           total: '₹' + Number(inv.total_amount || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 }),
           totalRaw: Number(inv.total_amount || 0),
@@ -1277,6 +1279,20 @@
       filterDashboardTable();
     }
 
+    // Helper: Parse date string to Date object
+    function parseDate(dateStr) {
+      if (!dateStr) return new Date(0);
+      // Try dd-MM-yyyy format
+      var parts = dateStr.split('-');
+      if (parts.length === 3 && parts[0].length === 2) {
+        return new Date(parts[2], parts[1] - 1, parts[0]);
+      }
+      // Try yyyy-MM-dd format
+      var d = new Date(dateStr);
+      if (!isNaN(d.getTime())) return d;
+      return new Date(0);
+    }
+
     function filterDashboardTable() {
       const search = (document.getElementById('dashboard-search')?.value || '').toLowerCase();
       let data = window.dashboardData || [];
@@ -1284,11 +1300,16 @@
 
       const col = window.dashboardSortCol || 0;
       const dir = window.dashboardSortDir || 1;
-      const keys = ['invoiceNo', 'date', 'clientName', 'totalRaw', 'status'];
+      const keys = ['invoiceNo', 'dateObj', 'clientName', 'totalRaw', 'status'];
       data.sort((a, b) => {
         let va = a[keys[col]] || '', vb = b[keys[col]] || '';
-        if (typeof va === 'string') va = va.toLowerCase();
-        if (typeof vb === 'string') vb = vb.toLowerCase();
+        if (keys[col] === 'dateObj') {
+          va = va instanceof Date ? va.getTime() : 0;
+          vb = vb instanceof Date ? vb.getTime() : 0;
+        } else if (typeof va === 'string') {
+          va = va.toLowerCase();
+          vb = vb.toLowerCase();
+        }
         return va < vb ? -dir : va > vb ? dir : 0;
       });
 
@@ -1694,7 +1715,7 @@
     }
 
     // ========================================================================
-    // REVISE INVOICE - FIXED: Close revise modal before showing review
+    // REVISE INVOICE
     // ========================================================================
 
     function handleReviseInvoice(invoiceNo) {
@@ -2740,7 +2761,7 @@
         return;
       }
       const invoices = response.invoices || [];
-      invoices.sort((a, b) => { return new Date(b.date || '1970-01-01') - new Date(a.date || '1970-01-01'); });
+      invoices.sort((a, b) => { return parseDate(b.date) - parseDate(a.date); });
       exportInvoicesData = invoices;
 
       if (invoices.length === 0) {
@@ -2960,7 +2981,7 @@
       }
 
       const cancelled = (response.invoices || []).filter(inv => inv.status === 'CANCELLED');
-      cancelled.sort((a, b) => { return new Date(b.date || '1970-01-01') - new Date(a.date || '1970-01-01'); });
+      cancelled.sort((a, b) => { return parseDate(b.date) - parseDate(a.date); });
 
       if (cancelled.length === 0) {
         container.innerHTML = `
